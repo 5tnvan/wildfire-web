@@ -42,5 +42,10 @@
   },
   "engines": {
     "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.2.10",
+    "tailwind-merge": "^2.3.0"
   }
 }

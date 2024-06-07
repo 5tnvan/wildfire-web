@@ -162,6 +162,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.24.1":
+  version: 7.24.7
+  resolution: "@babel/runtime@npm:7.24.7"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: d17f29eed6f848ac15cdf4202a910b741facfb0419a9d79e5c7fa37df6362fc3227f1cc2e248cc6db5e53ddffb4caa6686c488e6e80ce3d29c36a4e74c8734ea
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.15":
   version: 7.22.15
   resolution: "@babel/template@npm:7.22.15"
@@ -5184,6 +5193,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: acd3e1ab9d8a433ecb3cc2f6a05ab95fe50b4a3cfc5ba47abb6cbf3754585fcb87b84e90c822a1f256c4198e3b41c7f6c391577ffc8678ad587fc0976b24fd57
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:^1.1.0":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
@@ -7491,6 +7507,26 @@ __metadata:
   version: 4.3.6
   resolution: "fraction.js@npm:4.3.6"
   checksum: e96ae77e64ebfd442d3a5a01a3f0637b0663fc2440bcf2841b3ad9341ba24c81fb2e3e7142e43ef7d088558c6b3f8609df135b201adc7a1c674aea6a71384162
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:^11.2.10":
+  version: 11.2.10
+  resolution: "framer-motion@npm:11.2.10"
+  dependencies:
+    tslib: ^2.4.0
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: d124bba0d59856b5b17db2d55f6a627d8035e7b7728a610669e6f8dd215b8bbe1be1ee4a0d62d7ae365496bc2ebe8761b2bf4cf2e9c4760b4bfd7fdfd47a43f1
   languageName: node
   linkType: hard
 
@@ -12459,8 +12495,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
+    clsx: ^2.1.1
+    framer-motion: ^11.2.10
     husky: ^8.0.1
     lint-staged: ^13.0.3
+    tailwind-merge: ^2.3.0
   languageName: unknown
   linkType: soft
 
@@ -13334,6 +13373,15 @@ __metadata:
     string-width: ^4.2.3
     strip-ansi: ^6.0.1
   checksum: 08249c7046125d9d0a944a6e96cfe9ec66908d6b8a9db125531be6eb05fa0de047fd5542e9d43b4f987057f00a093b276b8d3e19af162a9c40db2681058fd306
+  languageName: node
+  linkType: hard
+
+"tailwind-merge@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "tailwind-merge@npm:2.3.0"
+  dependencies:
+    "@babel/runtime": ^7.24.1
+  checksum: 1254eea9b6ec480911f01e2909e3ba35ca3c534d9db1405dfe9bdf51d100663a3935cb20662c023ab44ee9679bce10d86bd27beba23d0174beff32a6acb06978
   languageName: node
   linkType: hard
 
