@@ -1,5 +1,4 @@
 # Wildfire App
-Got 3 Seconds?
 
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Github</a> |
@@ -7,16 +6,14 @@ Got 3 Seconds?
   Wildpay <a href="https://www.wildpay.app">www.wildpay.app</a>
 </h4>
 
->Wildire is a Web3 Creator Economy App, based on 3 principles:
-
 🔥 **Got 3 seconds?**
-Become a Web3 Creator by posting a 3-second video each day.
+>Become a Web3 Creator by posting a 3-second video each day.
 
 🔥 **Extremely. Short. Content.** 
-No more doom scrolling—stay informed about the world, 24/7, in just 3 seconds.
+>No more doom scrolling—stay informed about the world, 24/7, in just 3 seconds.
 
 🔥 **Web3 pays 100%**
-Creators get paid instantly in ETH, and retain all their revenue.
+>Creators get paid instantly in ETH, and retain all their revenue.
 
 ## ⚙️ Set-up
 
