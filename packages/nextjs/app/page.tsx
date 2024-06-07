@@ -10,20 +10,33 @@ const Home: NextPage = () => {
   return (
     <>
       <div className="bg-white">
+        <div className="flex flex-row justify-between items-center p-5">
+          <Image
+            src={`/wildfire-logo-lit.png`}
+            alt="hero"
+            height={80}
+            width={80}
+            className="rounded-2xl object-cover h-full object-left-top"
+            draggable={false}
+          />
+          <Link
+            href="https://youtube.com/clip/UgkxjdMK-9RyykIG7JHpuWkTQX4h8w7Mlbr6?si=UsxzkYpD2LuV91O8"
+            className="btn btn-small btn-outline"
+          >
+            Watch Preview
+          </Link>
+        </div>
+
+        {/* GOT 3 SECONDS? */}
         <div className="flex flex-col overflow-hidden">
           <ContainerScroll
             titleComponent={
               <>
-                <h1 className="text-4xl font-semibold text-black">
-                  Unleash the power of <br />
-                  <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">Web3 Creator Economy</span>
+                <h1 className="text-6xl md:text-[4rem] font-semibold text-black 0">
+                  Got
+                  <br />
+                  <span className="text-6xl md:text-[6rem] font-bold mt-1 leading-none">3 seconds?</span>
                 </h1>
-                <Link
-                  href="https://youtube.com/clip/UgkxjdMK-9RyykIG7JHpuWkTQX4h8w7Mlbr6?si=UsxzkYpD2LuV91O8"
-                  className="btn btn-neutral mb-10"
-                >
-                  Watch App Preview
-                </Link>
               </>
             }
           >
@@ -37,12 +50,11 @@ const Home: NextPage = () => {
             />
           </ContainerScroll>
         </div>
+
+        {/* WE ARE WORKING HARD TO GET THE APP ON */}
         <h1 className="text-3xl text-center">We are working hard to get the app on...</h1>
         <div className="flex flex-row justify-center gap-4">
-          <button
-            type="button"
-            className="flex items-center justify-center w-48 mt-3 text-black bg-transparent border border-black h-14 rounded-xl"
-          >
+          <div className="flex items-center justify-center w-48 mt-3 text-black bg-transparent border border-black h-14 rounded-xl">
             <div className="mr-3">
               <svg viewBox="0 0 384 512" width="30">
                 <path
@@ -55,11 +67,8 @@ const Home: NextPage = () => {
               <div className="text-xs">Download on the</div>
               <div className="-mt-1 font-sans text-2xl font-semibold">App Store</div>
             </div>
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center w-48 mt-3 text-white bg-black rounded-lg h-14"
-          >
+          </div>
+          <div className="flex items-center justify-center w-48 mt-3 text-white bg-black rounded-lg h-14">
             <div className="mr-3">
               <svg viewBox="30 336.7 120.9 129.2" width="30">
                 <path
@@ -84,9 +93,10 @@ const Home: NextPage = () => {
               <div className="text-xs">GET IT ON</div>
               <div className="-mt-1 font-sans text-xl font-semibold">Google Play</div>
             </div>
-          </button>
+          </div>
         </div>
-        {/* <h1 className="text-3xl text-center">What to expect?</h1> */}
+
+        {/* 3-GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-32 px-5">
           <WobbleCard
             containerClassName="col-span-1 lg:col-span-2 h-full bg-pink-800 min-h-[500px] lg:min-h-[300px]"
@@ -134,6 +144,8 @@ const Home: NextPage = () => {
             />
           </WobbleCard>
         </div>
+
+        {/* FOOTER */}
         <footer className="footer footer-center p-10 bg-zinc-100 text-primary-content">
           <aside>
             <div className="flex flex-col items-center font-bold gap-1">
@@ -145,14 +157,14 @@ const Home: NextPage = () => {
                 className="align-center"
               />
               <p>
-                WildFire <br />3 Seconds App
+                wildfire <br />3 Seconds App
               </p>
             </div>
             <p>
               <Link href="https://micalabs.org/" className="link">
                 MicaLabs
               </Link>{" "}
-              © 2024 - All right reserved
+              © 2024 - All rights reserved
             </p>
           </aside>
           <nav>
