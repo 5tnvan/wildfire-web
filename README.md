@@ -1,39 +1,33 @@
-# 🏗 Scaffold-ETH 2
+# Wildfire App
+Got 3 Seconds?
 
 <h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
+  <a href="https://docs.scaffoldeth.io">Github</a> |
+  Wildfire <a href="https://www.3seconds.me">www.3seconds.me</a> |
+  Wildpay <a href="https://www.wildpay.app">www.wildpay.app</a>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+>Wildire is a Web3 Creator Economy App, based on 3 principles:
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+🔥 **Got 3 seconds?**
+Become a Web3 Creator by posting a 3-second video each day.
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+🔥 **Extremely. Short. Content.** 
+No more doom scrolling—stay informed about the world, 24/7, in just 3 seconds.
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+🔥 **Web3 pays 100%**
+Creators get paid instantly in ETH, and retain all their revenue.
 
-## Requirements
+## ⚙️ Set-up
 
-Before you begin, you need to install the following tools:
+>The app is built using [Scaffold-Eth-2](https://github.com/scaffold-eth/scaffold-eth-2) (NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript), [Subgraph](https://github.com/graphprotocol), [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts) and [Supabase Auth](https://github.com/supabase/supabase).
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
-
-## Quickstart
-
-To get started with Scaffold-ETH 2, follow the steps below:
-
+To set up:
 1. Clone this repo & install dependencies
 
 ```
-git clone https://github.com/scaffold-eth/scaffold-eth-2.git
-cd scaffold-eth-2
+git clone https://github.com/5tnvan/tipping-app-v5
+cd tipping-app-v5
 yarn install
 ```
 
@@ -51,31 +45,36 @@ This command starts a local Ethereum network using Hardhat. The network runs on 
 yarn deploy
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
+4. You must create an env.local file and put your Supabase keys into this for the app to run. Or ask tran@micalabs.org for help.
 ```
-yarn start
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+## ⚙️ Smart Contracts
 
-**What's next**:
+Wildfire is integrated with Wildpay.
+Our Smart Contracts are verified on chain!
 
-- Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
-- Edit your smart contract test in: `packages/hardhat/test`. To run test use `yarn hardhat:test`
+### Base: 
+- https://basescan.org/address/0x3579b02193028357acafe8323d2f62155078033a
 
-## Documentation
+### Ethereum:
+- https://etherscan.io/address/0x3579b02193028357acafe8323d2f62155078033a
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+## ⚙️ Subgraph
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+We index our Smart Contracts and query this data from our front-end app! 
 
-## Contributing to Scaffold-ETH 2
+### Base
+- https://github.com/5tnvan/tipping-app-v5/tree/main/packages/subgraph/wildpay-base-mainnet (Source Code)
+- https://thegraph.com/studio/subgraph/wildpay-base-mainnet/ (Subgraph code)
+- https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/version/latest (API Endpoint)
+### Ethereum
+- https://github.com/5tnvan/tipping-app-v5/tree/main/packages/subgraph/wildpay-base-mainnet (Source code)
+- https://thegraph.com/studio/subgraph/wildpay-eth-mainnet/ (Subgraph Studio)
+- https://api.studio.thegraph.com/query/68297/wildpay-eth-mainnet/version/latest (API Endpoint)
 
-We welcome contributions to Scaffold-ETH 2!
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+## Got a question ❓
+Write to tran@micalabs.org
