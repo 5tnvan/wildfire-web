@@ -11,14 +11,16 @@ const Home: NextPage = () => {
     <>
       <div className="bg-white">
         <div className="flex flex-row justify-between items-center p-5">
-          <Image
-            src={`/wildfire-logo-lit.png`}
-            alt="hero"
-            height={80}
-            width={80}
-            className="rounded-2xl object-cover h-full object-left-top"
-            draggable={false}
-          />
+          <Link href="https://www.3seconds.me">
+            <Image
+              src={`/wildfire-logo-lit.png`}
+              alt="hero"
+              height={80}
+              width={80}
+              className="rounded-2xl object-cover h-full object-left-top"
+              draggable={false}
+            />
+          </Link>
           <Link
             href="https://youtube.com/clip/UgkxjdMK-9RyykIG7JHpuWkTQX4h8w7Mlbr6?si=UsxzkYpD2LuV91O8"
             className="btn btn-small btn-outline"
@@ -52,7 +54,7 @@ const Home: NextPage = () => {
         </div>
 
         {/* WE ARE WORKING HARD TO GET THE APP ON */}
-        <h1 className="text-3xl text-center">We are working hard to get the app on...</h1>
+        <h1 className="text-3xl text-center">We are working hard to get on...</h1>
         <div className="flex flex-row justify-center gap-4">
           <div className="flex items-center justify-center w-48 mt-3 text-black bg-transparent border border-black h-14 rounded-xl">
             <div className="mr-3">
