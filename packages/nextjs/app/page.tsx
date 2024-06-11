@@ -8,12 +8,12 @@ import { WobbleCard } from "~~/components/ui/wooble-card";
 const Home: NextPage = () => {
   return (
     <>
-      <div>
+      <div className="">
+
         {/* GOT 3 SECONDS? */}
-        <div className="flex  flex-col lg:flex-row items-center justify-center my-20">
-          <Image src={`/app.png`} alt="wildfire" width={400} height={200} style={{ width: "auto", height: "auto" }} priority />
-          <div className="mx-20 mt-20 lg:mt-0 flex flex-col">
-            <h1 className="text-5xl font-bold self-center">wildfire</h1>
+        <div className="flex flex-col items-center justify-center">
+          <div className="px-5 lg:mt-0 flex flex-col w-full items-center py-8 lg:py-16">
+            <h1 className="text-5xl font-bold">wildfire</h1>
             <h3 className="text-lg">A 3 seconds video app that pays off</h3>
             <Link
               href="https://youtube.com/clip/UgkxjdMK-9RyykIG7JHpuWkTQX4h8w7Mlbr6?si=UsxzkYpD2LuV91O8"
@@ -22,18 +22,27 @@ const Home: NextPage = () => {
               Watch Preview
             </Link>
           </div>
+          <Image
+            src={`/app.png`}
+            alt="wildfire"
+            width={400}
+            height={200}
+            style={{ width: "auto", height: "auto" }}
+            className="px-5"
+            priority
+          />
         </div>
 
         {/* WE ARE WORKING HARD TO GET THE APP ON */}
-        <div className="bg-base-100 p-20 my-32 w-fit rounded-lg m-auto shadow-md">
+        <div className="p-20 w-full rounded-lg m-auto shadow-md">
           <h1 className="text-lg text-center text-content-primary mb-5">Get the app soon.</h1>
-          <div className="flex flex-row justify-center gap-4">
+          <div className="flex flex-col lg:flex-row justify-center gap-4">
             <Image
               src={`/applestore.png`}
               alt="wildfire"
-              height={1114}
-              width={215}
-              className="rounded-2xl object-cover h-full object-left-top"
+              height={900}
+              width={220}
+              className="rounded-2xl object-cover h-full"
               style={{ width: "auto", height: "auto" }}
               draggable={false}
             />
@@ -50,7 +59,7 @@ const Home: NextPage = () => {
         </div>
 
         {/* 3-GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-32 px-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 max-w-7xl mx-auto w-full ">
           <WobbleCard
             containerClassName="col-span-1 lg:col-span-2 h-full bg-pink-800 min-h-[500px] lg:min-h-[300px]"
             className=""

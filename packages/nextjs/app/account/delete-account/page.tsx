@@ -34,7 +34,7 @@ const DeleteAccount: NextPage = () => {
   return (
     <>
       {user && profile && (
-        <div className="flex flex-col items-center grow gap-4">
+        <div className="flex flex-col items-center grow gap-2 py-5">
           <Avatar profile={profile} width={16} height={16} />
           <div className="flex flex-row items-center font-semibold">{user.email}</div>
         </div>
@@ -43,7 +43,7 @@ const DeleteAccount: NextPage = () => {
         (account.length == 0 || (account.length > 0 && account[0].completed)) && ( // if there is no request, or request has been completed
           <>
             <div className="form-control w-fit self-center my-10 grow">
-            <div className="font-semibold text-secondary self-center">Delete Account</div>
+              <div className="font-semibold text-secondary self-center">Delete Account</div>
               <label className="label cursor-pointer justify-center gap-2">
                 <input type="checkbox" checked={confirmDelete} onChange={handleConfirmDelete} className="checkbox" />
                 <span className={`label-text ${confirmDelete ? "font-medium" : ""}`}>

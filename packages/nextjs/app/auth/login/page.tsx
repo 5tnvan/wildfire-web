@@ -33,9 +33,9 @@ const Login: NextPage = () => {
   return (
     <>
       {/* CONTENT */}
-      <div className=" m-auto flex flex-col items-center">
+      <div className="flex flex-col justify-center items-center px-5 grow">
         <h1 className="text-3xl my-5">Welcome back</h1>
-        <form onSubmit={handleLogin} className="w-[450px]">
+        <form onSubmit={handleLogin} className="w-full lg:w-[450px]">
           <label className="input input-bordered flex items-center gap-2 mb-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -77,21 +77,20 @@ const Login: NextPage = () => {
             </div>
           )}
         </form>
-      </div>
-
-      <div className="flex flex-col items-center my-8">
-        <div>
-          {`Don't have an account? `}
-          <Link href="www.wildpay.app/getstarted" className="link">
-            Register with Wildpay
-          </Link>
-        </div>
-        {/* <div>
+        <div className="flex flex-col items-center my-5">
+          <div>
+            {`Don't have an account? `}
+            <Link href="www.wildpay.app/getstarted" className="link">
+              Register with Wildpay
+            </Link>
+          </div>
+          {/* <div>
             {`Forgot Password `}
             <Link href="/login/forgotpassword" className="link link-secondary">
               Reset
             </Link>
           </div> */}
+        </div>
       </div>
     </>
   );

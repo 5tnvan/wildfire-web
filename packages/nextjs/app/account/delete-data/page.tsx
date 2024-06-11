@@ -34,7 +34,7 @@ const DeleteData: NextPage = () => {
   return (
     <>
       {user && profile && (
-        <div className="flex flex-col items-center grow gap-4">
+        <div className="flex flex-col items-center grow gap-2 py-5">
           <Avatar profile={profile} width={16} height={16} />
           <div className="flex flex-row items-center font-semibold">{user.email}</div>
         </div>

@@ -7,7 +7,10 @@ import { SwitchTheme } from "~~/components/SwitchTheme";
  */
 export const Footer = () => {
   return (
-    <div className="flex flex-row py-5 px-1">
+    <div className="flex flex-col py-5 px-1">
+      <div className="lg:absolute lg:right-0 p-4 pointer-events-none">
+        <SwitchTheme className={`pointer-events-auto`} />
+      </div>
       <ul className="menu menu-horizontal w-full flex flex-row justify-center gap-2">
         <div className="flex justify-center items-center gap-2 text-sm w-full">
           <div className="text-center">
@@ -36,9 +39,6 @@ export const Footer = () => {
           2024 - All right reserved
         </div>
       </ul>
-      <div className="absolute right-0 p-4 pointer-events-none">
-        <SwitchTheme className={`pointer-events-auto`} />
-      </div>
     </div>
   );
 };

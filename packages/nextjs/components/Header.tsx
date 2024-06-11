@@ -36,7 +36,7 @@ export const Header = () => {
   };
 
   return (
-    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+    <div className="sticky bg-base-300 lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-full justify-between ">
         <Link href="/">
           <Image

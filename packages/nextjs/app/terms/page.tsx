@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 const PrivacyPage: NextPage = () => {
   return (
     <>
-      <div className="grow p-5 w-1/2 m-auto">
+      <div className="grow p-5">
         <h1 className="text-3xl py-5">{`Terms`} and Conditions</h1>
         <div>
           <p>
