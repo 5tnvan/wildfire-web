@@ -13,8 +13,8 @@ const PrivacyPage: NextPage = () => {
           </p>
 
           <p>
-            Welcome to Wildfire! This Privacy Policy explains how Wildfire ("we," "our," or "us") collects, uses, and
-            protects your personal information when you use our 3-second content-sharing video app ("App").
+            Welcome to Wildfire! This Privacy Policy explains how Wildfire {`"we," "our," or "us"`} collects, uses, and
+            protects your personal information when you use our 3-second content-sharing video app.
           </p>
 
           <h2 className="text-xl">1. Information We Collect</h2>
@@ -62,7 +62,7 @@ const PrivacyPage: NextPage = () => {
           <ul>
             <li>Operate and maintain the App.</li>
             <li>Personalize your experience.</li>
-            <li>Improve, test, and enhance the App's functionality.</li>
+            <li>Improve, test, and enhance the {`App's`} functionality.</li>
           </ul>
 
           <h3 className="text-lg mt-5">3.2. To Communicate with You</h3>
