@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { AuthContext, AuthUserContext } from "./context";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
