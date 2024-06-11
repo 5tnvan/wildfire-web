@@ -9,18 +9,18 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#FFAA00",
-          "primary-content": "#212638",
-          secondary: "#DAE8FF",
-          "secondary-content": "#212638",
-          accent: "#93BBFB",
-          "accent-content": "#212638",
-          neutral: "#212638",
-          "neutral-content": "#ffffff",
-          "base-100": "#ffffff",
-          "base-200": "#f4f8ff",
-          "base-300": "#DAE8FF",
-          "base-content": "#212638",
+          primary: "#FFAA00", // orange
+          "primary-content": "#030712", //grey 950
+          secondary: "#F10849", // red-pinkish
+          "secondary-content": "#030712", //grey 950
+          accent: "#FFAA00", //orange
+          "accent-content": "#030712", //grey 950
+          neutral: "#4b5563", // grey 600
+          "neutral-content": "#ffffff", //white
+          "base-100": "#efefef", // less less white
+          "base-200": "#f9fafb", // less white
+          "base-300": "#ffffff", // white
+          "base-content": "#000000", //black
           info: "#93BBFB",
           success: "#34EEB6",
           warning: "#FFCF72",
@@ -41,18 +41,18 @@ module.exports = {
       },
       {
         dark: {
-          primary: "#FFAA00",
-          "primary-content": "#F9FBFF",
-          secondary: "#323f61",
-          "secondary-content": "#F9FBFF",
-          accent: "#4969A6",
-          "accent-content": "#F9FBFF",
-          neutral: "#F9FBFF",
-          "neutral-content": "#385183",
-          "base-100": "#385183",
-          "base-200": "#2A3655",
-          "base-300": "#212638",
-          "base-content": "#F9FBFF",
+          primary: "#FFAA00", // orange
+          "primary-content": "#f9fafb", //grey 50
+          secondary: "#F10849", // red-pinkish
+          "secondary-content": "#f9fafb", //grey 50
+          accent: "#4969A6", // orange
+          "accent-content": "#f9fafb", //grey 50
+          neutral: "#F9FBFF", // grey 600
+          "neutral-content": "#000000", //black
+          "base-100": "#3e3e3e", //less less back
+          "base-200": "#0D0D0D", //less black
+          "base-300": "#000000", //black
+          "base-content": "#ffffff", //white
           info: "#385183",
           success: "#34EEB6",
           warning: "#FFCF72",
@@ -81,6 +81,9 @@ module.exports = {
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      fontFamily: {
+        body: ["Haas", "sans-serif"],
       },
     },
   },

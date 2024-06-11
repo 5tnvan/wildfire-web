@@ -14,6 +14,9 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
+  images: {
+    domains: ["daisyui.com", "media1.tenor.com", "poalybuqvwrnukxylhad.supabase.co"],
+  },
 };
 
 module.exports = nextConfig;

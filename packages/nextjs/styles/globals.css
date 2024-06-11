@@ -2,6 +2,17 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@font-face {
+  font-family: 'Haas';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/NeueHaasDisplayRoman.ttf') format('woff2');
+}
+
+/* html {
+  font-family: "Haas", system-ui, sans-serif; letter-spacing: 1px;
+} */
+
 :root,
 [data-theme] {
   background: oklch(var(--b2));
