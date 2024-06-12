@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         </div>
 
         {/* WE ARE WORKING HARD TO GET THE APP ON */}
-        <div className="p-20 w-full rounded-lg m-auto shadow-md">
+        <div className="p-20 w-full rounded-lg m-auto">
           <h1 className="text-lg text-center text-content-primary mb-5">Get the app soon.</h1>
           <div className="flex flex-col lg:flex-row justify-center gap-4">
             <Image

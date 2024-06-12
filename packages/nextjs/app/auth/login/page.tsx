@@ -80,7 +80,7 @@ const Login: NextPage = () => {
         <div className="flex flex-col items-center my-5">
           <div>
             {`Don't have an account? `}
-            <Link href="www.wildpay.app/getstarted" className="link">
+            <Link href="https://www.wildpay.app/getstarted" className="link">
               Register with Wildpay
             </Link>
           </div>
