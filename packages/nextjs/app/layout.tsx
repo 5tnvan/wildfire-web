@@ -9,7 +9,10 @@ export const metadata = getMetadata({
   title: "Wildfire | 3 Seconds App",
   description: "3 Seconds App",
 });
-
+/**
+ * SE-2 APP LAYOUT
+ * Entry point to the app
+ **/
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning>

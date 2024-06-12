@@ -2,12 +2,12 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { AuthContext, AuthUserContext } from "../context";
+import { AuthContext, AuthUserContext } from "../../context";
 import type { NextPage } from "next";
 import { Avatar } from "~~/components/Avatar";
 import { TimeAgo } from "~~/components/TimeAgo";
 
-const Home: NextPage = () => {
+const Account: NextPage = () => {
   const { user } = useContext(AuthContext);
   const { loadingAuthUser, profile, account } = useContext(AuthUserContext);
 
@@ -84,4 +84,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Account;

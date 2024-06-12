@@ -9,7 +9,7 @@ import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
  **/
 export const useAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
   const [user, setUser] = useState<any>(null);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 

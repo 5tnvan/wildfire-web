@@ -3,12 +3,12 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext, AuthUserContext } from "../../context";
+import { AuthContext, AuthUserContext } from "../../../context";
 import type { NextPage } from "next";
 import { Avatar } from "~~/components/Avatar";
-import { requestDeleteData } from "~~/utils/wildfire/crud/account";
+import { requestDeleteAccount } from "~~/utils/wildfire/crud/account";
 
-const DeleteData: NextPage = () => {
+const DeleteAccount: NextPage = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
   const { profile, account, refetchAuthUser } = useContext(AuthUserContext);
@@ -24,7 +24,7 @@ const DeleteData: NextPage = () => {
   };
 
   const handleDelete = async () => {
-    await requestDeleteData();
+    await requestDeleteAccount();
     await refetchAuthUser();
     router.push("/account");
   };
@@ -43,11 +43,11 @@ const DeleteData: NextPage = () => {
         (account.length == 0 || (account.length > 0 && account[0].completed)) && ( // if there is no request, or request has been completed
           <>
             <div className="form-control w-fit self-center my-10 grow">
-              <div className="font-semibold text-secondary self-center">Delete Data</div>
+              <div className="font-semibold text-secondary self-center">Delete Account</div>
               <label className="label cursor-pointer justify-center gap-2">
                 <input type="checkbox" checked={confirmDelete} onChange={handleConfirmDelete} className="checkbox" />
                 <span className={`label-text ${confirmDelete ? "font-medium" : ""}`}>
-                  I hereby confirm the deletion of my data
+                  I hereby confirm the deletion of my account and all my data
                 </span>
               </label>
               <label className="label cursor-pointer justify-center gap-2">
@@ -58,18 +58,18 @@ const DeleteData: NextPage = () => {
                   className="checkbox"
                 />
                 <span className={`label-text ${confirmIrreversible ? "font-medium" : ""}`}>
-                  I understand that this will delete all content and data associated with my account within 14 days.
+                  I understand that this action is not revocable and my account will be deleted within 14 days
                 </span>
               </label>
               <div
                 className={`btn btn-primary btn-small ${!canDelete ? "btn-disabled" : ""} my-2`}
                 onClick={handleDelete}
               >
-                Delete data, but keep account
+                Delete account
               </div>
             </div>
-            <Link href="/account/delete-account" className="link self-center text-sm my-4">
-              Want to delete account?
+            <Link href="/account/delete-data" className="link self-center text-sm my-4">
+              Want to delete data, but keep account?
             </Link>
           </>
         )}
@@ -88,4 +88,4 @@ const DeleteData: NextPage = () => {
   );
 };
 
-export default DeleteData;
+export default DeleteAccount;
