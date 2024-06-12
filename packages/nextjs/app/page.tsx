@@ -9,7 +9,6 @@ const Home: NextPage = () => {
   return (
     <>
       <div className="">
-
         {/* GOT 3 SECONDS? */}
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center py-8 lg:py-16">
