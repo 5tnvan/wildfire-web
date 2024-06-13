@@ -3,17 +3,23 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext, AuthUserContext } from "../../../context";
+import { AuthContext, AuthUserAccountContext, AuthUserContext } from "../../../context";
 import type { NextPage } from "next";
 import { Avatar } from "~~/components/Avatar";
 import { requestDeleteAccount } from "~~/utils/wildfire/crud/account";
 
 const DeleteAccount: NextPage = () => {
   const router = useRouter();
+
+  //CONSUME PROVIDERS
   const { user } = useContext(AuthContext);
-  const { profile, account, refetchAuthUser } = useContext(AuthUserContext);
+  const { profile, refetchAuthUser } = useContext(AuthUserContext);
+  const { account } = useContext(AuthUserAccountContext);
+
+  //STATES
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmIrreversible, setConfirmIrreversible] = useState(false);
+  const canDelete = confirmDelete && confirmIrreversible;
 
   const handleConfirmDelete = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmDelete(event.target.checked);
@@ -28,8 +34,6 @@ const DeleteAccount: NextPage = () => {
     await refetchAuthUser();
     router.push("/account");
   };
-
-  const canDelete = confirmDelete && confirmIrreversible;
 
   return (
     <>

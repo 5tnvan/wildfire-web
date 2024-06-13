@@ -2,14 +2,16 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { AuthContext, AuthUserContext } from "../../context";
+import { Avatar } from "../../../components/Avatar";
+import { TimeAgo } from "../../../components/wildfire/TimeAgo";
+import { AuthContext, AuthUserAccountContext, AuthUserContext } from "../../context";
 import type { NextPage } from "next";
-import { Avatar } from "~~/components/Avatar";
-import { TimeAgo } from "~~/components/TimeAgo";
 
 const Account: NextPage = () => {
+  //CONSUME PROVIDERS
   const { user } = useContext(AuthContext);
-  const { loadingAuthUser, profile, account } = useContext(AuthUserContext);
+  const { loadingAuthUser, profile } = useContext(AuthUserContext);
+  const { account } = useContext(AuthUserAccountContext);
 
   return (
     <div className="grow">

@@ -12,7 +12,7 @@ module.exports = {
           primary: "#FFAA00", // orange
           "primary-content": "#030712", //grey 950
           secondary: "#F10849", // red-pinkish
-          "secondary-content": "#030712", //grey 950
+          "secondary-content": "#1f2937", //grey 800
           accent: "#FFAA00", //orange
           "accent-content": "#030712", //grey 950
           neutral: "#4b5563", // grey 600
@@ -44,8 +44,8 @@ module.exports = {
           primary: "#FFAA00", // orange
           "primary-content": "#f9fafb", //grey 50
           secondary: "#F10849", // red-pinkish
-          "secondary-content": "#f9fafb", //grey 50
-          accent: "#4969A6", // orange
+          "secondary-content": "#e5e7eb", //grey 200
+          accent: "#FFAA00", // orange
           "accent-content": "#f9fafb", //grey 50
           neutral: "#F9FBFF", // grey 600
           "neutral-content": "#000000", //black
@@ -81,9 +81,6 @@ module.exports = {
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-      },
-      fontFamily: {
-        body: ["Haas", "sans-serif"],
       },
     },
   },

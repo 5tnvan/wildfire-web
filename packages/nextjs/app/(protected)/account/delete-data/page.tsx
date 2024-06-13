@@ -3,17 +3,23 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext, AuthUserContext } from "../../../context";
+import { AuthContext, AuthUserAccountContext, AuthUserContext } from "../../../context";
 import type { NextPage } from "next";
 import { Avatar } from "~~/components/Avatar";
 import { requestDeleteData } from "~~/utils/wildfire/crud/account";
 
 const DeleteData: NextPage = () => {
   const router = useRouter();
+
+  //CONSUME PROVIDERS
   const { user } = useContext(AuthContext);
-  const { profile, account, refetchAuthUser } = useContext(AuthUserContext);
+  const { profile, refetchAuthUser } = useContext(AuthUserContext);
+  const { account } = useContext(AuthUserAccountContext);
+
+  //STATES
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmIrreversible, setConfirmIrreversible] = useState(false);
+  const canDelete = confirmDelete && confirmIrreversible;
 
   const handleConfirmDelete = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmDelete(event.target.checked);
@@ -29,10 +35,8 @@ const DeleteData: NextPage = () => {
     router.push("/account");
   };
 
-  const canDelete = confirmDelete && confirmIrreversible;
-
   return (
-    <>
+    <div className="grow">
       {user && profile && (
         <div className="flex flex-col items-center grow gap-2 py-5">
           <Avatar profile={profile} width={16} height={16} />
@@ -73,18 +77,15 @@ const DeleteData: NextPage = () => {
             </Link>
           </>
         )}
-
       {account && account.length > 0 && !account[0].completed && (
-        <>
-          <div className="form-control w-fit self-center my-10 grow">
-            <div>You cannot make another request at the moment.</div>
-            <Link className={`btn btn-outline btn-small my-2`} href="/account">
-              Go back to My Account
-            </Link>
-          </div>
-        </>
+        <div className="form-control w-fit self-center my-10 grow">
+          <div>You cannot make another request at the moment.</div>
+          <Link className={`btn btn-outline btn-small my-2`} href="/account">
+            Go back to My Account
+          </Link>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

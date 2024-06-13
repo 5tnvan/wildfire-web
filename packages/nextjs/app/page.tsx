@@ -4,10 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import type { NextPage } from "next";
 import { WobbleCard } from "~~/components/ui/wooble-card";
+import { Footer } from "~~/components/wildfire/Footer";
+import { Header } from "~~/components/wildfire/Header";
 
-const Home: NextPage = () => {
+const Landing: NextPage = () => {
   return (
     <>
+      <Header />
       <div className="">
         {/* GOT 3 SECONDS? */}
         <div className="flex flex-col items-center justify-center">
@@ -108,8 +111,9 @@ const Home: NextPage = () => {
           </WobbleCard>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
 
-export default Home;
+export default Landing;

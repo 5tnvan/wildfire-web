@@ -29,7 +29,7 @@ export const Avatar = ({ profile, width, height }: Props) => {
       )}
       {!profile.avatar_url && (
         <div
-          className={`flex justify-center items-center w-${width} h-${width} rounded-full border border-primary bg-neutral-content`}
+          className={`flex justify-center items-center w-${width} h-${width} rounded-full border border-primary bg-base-200`}
         >
           <div className={`${textSize} text-primary`}>{profile.username.charAt(0).toUpperCase()}</div>
         </div>

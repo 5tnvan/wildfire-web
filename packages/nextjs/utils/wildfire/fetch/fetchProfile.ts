@@ -30,12 +30,8 @@ export const fetchSuperProfile = async () => {
  * TABLE: "profiles"
  **/
 
-export const fetchProfileFromUsername = async (username: string) => {
+export const fetchProfileByUsername = async (username: string) => {
   const supabase = createClient();
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("*, profile_bios(*)")
-    .eq("username", username)
-    .limit(1);
+  const { data: profileData } = await supabase.from("profiles").select("*").eq("username", username).limit(1);
   return profileData?.[0] ?? null;
 };

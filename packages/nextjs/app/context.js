@@ -4,6 +4,7 @@ import { createContext } from "react";
 
 const AuthContext = createContext();
 const AuthUserContext = createContext();
+const AuthUserAccountContext = createContext();
 const AuthUserFollowsContext = createContext();
 const AuthUserNotificationContext = createContext();
 const AuthUserPaymentContext = createContext();
@@ -15,6 +16,7 @@ const ModalsContext = createContext();
 export {
   AuthContext,
   AuthUserContext,
+  AuthUserAccountContext,
   AuthUserFollowsContext,
   AuthUserNotificationContext,
   AuthUserPaymentContext,
