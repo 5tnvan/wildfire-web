@@ -49,6 +49,25 @@ const Feed: NextPage = () => {
   return (
     <>
       <div id="feed-page" className="flex flex-row bg-lime-400">
+        {/* FEED */}
+        <div id="feed-page-infinitite-scroll" ref={sliderRef} className="infinite-scroll bg-red-300">
+          {userFeed && userFeed.length > 0 ? (
+            <>
+              {userFeed.map((video: any, index: any) => (
+                <VideoCard
+                  key={index}
+                  index={index}
+                  data={video}
+                  lastVideoIndex={userFeed.length - 1}
+                  getVideos={fetchMore}
+                  isPlaying={index === playingIndex}
+                />
+              ))}
+            </>
+          ) : (
+            <>Loading...</>
+          )}
+        </div>
         {/* FOLLOWING */}
         <div
           id="feed-page-following"
@@ -78,25 +97,6 @@ const Feed: NextPage = () => {
               </Link>
             </>
           ))}
-        </div>
-        {/* FEED */}
-        <div id="feed-page-infinitite-scroll" ref={sliderRef} className="infinite-scroll bg-red-300">
-          {userFeed && userFeed.length > 0 ? (
-            <>
-              {userFeed.map((video: any, index: any) => (
-                <VideoCard
-                  key={index}
-                  index={index}
-                  data={video}
-                  lastVideoIndex={userFeed.length - 1}
-                  getVideos={fetchMore}
-                  isPlaying={index === playingIndex}
-                />
-              ))}
-            </>
-          ) : (
-            <>Loading...</>
-          )}
         </div>
       </div>
     </>

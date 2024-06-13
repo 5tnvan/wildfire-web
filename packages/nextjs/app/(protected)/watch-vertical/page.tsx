@@ -34,7 +34,7 @@ const Watch: NextPage = () => {
 
     const observer = new IntersectionObserver(callback, options);
 
-    const videoCards = sliderRef.current.querySelectorAll(".slider-children");
+    const videoCards = sliderRef.current.querySelectorAll(".infinite-scroll-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
@@ -42,7 +42,7 @@ const Watch: NextPage = () => {
   }, [feed]); // Ensure to run effect whenever feed changes
 
   return (
-    <div ref={sliderRef} className="slider-container">
+    <div ref={sliderRef} className="infinite-scroll">
       {feed && feed.length > 0 ? (
         <>
           {feed.map((video, index) => (

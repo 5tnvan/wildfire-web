@@ -39,8 +39,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           src={data.video_url}
           className="video rounded-lg"
           onClick={handleTogglePlay}
-          muted={true}
-          loop
+          muted={false}
         ></video>
       </div>
       <div className="video-info ml-2 self-end">
