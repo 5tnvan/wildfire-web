@@ -17,8 +17,8 @@ module.exports = {
           "accent-content": "#030712", //grey 950
           neutral: "#4b5563", // grey 600
           "neutral-content": "#ffffff", //white
-          "base-100": "#efefef", // less less white
-          "base-200": "#f9fafb", // less white
+          "base-100": "#E6E6E6", // less less white
+          "base-200": "#F5F5F5", // less white
           "base-300": "#ffffff", // white
           "base-content": "#000000", //black
           info: "#93BBFB",
@@ -49,8 +49,8 @@ module.exports = {
           "accent-content": "#f9fafb", //grey 50
           neutral: "#F9FBFF", // grey 600
           "neutral-content": "#000000", //black
-          "base-100": "#3e3e3e", //less less back
-          "base-200": "#0D0D0D", //less black
+          "base-100": "#2A2A2A", //less less back
+          "base-200": "#131313", //less black
           "base-300": "#000000", //black
           "base-content": "#ffffff", //white
           info: "#385183",

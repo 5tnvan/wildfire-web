@@ -21,13 +21,31 @@ export const fetchFeedWithRange = async (from: any, to: any) => {
 };
 
 /**
+ * FETCH: fetchFeedAll()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ **/
+
+export const fetchUserFeedAll = async (user_id: any) => {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("3sec")
+    .select("id, thumbnail_url, created_at, country:country_id(id, name), 3sec_views(view_count)")
+    .eq("user_id", user_id)
+    .order("created_at", { ascending: false });
+
+    console.log("fetchUserFeedAll", user_id, data);
+
+  return data;
+};
+
+/**
  * FETCH: fetchUserFeedWithRange()
  * DB: supabase
  * TABLE: "3sec_desc_view"
  **/
 
 export const fetchUserFeedWithRange = async (user_id: any, from: any, to: any) => {
-  console.log("user_idddd", user_id);
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec")

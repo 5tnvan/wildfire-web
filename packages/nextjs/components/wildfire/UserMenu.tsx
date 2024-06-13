@@ -9,7 +9,6 @@ import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { logout } from "~~/utils/logout";
 
 export const UserMenu = (launchApp: any) => {
-  console.log("launchApp",launchApp.launchApp)
   const { refetchAuth } = useContext(AuthContext);
   const { loadingAuthUser, profile, refetchAuthUser } = useContext(AuthUserContext);
 

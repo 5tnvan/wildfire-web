@@ -30,12 +30,12 @@ export const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/watch">
+            <Link href="/watch-vertical">
               <EyeIcon width={23} /> Watch
             </Link>
           </li>
           <li>
-            <Link href="/watch-vertical">
+            <Link href="/watch">
               <SparklesIcon width={23} />
               Discover
             </Link>

@@ -50,8 +50,6 @@ export const useUserFollowedFeed = () => {
     if (following) {
       const followingArray = following.map((f: any) => f.following.id); // Create an array of IDs from following
 
-      console.log("followingArray", followingArray);
-
       const { data } = await fetchUserFeedFromArrayOfFollowing(followingArray, from, to);
 
       if (data) {

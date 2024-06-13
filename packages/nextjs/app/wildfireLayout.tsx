@@ -25,8 +25,6 @@ const WildfireApp = ({ children }: { children: React.ReactNode }) => {
   const { account } = useUserAccount(); //<AuthUserAccountContext>
   const { loading: loadingFollows, followers, following, refetch: refetchFollows } = useUserFollows(); //<AuthUserContext>
 
-  console.log("wildpayLayout isAuthenticated", isAuthenticated);
-
   return (
     <>
       <AuthContext.Provider value={{ loadingAuth, isAuthenticated, user, refetchAuth }}>
