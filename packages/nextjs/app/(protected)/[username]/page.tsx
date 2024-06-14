@@ -1,115 +1,116 @@
 "use client";
 
+import { useState } from "react";
 import React from "react";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
-import VideoCard2 from "../../../components/wildfire/VideoCard2";
-import { useUserFeed } from "../../../hooks/wildfire/useUserFeed";
-import { useUserProfileByUsername } from "../../../hooks/wildfire/useUserProfileByUsername";
 import { NextPage } from "next";
-import { UserIcon } from "@heroicons/react/24/outline";
+import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import FormatNumber from "~~/components/wildfire/FormatNumber";
+import ThumbCard from "~~/components/wildfire/ThumCard";
+import VideoModal from "~~/components/wildfire/VideoModal";
+import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
+import { useUserFeed } from "~~/hooks/wildfire/useUserFeed";
+import { useUserFeedByUsername } from "~~/hooks/wildfire/useUserFeedByUsername";
+import { useUserFollowsByUsername } from "~~/hooks/wildfire/useUserFollowsByUsername";
+import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUsername";
+import { calculateSum } from "~~/utils/wildfire/calculateSum";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
+
+  //FETCH DIRECTLY
   const { loading: loadingProfile, profile } = useUserProfileByUsername(username);
-  const { feed, fetchMore } = useUserFeed(profile?.id);
-  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { followers } = useUserFollowsByUsername(username);
+  const { feed } = useUserFeedByUsername(username);
+  const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
+  //DYNAMICALLY GENERATE LEVEL NAME
+  const highestLevel = profile?.levels?.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
+  const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
+  const levelName = levelNames[highestLevel] || "unknown";
+  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(3);
+
+  console.log("profile", profile?.id);
+  console.log("followers", followers);
   console.log("feed", feed);
-  console.log("username", username);
-  console.log("profile", profile);
+  console.log("incomingRes", incomingRes);
 
-  // Callback function for Intersection Observer
-  const callback = (entries: any) => {
-    entries.forEach((entry: any) => {
-      console.log(entry.target, entry.isIntersecting);
-      if (entry.isIntersecting) {
-        const index = parseInt(entry.target.getAttribute("data-index") || "0", 10);
-        setPlayingIndex(index);
-      }
-    });
+  //STATES
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  const handleThumbClick = (id: any) => {
+    console.log("id", id);
+    const res = feed.find((item: any) => item.id === id);
+    setSelectedVideo(res);
+    setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    if (!carouselRef.current) return;
-
-    const options = {
-      root: carouselRef.current,
-      rootMargin: "0px",
-      threshold: 0.8, // Multiple thresholds for more accurate detection
-    };
-
-    const observer = new IntersectionObserver(callback, options);
-
-    const videoCards = carouselRef.current.querySelectorAll(".carousel-item");
-
-    videoCards.forEach(card => {
-      observer.observe(card);
-    });
-  }, [feed]); // Ensure to run effect whenever feed changes
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+  };
 
   if (profile) {
     return (
-      <div className="grow w-full flex flex-row items-start ">
-        {/* FEED */}
-        <div ref={carouselRef} className=" carousel carousel-center w-3/4 space-x-2 rounded-lg">
+      <div className="flex flex-row items-start ">
+        {/* MODAL */}
+        {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
+        <div className="carousel carousel-center rounded-box w-full ml-2">
           {feed && feed.length > 0 ? (
             <>
-              {feed.map((video, index) => (
-                <VideoCard2
-                  key={index}
-                  index={index}
-                  author={video.profile.username}
-                  videoURL={video.video_url}
-                  lastVideoIndex={feed.length - 1}
-                  getVideos={fetchMore}
-                  isPlaying={index === playingIndex}
-                />
+              {feed.map((thumb: any, index: any) => (
+                <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
               ))}
             </>
           ) : (
-            <>Loading...</>
+            <></>
           )}
         </div>
-        {/* PROFILE INTRO */}
-        <div className="stats shadow flex flex-col grow h-full py-5 ml-2 mr-5">
-          <div className="stat flex flex-col gap-2 justify-center items-center">
+        <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
+          <div className="stat">
             <div className="stat-figure text-secondary">
-              {profile.avatar_url && (
+              {profile?.avatar_url && (
                 <div className="avatar">
                   <div className="w-16 rounded-full">
-                    <img src={profile.avatar_url} />
+                    <img src={profile?.avatar_url} />
                   </div>
                 </div>
               )}
-              {!profile.avatar_url && (
+              {!profile?.avatar_url && (
                 <div className="avatar placeholder">
                   <div className="bg-neutral text-neutral-content rounded-full w-24">
-                    <span className="text-3xl">{profile.username.charAt(0).toUpperCase()}</span>
+                    <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
               )}
             </div>
-            <div className="stat-value">{profile.username}</div>
+            <div className="stat-title">Level</div>
+            <div className="stat-value">{levelName}</div>
+            {/* <div className="stat-desc">Level up</div> */}
           </div>
           <div className="stat">
             <div className="stat-figure text-primary">
               <UserIcon width={60} />
             </div>
             <div className="stat-title">Followers</div>
-            <div className="stat-value text-primary">12K</div>
+            <div className="stat-value text-primary">
+              {followers && followers.length > 0 ? <FormatNumber number={followers.length} /> : "s0"}
+            </div>
             <div className="stat-desc">See followers</div>
           </div>
-          {/* <div className="stat">
+          <div className="stat">
             <div className="stat-figure text-primary">
               <CircleStackIcon width={60} />
             </div>
 
             <div className="stat-title">Balance</div>
-            <div className="stat-value text-primary">$350</div>
-            <div className="stat-desc">See balance</div>
-          </div> */}
+            <div className="stat-value text-primary">{balance}</div>
+            <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
+              See history
+            </Link>
+          </div>
         </div>
       </div>
     );

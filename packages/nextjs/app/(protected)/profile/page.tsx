@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { AuthUserContext, AuthUserFollowsContext } from "../../context";
@@ -8,6 +8,7 @@ import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
+import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useUserFeedAll } from "~~/hooks/wildfire/useUserFeedAll";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
@@ -15,12 +16,10 @@ import { calculateSum } from "~~/utils/wildfire/calculateSum";
 const Profile: NextPage = () => {
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
-  const { following } = useContext(AuthUserFollowsContext);
+  const { followers } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
-
-  console.log;
 
   //DYNAMICALLY GENERATE LEVEL NAME
   const highestLevel = profile?.levels.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
@@ -31,16 +30,31 @@ const Profile: NextPage = () => {
   //FETCH DIRECTLY
   const { feed } = useUserFeedAll();
 
-  console.log("profile", profile);
-  console.log("profile", levelName);
+  //STATES
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  const handleThumbClick = (id: any) => {
+    console.log("id", id);
+    const res = feed.find((item: any) => item.id === id);
+    setSelectedVideo(res);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+  };
 
   return (
     <div className="flex flex-row items-start ">
+      {/* MODAL */}
+      {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
       <div className="carousel carousel-center rounded-box w-full ml-2">
         {feed && feed.length > 0 ? (
           <>
             {feed.map((thumb: any, index: any) => (
-              <ThumbCard key={index} index={index} data={thumb} />
+              <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
             ))}
           </>
         ) : (
@@ -75,7 +89,7 @@ const Profile: NextPage = () => {
           </div>
           <div className="stat-title">Followers</div>
           <div className="stat-value text-primary">
-            {following && following.length > 0 ? <FormatNumber number={following.length} /> : "s0"}
+            {followers && followers.length > 0 ? <FormatNumber number={followers.length} /> : "s0"}
           </div>
           <div className="stat-desc">See followers</div>
         </div>

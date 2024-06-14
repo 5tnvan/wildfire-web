@@ -3,9 +3,9 @@ import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
 import { EyeIcon } from "@heroicons/react/24/solid";
 
-const ThumbCard = ({ index, data }: any) => {
+const ThumbCard = ({ index, data, onCta }: any) => {
   return (
-    <div className="carousel-item mr-2 relative" data-index={index}>
+    <div className="carousel-item mr-2 relative" data-index={index} onClick={() => onCta(data.id)}>
       <img src={data.thumbnail_url} className="h-screen rounded-lg" style={{ height: "calc(100vh - 71px)" }} />
       <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full opacity-70">
         <EyeIcon width={20} />

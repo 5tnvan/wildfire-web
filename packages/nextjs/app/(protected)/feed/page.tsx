@@ -1,11 +1,12 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NextPage } from "next";
 import { AuthUserFollowsContext } from "~~/app/context";
-import VideoCard from "~~/components/wildfire/VideoCard";
+import { ParallaxScroll } from "~~/components/ui/parallax-scroll";
+import VideoModal from "~~/components/wildfire/VideoModal";
 import { useUserFollowedFeed } from "~~/hooks/wildfire/useUserFollowingFeed";
 
 const Feed: NextPage = () => {
@@ -14,50 +15,39 @@ const Feed: NextPage = () => {
 
   //FETCH DIRECTLY
   const { feed: userFeed, fetchMore } = useUserFollowedFeed();
+  // console.log(userFeed, userFeed.length > 0);
 
   //STATES
-  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
-  // Callback function for Intersection Observer
-  const callback = (entries: any) => {
-    entries.forEach((entry: any) => {
-      if (entry.isIntersecting) {
-        const index = parseInt(entry.target.getAttribute("data-index") || "0", 10);
-        setPlayingIndex(index);
-      }
-    });
+  const handleParalaxClick = (id: any) => {
+    console.log("id", id);
+    const res = userFeed.find((item: any) => item.id === id);
+    setSelectedVideo(res);
+    setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    if (!sliderRef.current) return;
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+  };
 
-    const options = {
-      root: sliderRef.current,
-      rootMargin: "0px",
-      threshold: 0.8, // Multiple thresholds for more accurate detection
-    };
-
-    const observer = new IntersectionObserver(callback, options);
-
-    const videoCards = sliderRef.current.querySelectorAll(".infinite-scroll-item");
-
-    videoCards.forEach((card: any) => {
-      observer.observe(card);
-    });
-  }, [userFeed]); // Ensure to run effect whenever feed changes
   return (
     <>
-      <div id="feed-page" className="flex flex-row bg-lime-400">
+      <div id="feed-page" className="flex flex-row">
+        {/* FEED */}
+        {userFeed && userFeed.length > 0 && <ParallaxScroll data={userFeed} onCta={handleParalaxClick} />}
+
+        {/* MODAL */}
+        {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
+
         {/* FOLLOWING */}
-        <div
-          id="feed-page-following"
-          className="stats w-64 h-full max-h-screen overflow-scroll flex flex-col bg-base-200 shadow py-5 mr-2"
-        >
-          {following?.map((following: any) => (
+        <div className="flex flex-col gap-3 h-screen-custom overflow-scroll pr-2">
+          {following?.map((following: any, index: number) => (
             <>
-              <Link href={"/" + following.following.username} className="stat hover:opacity-75">
-                <div className="stat-figure text-secondary">
+              <Link key={index} href={"/" + following.following.username} className="">
+                <div className="">
                   {following.following.avatar_url && (
                     <div className="avatar">
                       <div className="w-12 rounded-full">
@@ -73,30 +63,9 @@ const Feed: NextPage = () => {
                     </div>
                   )}
                 </div>
-                <div className="stat-title">Level</div>
-                <div className="stat-value text-lg">{following.following.username}</div>
               </Link>
             </>
           ))}
-        </div>
-        {/* FEED */}
-        <div id="feed-page-infinitite-scroll" ref={sliderRef} className="infinite-scroll bg-red-300">
-          {userFeed && userFeed.length > 0 ? (
-            <>
-              {userFeed.map((video: any, index: any) => (
-                <VideoCard
-                  key={index}
-                  index={index}
-                  data={video}
-                  lastVideoIndex={userFeed.length - 1}
-                  getVideos={fetchMore}
-                  isPlaying={index === playingIndex}
-                />
-              ))}
-            </>
-          ) : (
-            <>Loading...</>
-          )}
         </div>
       </div>
     </>

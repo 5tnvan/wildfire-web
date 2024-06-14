@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 
-const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) => {
+const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
+  console.log("video data", data);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [loadNewVidsAt, setloadNewVidsAt] = useState(lastVideoIndex);
   const [loopCount, setLoopCount] = useState(0);
   const [showWatchAgain, setShowWatchAgain] = useState(false);
   const [showPaused, setShowPaused] = useState(false);
@@ -36,40 +37,22 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
     }
   };
 
-  //fetch more
-  if (isPlaying) {
-    if (loadNewVidsAt === index) {
-      setloadNewVidsAt((prev: any) => prev + 2);
-      getVideos();
-    }
-  }
-
-  //auto play when video is in view (based on isPlaying)
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        setLoopCount(0);
-        setShowWatchAgain(false);
-        videoRef.current.play();
-        setShowPaused(false);
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
   return (
-    <div className="infinite-scroll-item flex flex-row justify-center" data-index={index}>
-      <div className="video-wrapper relative">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <div onClick={onClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2">
+        <ChevronLeftIcon width={20} color="black" />
+        Back
+      </div>
+      {/* video */}
+      <div className="relative">
         <video
-          id={index}
-          ref={videoRef}
           src={data.video_url}
-          className="video rounded-lg"
+          ref={videoRef}
+          autoPlay
+          className="w-auto h-screen rounded-lg"
           onClick={handleTogglePlay}
           onEnded={handleVideoEnd}
-          muted={false}
-        ></video>
+        />
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
             <div
@@ -80,7 +63,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
                 videoRef.current?.play();
               }}
             >
-              <EyeIcon width={16}/>
+              <EyeIcon width={16} />
               <span className="font-medium">Watch again</span>
             </div>
           </div>
@@ -94,6 +77,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           </div>
         )}
       </div>
+
       <div className="video-info ml-2 self-end">
         {/* USER INFO */}
         <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
@@ -104,10 +88,10 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           <div className="flex flex-row gap-2">
             {data.country && (
               <div className="flex flex-row gap-1">
-                <MapPinIcon width={15} /> <span className="text-sm">{data.country.name}</span>
+                <MapPinIcon width={15} color="white" /> <span className="text-sm text-white">{data.country.name}</span>
               </div>
             )}
-            <div className="opacity-70 text-sm">
+            <div className="text-sm text-zinc-400">
               <TimeAgo timestamp={data.created_at} />
             </div>
           </div>
@@ -159,4 +143,4 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
   );
 };
 
-export default VideoCard;
+export default VideoModal;

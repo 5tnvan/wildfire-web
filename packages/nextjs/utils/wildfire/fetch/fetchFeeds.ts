@@ -30,7 +30,9 @@ export const fetchUserFeedAll = async (user_id: any) => {
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec")
-    .select("id, thumbnail_url, created_at, country:country_id(id, name), 3sec_views(view_count)")
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(name), profile:user_id(id, username, avatar_url), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+    )
     .eq("user_id", user_id)
     .order("created_at", { ascending: false });
 
@@ -45,12 +47,13 @@ export const fetchUserFeedAll = async (user_id: any) => {
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchUserFeedWithRange = async (user_id: any, from: any, to: any) => {
+export const fetchUserFeedWithRange = async (user_id: string, from: any, to: any) => {
+  console.log("fetchUserFeedWithRange", user_id, from, to);
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec")
     .select(
-      "id, video_url, thumbnail_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url), 3sec_views(view_count)",
+      "id, thumbnail_url, video_url, created_at, country:country_id(name), profile:user_id(id, username, avatar_url), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })

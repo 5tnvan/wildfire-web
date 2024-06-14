@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
 
 export const Sidebar = () => {
@@ -34,12 +34,12 @@ export const Sidebar = () => {
               <EyeIcon width={23} /> Watch
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link href="/watch">
               <SparklesIcon width={23} />
               Discover
             </Link>
-          </li>
+          </li> */}
         </ul>
         <div className="pointer-events-none flex flex-row justify-end p-1">
           <SwitchTheme className={`pointer-events-auto`} />

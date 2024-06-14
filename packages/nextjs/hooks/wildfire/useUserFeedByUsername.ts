@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchUserFeedWithRange } from "../../utils/wildfire/fetch/fetchFeeds";
 import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
-import { fetchUser } from "../../utils/wildfire/fetch/fetchUser";
+import { fetchProfileByUsername } from "~~/utils/wildfire/fetch/fetchProfile";
 
 const getRange = (page: number, range: number) => {
   const from = page * range;
@@ -15,7 +15,7 @@ const getRange = (page: number, range: number) => {
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useUserFeed = () => {
+export const useUserFeedByUsername = (username: any) => {
   const range = 3;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,14 +41,14 @@ export const useUserFeed = () => {
   const fetchFeed = async () => {
     setIsLoading(true);
     const { from, to } = getRange(page, range);
-    const user = await fetchUser();
-    if (user.user) {
-      const data = await fetchUserFeedWithRange(user.user.id, from, to);
+    const profile = await fetchProfileByUsername(username);
+    if (profile) {
+      const data = await fetchUserFeedWithRange(profile.id, from, to);
 
       if (data) {
         // Check if each post is liked by the user
         const likedPostsPromises = data.map(async (post: any) => {
-          return fetchLikes(post, user.user?.id);
+          return fetchLikes(post, profile.id);
         });
 
         const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve

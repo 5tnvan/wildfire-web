@@ -52,7 +52,27 @@ p {
   display: none;
 }
 
-/* video feed */
+/* override */
 .stat {
   border-left-width: 0!important;
 }
+.btn {
+  box-shadow: none;
+}
+.btn-primary {
+  color: #000;
+}
+
+/* custom */
+.h-screen-custom {
+  height: calc(100dvh - 63px);
+}
+.glow {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+.text-shadow {
+  text-shadow: #000 1px 0 10px;
+}
+
+.wildui-modal-container { background-color: rgba(0, 0, 0, 0.5); z-index: 100;}
+.wildui-modal-child { width: 480px; }
