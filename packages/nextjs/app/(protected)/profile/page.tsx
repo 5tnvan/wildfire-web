@@ -11,12 +11,18 @@ import ThumbCard from "~~/components/wildfire/ThumCard";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useUserFeedAll } from "~~/hooks/wildfire/useUserFeedAll";
+import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
+import TipModal from "~~/components/wildfire/TipModal";
 
 const Profile: NextPage = () => {
+  const price = useGlobalState(state => state.nativeCurrency.price);
+
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
   const { followers } = useContext(AuthUserFollowsContext);
+  const { feed } = useUserFeedAll();
 
   //FETCH DIRECTLY
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
@@ -25,31 +31,38 @@ const Profile: NextPage = () => {
   const highestLevel = profile?.levels.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
-  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(3);
+  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
-  //FETCH DIRECTLY
-  const { feed } = useUserFeedAll();
-
-  //STATES
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //VID MODAL
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleThumbClick = (id: any) => {
     console.log("id", id);
     const res = feed.find((item: any) => item.id === id);
     setSelectedVideo(res);
-    setIsModalOpen(true);
+    setIsVideoModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeVideoModal = () => {
+    setIsVideoModalOpen(false);
     setSelectedVideo(null);
+  };
+
+  //TIP MODAL
+  const [isTipModalOpen, setTipModalOpen] = useState(false);
+
+  const closeTipModal = () => {
+    setTipModalOpen(false);
   };
 
   return (
     <div className="flex flex-row items-start ">
-      {/* MODAL */}
-      {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
+      {/* MODALS */}
+      {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
+      {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
+
+      {/* FEED */}
       <div className="carousel carousel-center rounded-box w-full ml-2">
         {feed && feed.length > 0 ? (
           <>
@@ -61,6 +74,8 @@ const Profile: NextPage = () => {
           <></>
         )}
       </div>
+
+      {/* STAT */}
       <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
         <div className="stat">
           <div className="stat-figure text-secondary">
@@ -99,10 +114,15 @@ const Profile: NextPage = () => {
           </div>
 
           <div className="stat-title">Balance</div>
-          <div className="stat-value text-primary">{balance}</div>
+          <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
           <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
-            See history
+            {balance} ETH
           </Link>
+        </div>
+        <div className="stat">
+          <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
+            Tip Now
+          </div>
         </div>
       </div>
     </div>

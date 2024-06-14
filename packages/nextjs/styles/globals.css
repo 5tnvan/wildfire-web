@@ -74,5 +74,36 @@ p {
   text-shadow: #000 1px 0 10px;
 }
 
+/* what is this? */
 .wildui-modal-container { background-color: rgba(0, 0, 0, 0.5); z-index: 100;}
 .wildui-modal-child { width: 480px; }
+
+/* input */
+/* Remove default styling for number input */
+#wildui-fastpay input[type="number"], #wildpay-withdraw input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  width: 100%; /* Adjust width as needed */
+  padding: 0.5rem; /* Adjust padding as needed */
+}
+
+/* Webkit browsers like Chrome and Safari use a different appearance property */
+#wildui-fastpay input::-webkit-outer-spin-button,
+#wildui-fastpay input::-webkit-inner-spin-button,
+#wildui-withdraw input::-webkit-outer-spin-button,
+#wildui-withdraw input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows in IE 10 and above */
+#wildui-fastpay input[type="number"]::-ms-clear,
+#wildui-withdraw input[type="number"]::-ms-clear {
+  display: none;
+}
+
+/* Remove outline on focus for number input */
+#wildui-fastpay input[type="number"]:focus,
+#wildui-withdraw input[type="number"]:focus {
+  outline: none;
+}

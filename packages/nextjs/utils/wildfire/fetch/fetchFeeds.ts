@@ -34,6 +34,7 @@ export const fetchUserFeedAll = async (user_id: any) => {
       "id, thumbnail_url, video_url, created_at, country:country_id(name), profile:user_id(id, username, avatar_url), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .eq("user_id", user_id)
+    .limit(3)
     .order("created_at", { ascending: false });
 
     console.log("fetchUserFeedAll", user_id, data);

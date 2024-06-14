@@ -38,7 +38,7 @@ export const Header = () => {
         </Link>
 
         <div className=" lg:flex lg:flex-nowrap ">
-          {isAuthenticated == true && profile && <UserMenu launchApp="true" />}
+          {isAuthenticated == true && profile && <UserMenu launchApp={true} wildpay={false} />}
           {isAuthenticated == false && (
             <Link href="/login" className="btn btn-outline btn-small mx-2">
               Login
