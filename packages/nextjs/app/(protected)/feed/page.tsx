@@ -14,22 +14,23 @@ const Feed: NextPage = () => {
   const { following } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { feed: userFeed } = useUserFollowedFeed();
-  // console.log(userFeed, userFeed.length > 0);
+  const { feed: userFeed, fetchMore } = useUserFollowedFeed();
+
+  console.log("feed", userFeed);
 
   //STATES
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleParalaxClick = (id: any) => {
     console.log("clicked", id);
     const res = userFeed.find((item: any) => item.id === id);
     setSelectedVideo(res);
-    setIsModalOpen(true);
+    setIsVideoModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsVideoModalOpen(false);
     setSelectedVideo(null);
   };
 
@@ -37,10 +38,12 @@ const Feed: NextPage = () => {
     <>
       <div id="feed-page" className="flex flex-row">
         {/* FEED */}
-        {userFeed && userFeed.length > 0 && <ParallaxScroll data={userFeed} onCta={handleParalaxClick} />}
+        {userFeed && userFeed.length > 0 && (
+          <ParallaxScroll data={userFeed} onCta={handleParalaxClick} fetchMore={() => fetchMore()} />
+        )}
 
         {/* MODAL */}
-        {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
+        {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
 
         {/* FOLLOWING */}
         <div className="flex flex-col gap-3 h-screen-custom overflow-scroll pr-2">
