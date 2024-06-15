@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserContext } from "~~/app/context";
+import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
 import { login } from "~~/utils/login";
 
 const Login: NextPage = () => {
@@ -15,6 +15,8 @@ const Login: NextPage = () => {
 
   const { refetchAuth } = useContext(AuthContext);
   const { refetchAuthUser } = useContext(AuthUserContext);
+  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
+  const { refetchAuthUserAccount } = useContext(AuthUserAccountContext);
 
   const handleLogin = async (event: any) => {
     try {
@@ -23,7 +25,9 @@ const Login: NextPage = () => {
       await login(formData); // Wait for login process to finish
       await refetchAuth();
       await refetchAuthUser();
-      router.push("/account");
+      await refetchAuthUserFollows();
+      await refetchAuthUserAccount();
+      router.push("/feed");
     } catch (error) {
       setError("Login failed. Please try again.");
       setIsProcessing(false);

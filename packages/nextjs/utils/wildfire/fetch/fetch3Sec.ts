@@ -1,6 +1,6 @@
 "use server";
 
-import { fetchLiked, fetchLikes } from "./fetchLikes";
+import { fetchLiked } from "./fetchLikes";
 import { createClient } from "~~/utils/supabase/server";
 
 /**

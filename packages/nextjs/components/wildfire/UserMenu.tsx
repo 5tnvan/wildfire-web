@@ -5,13 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
 import { ChevronDownIcon, ChevronRightIcon, Cog6ToothIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserContext } from "~~/app/context";
+import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { logout } from "~~/utils/logout";
 
 export const UserMenu = ({ launchApp, wildpay }: any) => {
   const { refetchAuth } = useContext(AuthContext);
   const { loadingAuthUser, profile, refetchAuthUser } = useContext(AuthUserContext);
+  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
+  const { refetchAuthUserAccount } = useContext(AuthUserAccountContext);
 
   //DROPDOWN
   const dropdownRef = useRef<HTMLDetailsElement>(null);
@@ -26,6 +28,8 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
       await logout();
       await refetchAuth();
       await refetchAuthUser();
+      await refetchAuthUserFollows();
+      await refetchAuthUserAccount();
     } catch (error) {
       console.error("Logout error:", error);
       //router.push("error");

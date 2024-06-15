@@ -73,20 +73,25 @@ const TipModal = ({ data, onClose }: any) => {
 
   const handlePay = async () => {
     try {
-      await pay({
-        functionName: "setPayment",
-        args: [data.wallet_id, message],
-        value: parseEther(ethAmountWithFee.toString()),
-        blockConfirmations: 1,
-        onBlockConfirmation: (txnReceipt: any) => {
-          console.log("FastPayConfirm trasactionHash", txnReceipt);
-          handleReceipt(txnReceipt.transactionHash);
+      await pay(
+        {
+          functionName: "setPayment",
+          args: [data.wallet_id, message],
+          value: parseEther(ethAmountWithFee.toString()),
         },
-      });
+        {
+          blockConfirmations: 1,
+          onBlockConfirmation: (txnReceipt: any) => {
+            console.log("FastPayConfirm trasactionHash", txnReceipt);
+            handleReceipt(txnReceipt.transactionHash);
+          },
+        },
+      );
     } catch (e) {
       console.error("Error setting greeting:", e);
     }
   };
+
   const { writeContractAsync: pay, isMining } = useScaffoldWriteContract("WildpayContract");
 
   const handleClose = () => {
