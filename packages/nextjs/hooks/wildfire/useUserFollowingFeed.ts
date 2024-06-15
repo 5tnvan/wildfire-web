@@ -19,7 +19,7 @@ const getRange = (page: number, range: number) => {
 export const useUserFollowedFeed = () => {
   const range = 3;
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -40,7 +40,7 @@ export const useUserFollowedFeed = () => {
   };
 
   const fetchFeed = async () => {
-    setIsLoading(true);
+    setLoading(true);
     const { from, to } = getRange(page, range);
 
     // Get list of auth's user following
@@ -68,12 +68,12 @@ export const useUserFollowedFeed = () => {
         setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchFeed();
   }, [page, triggerRefetch]);
 
-  return { isLoading, feed, fetchMore, refetch };
+  return { loading, feed, fetchMore, refetch };
 };

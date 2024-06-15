@@ -11,10 +11,10 @@ import { useUserFollowedFeed } from "~~/hooks/wildfire/useUserFollowingFeed";
 
 const Feed: NextPage = () => {
   //CONSUME PROVIDERS
-  const { following } = useContext(AuthUserFollowsContext);
+  const { loadingFollows, following } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { feed: userFeed, fetchMore } = useUserFollowedFeed();
+  const { loading: loadingUserFeed, feed: userFeed, fetchMore } = useUserFollowedFeed();
 
   console.log("feed", userFeed);
 
@@ -34,10 +34,33 @@ const Feed: NextPage = () => {
     setSelectedVideo(null);
   };
 
+  console.log("following", following);
+
   return (
     <>
       <div id="feed-page" className="flex flex-row">
-        {/* FEED */}
+        {/* FIRST TIME USER */}
+        {!loadingFollows && following && following.length == 0 && (
+          <div className="flex flex-row justify-center items-center grow">
+            <Link className="btn btn-base-100" href={"/watch-vertical"}>
+              🥳 Start following someone
+            </Link>
+          </div>
+        )}
+
+        {/* LOADING FEED */}
+        {!loadingFollows &&
+          following &&
+          following.length > 0 &&
+          loadingUserFeed &&
+          userFeed &&
+          userFeed.length == 0 && (
+            <div className="flex flex-row justify-center items-center grow">
+              <span className="loading loading-ring loading-lg"></span>
+            </div>
+          )}
+
+        {/* RENDER FEED */}
         {userFeed && userFeed.length > 0 && (
           <ParallaxScroll data={userFeed} onCta={handleParalaxClick} fetchMore={() => fetchMore()} />
         )}

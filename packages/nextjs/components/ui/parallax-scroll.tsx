@@ -58,10 +58,10 @@ export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
   }, [data]); // Ensure to run effect whenever feed changes
 
   return (
-    <div className={cn("h-screen-custom items-start overflow-y-auto w-full")} ref={gridRef}>
+    <div className={cn("h-screen-custom items-start overflow-y-auto w-full grow")} ref={gridRef}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start gap-2 px-2">
         <div className="grid gap-2">
-          {firstPart.map((item: any, index: any) => (
+          {firstPart.map((item: any) => (
             <motion.div
               data-index={item.id}
               style={{ y: translateFirst }}
@@ -76,7 +76,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
           ))}
         </div>
         <div className="grid gap-2">
-          {secondPart.map((item: any, index: any) => (
+          {secondPart.map((item: any) => (
             <motion.div
               data-index={item.id}
               style={{ y: translateSecond }}
@@ -89,7 +89,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
           ))}
         </div>
         <div className="grid gap-2">
-          {thirdPart.map((item: any, index: any) => (
+          {thirdPart.map((item: any) => (
             <motion.div
               data-index={item.id}
               style={{ y: translateThird }}
