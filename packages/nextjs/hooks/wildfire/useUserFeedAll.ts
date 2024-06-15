@@ -9,7 +9,7 @@ import { fetchUser } from "../../utils/wildfire/fetch/fetchUser";
  * Use this to get feed of videos
  **/
 export const useUserFeedAll = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any>();
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
@@ -18,19 +18,19 @@ export const useUserFeedAll = () => {
   };
 
   const fetchFeed = async () => {
-    setIsLoading(true);
+    setLoading(true);
     const user = await fetchUser();
     const data = await fetchUserFeedAll(user.user?.id);
     if (data) {
       setFeed(data);
       console.log("data", data);
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchFeed();
   }, [triggerRefetch]);
 
-  return { isLoading, feed, refetch };
+  return { loading, feed, refetch };
 };

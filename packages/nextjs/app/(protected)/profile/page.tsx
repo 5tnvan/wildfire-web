@@ -8,23 +8,23 @@ import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
+import TipModal from "~~/components/wildfire/TipModal";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useUserFeedAll } from "~~/hooks/wildfire/useUserFeedAll";
 import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import TipModal from "~~/components/wildfire/TipModal";
 
 const Profile: NextPage = () => {
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
-  const { followers } = useContext(AuthUserFollowsContext);
-  const { feed } = useUserFeedAll();
+  const { loading: loadingFollows, followers } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
+  const { loading: loadingFeed, feed } = useUserFeedAll();
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -62,18 +62,30 @@ const Profile: NextPage = () => {
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
 
+      {/* NO FEED TO SHOW */}
+      {!loadingFeed && feed && feed.length == 0 && (
+        <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
+          <Link className="btn btn-base-100" href={"/watch-vertical"}>
+            🤫 You haven't posted, yet.
+          </Link>
+        </div>
+      )}
+
+      {/* LOADING FEED */}
+      {loadingFeed && feed && feed.length == 0 && (
+        <div className="flex flex-row justify-center items-center h-screen-custom w-full grow">
+          <span className="loading loading-ring loading-lg"></span>
+        </div>
+      )}
+
       {/* FEED */}
-      <div className="carousel carousel-center rounded-box w-full ml-2">
-        {feed && feed.length > 0 ? (
-          <>
-            {feed.map((thumb: any, index: any) => (
-              <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
-            ))}
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
+      {feed && feed.length > 0 && (
+        <div className="carousel carousel-center rounded-box w-full ml-2">
+          {feed.map((thumb: any, index: any) => (
+            <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
+          ))}
+        </div>
+      )}
 
       {/* STAT */}
       <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
@@ -81,21 +93,21 @@ const Profile: NextPage = () => {
           <div className="stat-figure text-secondary">
             {profile?.avatar_url && (
               <div className="avatar">
-                <div className="w-16 rounded-full">
+                <div className="w-12 rounded-full">
                   <img src={profile?.avatar_url} />
                 </div>
               </div>
             )}
             {!profile?.avatar_url && (
               <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-24">
+                <div className="bg-neutral text-neutral-content rounded-full w-12">
                   <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
                 </div>
               </div>
             )}
           </div>
           <div className="stat-title">Level</div>
-          <div className="stat-value">{levelName}</div>
+          <div className="stat-value text-3xl">{levelName}</div>
           {/* <div className="stat-desc">Level up</div> */}
         </div>
         <div className="stat">
@@ -104,7 +116,9 @@ const Profile: NextPage = () => {
           </div>
           <div className="stat-title">Followers</div>
           <div className="stat-value text-primary">
-            {followers && followers.length > 0 ? <FormatNumber number={followers.length} /> : "s0"}
+            {!loadingFollows && followers && followers.length > 0 && <FormatNumber number={followers.length} />}
+            {!loadingFollows && followers && followers.length == 0 && "0"}
+            {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
           </div>
           <div className="stat-desc">See followers</div>
         </div>

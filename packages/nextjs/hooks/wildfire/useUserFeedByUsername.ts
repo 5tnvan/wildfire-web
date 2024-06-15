@@ -18,7 +18,7 @@ const getRange = (page: number, range: number) => {
 export const useUserFeedByUsername = (username: any) => {
   const range = 3;
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -39,7 +39,7 @@ export const useUserFeedByUsername = (username: any) => {
   };
 
   const fetchFeed = async () => {
-    setIsLoading(true);
+    setLoading(true);
     const { from, to } = getRange(page, range);
     const profile = await fetchProfileByUsername(username);
     if (profile) {
@@ -55,7 +55,7 @@ export const useUserFeedByUsername = (username: any) => {
         if (data.length < range) setHasMore(false); // No more data to fetch
         setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -63,5 +63,5 @@ export const useUserFeedByUsername = (username: any) => {
     fetchFeed();
   }, [page, triggerRefetch]);
 
-  return { isLoading, feed, fetchMore, refetch };
+  return { loading, feed, fetchMore, refetch };
 };
