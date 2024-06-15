@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchFollowers, fetchFollowing } from "~~/utils/wildfire/fetch/fetchFollows";
+import { fetchFollowed, fetchFollowers, fetchFollowing } from "~~/utils/wildfire/fetch/fetchFollows";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 /**
@@ -12,6 +12,7 @@ export const useUserFollows = () => {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState<any>();
   const [following, setFollowing] = useState<any>();
+  const [followed, setFollowed] = useState<any>();
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
   const refetch = () => {
@@ -25,8 +26,10 @@ export const useUserFollows = () => {
     if (userData?.user) {
       const followers = await fetchFollowers(userData?.user.id);
       const following = await fetchFollowing(userData?.user.id);
+      const followed = await fetchFollowed(userData?.user.id, userData?.user.id);
       setFollowers(followers);
       setFollowing(following);
+      setFollowed(followed);
     }
     setLoading(false); // Set loading to false when fetch is complete
   };
@@ -35,5 +38,5 @@ export const useUserFollows = () => {
     init();
   }, [triggerRefetch]);
 
-  return { loading, followers, following, refetch };
+  return { loading, followers, following, followed, refetch };
 };

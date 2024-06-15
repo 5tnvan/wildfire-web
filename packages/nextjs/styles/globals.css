@@ -56,11 +56,17 @@ p {
 .stat {
   border-left-width: 0!important;
 }
+:where(.stats) > :not([hidden]) ~ :not([hidden]) {
+  border-left-width: 0!important;
+}
 .btn {
   box-shadow: none;
 }
 .btn-primary {
   color: #000;
+}
+img {
+  height: 100%;
 }
 
 /* custom */

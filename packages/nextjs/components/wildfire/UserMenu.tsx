@@ -44,7 +44,7 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
             <span>{profile.username}</span>
             <ChevronDownIcon width={12} />
           </summary>
-          <ul className="p-2 menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+          <ul className="p-2 menu dropdown-content z-[1] bg-base-100 rounded-box w-52 border border-base-200">
             <li>
               <Link href="/profile" onClick={closeDropdown}>
                 <UserCircleIcon width={18} />

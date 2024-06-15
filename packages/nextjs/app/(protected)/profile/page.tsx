@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthUserContext, AuthUserFollowsContext } from "../../context";
 import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import FollowsModal from "~~/components/wildfire/FollowsModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
@@ -15,13 +16,14 @@ import { useUserFeedAll } from "~~/hooks/wildfire/useUserFeedAll";
 import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
+import { deleteFollow } from "~~/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
-  const { loading: loadingFollows, followers } = useContext(AuthUserFollowsContext);
+  const { loading: loadingFollows, followers, followed, refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
   const { loading: loadingFeed, feed } = useUserFeedAll();
@@ -32,6 +34,16 @@ const Profile: NextPage = () => {
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
   const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
+
+  const handleUnfollow = async () => {
+    if (followed == true) {
+      const error = await deleteFollow(profile.id, profile.id);
+      if (!error) {
+        refetchAuthUserFollows();
+        closeFollowsModal();
+      }
+    }
+  };
 
   //VID MODAL
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -56,11 +68,21 @@ const Profile: NextPage = () => {
     setTipModalOpen(false);
   };
 
+  //FOLLOWS MODAL
+  const [isFollowsModalOpen, setFollowsModalOpen] = useState(false);
+
+  const closeFollowsModal = () => {
+    setFollowsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-row items-start ">
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
+      {isFollowsModalOpen && (
+        <FollowsModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
+      )}
 
       {/* NO FEED TO SHOW */}
       {!loadingFeed && feed && feed.length == 0 && (
@@ -110,7 +132,7 @@ const Profile: NextPage = () => {
           <div className="stat-value text-3xl">{levelName}</div>
           {/* <div className="stat-desc">Level up</div> */}
         </div>
-        <div className="stat">
+        <div className="stat" onClick={() => setFollowsModalOpen(true)}>
           <div className="stat-figure text-primary">
             <UserIcon width={60} />
           </div>
@@ -120,7 +142,7 @@ const Profile: NextPage = () => {
             {!loadingFollows && followers && followers.length == 0 && "0"}
             {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
           </div>
-          <div className="stat-desc">See followers</div>
+          {/* <div className="stat-desc">See followers</div> */}
         </div>
         <div className="stat">
           <div className="stat-figure text-primary">

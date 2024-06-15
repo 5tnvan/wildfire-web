@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { NextPage } from "next";
-import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import { AuthContext } from "~~/app/context";
+import FollowsModal from "~~/components/wildfire/FollowsModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
@@ -17,14 +19,18 @@ import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUser
 import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
+import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
   const price = useGlobalState(state => state.nativeCurrency.price);
 
+  //CONSUME PROVIDERS
+  const { user } = useContext(AuthContext);
+
   //FETCH DIRECTLY
   const { loading: loadingProfile, profile } = useUserProfileByUsername(username);
-  const { loading: loadingFollows, followers } = useUserFollowsByUsername(username);
+  const { loading: loadingFollows, followers, followed, refetch: refetchFollows } = useUserFollowsByUsername(username);
   const { loading: loadingFeed, feed } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
@@ -38,6 +44,25 @@ const Profile: NextPage = () => {
   console.log("followers", followers);
   console.log("feed", feed);
   console.log("incomingRes", incomingRes);
+
+  const handleFollow = async () => {
+    if (followed == false) {
+      const error = await insertFollow(user.id, profile.id);
+      if (!error) refetchFollows();
+    } else {
+      setFollowsModalOpen(true);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (followed == true) {
+      const error = await deleteFollow(user.id, profile.id);
+      if (!error) {
+        refetchFollows();
+        closeFollowsModal();
+      }
+    }
+  };
 
   //VID MODAL
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -62,12 +87,22 @@ const Profile: NextPage = () => {
     setTipModalOpen(false);
   };
 
+  //FOLLOWS MODAL
+  const [isFollowsModalOpen, setFollowsModalOpen] = useState(false);
+
+  const closeFollowsModal = () => {
+    setFollowsModalOpen(false);
+  };
+
   if (profile) {
     return (
       <div className="flex flex-row items-start ">
         {/* MODALS */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
+        {isFollowsModalOpen && (
+          <FollowsModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
+        )}
 
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feed && feed.length == 0 && (
@@ -116,7 +151,7 @@ const Profile: NextPage = () => {
             <div className="stat-value text-3xl">{profile.username}</div>
             {/* <div className="stat-desc">Level up</div> */}
           </div>
-          <div className="stat">
+          <div className="stat" onClick={() => setFollowsModalOpen(true)}>
             <div className="stat-figure text-primary">
               <UserIcon width={60} />
             </div>
@@ -139,8 +174,24 @@ const Profile: NextPage = () => {
               {balance} ETH
             </Link>
           </div>
-          <div className="stat">
-            <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
+          <div className="px-5 my-2">
+            <div className="btn bg-base-200 w-full relative" onClick={handleFollow}>
+              {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
+              {!loadingFollows && followed == true && (
+                <>
+                  <span>Following</span>
+                  <CheckCircleIcon width={18} className="absolute right-3 opacity-30" />
+                </>
+              )}
+              {!loadingFollows && followed == false && (
+                <>
+                  <span>Follow</span>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="px-5">
+            <div className="btn btn-primary w-full" onClick={() => setTipModalOpen(true)}>
               Tip Now
             </div>
           </div>
