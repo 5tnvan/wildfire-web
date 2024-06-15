@@ -16,7 +16,7 @@ export const fetchSuperProfile = async () => {
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("*, profile_bios(id, views, content, created_at, cta), levels(id, level, created_at)")
+      .select("*, levels(id, level, created_at)")
       .eq("id", user.user?.id);
     return profile?.[0] ?? null;
   } else {
@@ -32,7 +32,11 @@ export const fetchSuperProfile = async () => {
 
 export const fetchProfileByUsername = async (username: string) => {
   const supabase = createClient();
-  const { data: profileData } = await supabase.from("profiles").select("*").eq("username", username).limit(1);
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("*, levels(id, level, created_at)")
+    .eq("username", username)
+    .limit(1);
   return profileData?.[0] ?? null;
 };
 

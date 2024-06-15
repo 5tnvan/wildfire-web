@@ -8,16 +8,19 @@ import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
+import TipModal from "~~/components/wildfire/TipModal";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useUserFeed } from "~~/hooks/wildfire/useUserFeed";
 import { useUserFeedByUsername } from "~~/hooks/wildfire/useUserFeedByUsername";
 import { useUserFollowsByUsername } from "~~/hooks/wildfire/useUserFollowsByUsername";
 import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUsername";
+import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
+  const price = useGlobalState(state => state.nativeCurrency.price);
 
   //FETCH DIRECTLY
   const { loading: loadingProfile, profile } = useUserProfileByUsername(username);
@@ -29,34 +32,42 @@ const Profile: NextPage = () => {
   const highestLevel = profile?.levels?.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
-  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(3);
+  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
   console.log("profile", profile?.id);
   console.log("followers", followers);
   console.log("feed", feed);
   console.log("incomingRes", incomingRes);
 
-  //STATES
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //VID MODAL
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleThumbClick = (id: any) => {
     console.log("id", id);
     const res = feed.find((item: any) => item.id === id);
     setSelectedVideo(res);
-    setIsModalOpen(true);
+    setIsVideoModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeVideoModal = () => {
+    setIsVideoModalOpen(false);
     setSelectedVideo(null);
+  };
+
+  //TIP MODAL
+  const [isTipModalOpen, setTipModalOpen] = useState(false);
+
+  const closeTipModal = () => {
+    setTipModalOpen(false);
   };
 
   if (profile) {
     return (
       <div className="flex flex-row items-start ">
-        {/* MODAL */}
-        {isModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
+        {/* MODALS */}
+        {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
+        {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
         <div className="carousel carousel-center rounded-box w-full ml-2">
           {feed && feed.length > 0 ? (
             <>
@@ -98,7 +109,7 @@ const Profile: NextPage = () => {
             <div className="stat-value text-primary">
               {followers && followers.length > 0 ? <FormatNumber number={followers.length} /> : "s0"}
             </div>
-            <div className="stat-desc">See followers</div>
+            {/* <div className="stat-desc">See followers</div> */}
           </div>
           <div className="stat">
             <div className="stat-figure text-primary">
@@ -106,10 +117,15 @@ const Profile: NextPage = () => {
             </div>
 
             <div className="stat-title">Balance</div>
-            <div className="stat-value text-primary">{balance}</div>
+            <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
             <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
-              See history
+              {balance} ETH
             </Link>
+          </div>
+          <div className="stat">
+            <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
+              Tip Now
+            </div>
           </div>
         </div>
       </div>

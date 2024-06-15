@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { Avatar } from "../Avatar";
 import FormatNumber from "../wildfire/FormatNumber";
+import { TimeAgo } from "../wildfire/TimeAgo";
 import { useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
@@ -13,7 +14,7 @@ import { cn } from "~~/utils/cn";
 
 export const ParallaxScroll = ({ data, onCta }: any) => {
   const gridRef = useRef(null);
-  
+
   const { scrollYProgress } = useScroll({
     container: gridRef,
     offset: ["start start", "end start"],
@@ -37,43 +38,50 @@ export const ParallaxScroll = ({ data, onCta }: any) => {
             <motion.div
               style={{ y: translateFirst }}
               key={`grid-1-${item.id}`}
-              className="relative"
+              className="relative bg-black hover:opacity-85 cursor-pointer rounded-lg"
               onClick={() => {
                 onCta(item.id);
               }}
             >
+              {/* PLAY ICON */}
+              <div className="absolute right-1/2 h-full flex justify-center bg-opacity-90">
+                <PlayIcon width={48} className="" color="white" />
+              </div>
+              {/* WATCH COUNT */}
+              <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
+                <EyeIcon width={20} />
+                <span className="font-medium">
+                  <FormatNumber number={item["3sec_views"][0].view_count} />
+                </span>
+              </div>
               <Image
                 src={item.thumbnail_url}
-                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0"
+                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0 opacity-50"
                 height={960}
                 width={540}
                 alt={item.profile.username}
               />
+              {/* AVATAR */}
               <div className="absolute top-2 left-2">
                 <Avatar profile={item.profile} width={10} height={10} />
               </div>
-              <div className="absolute top-3 right-2">
-                <PlayIcon width={35} color="white" className="" />
-              </div>
-              <div className="absolute bottom-4 right-2 flex flex-col gap-2">
-                <div className="flex flex-col items-center">
-                  <FireIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_fires"][0]?.count} />
+              {/* STRIP */}
+              <div className="absolute bottom-0 w-full flex flex-row p-4 bg-base-200 bg-opacity-90 justify-between items-center">
+                <div>
+                  <span className="font-semibold text-sm">{item.country && item.country.name}</span>
+                  <span className="text-sm">
+                    <TimeAgo timestamp={item.created_at} />
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <ChatBubbleOvalLeftEllipsisIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_comments"].length} />
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <EyeIcon width={26} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_views"][0]?.view_count} />
-                  </span>
-                </div>
+                <Image
+                  src={`/wildfire-logo-lit.png`}
+                  alt="hero"
+                  height={120}
+                  width={120}
+                  className=""
+                  draggable={false}
+                  style={{ width: "70px", height: "auto" }}
+                />
               </div>
             </motion.div>
           ))}
@@ -83,41 +91,48 @@ export const ParallaxScroll = ({ data, onCta }: any) => {
             <motion.div
               style={{ y: translateSecond }}
               key={`grid-2-${item.id}`}
-              className="relative"
+              className="relative bg-black hover:opacity-85 cursor-pointer rounded-lg"
               onClick={() => onCta(item.id)}
             >
+              {/* PLAY ICON */}
+              <div className="absolute right-1/2 h-full flex justify-center bg-opacity-90">
+                <PlayIcon width={48} className="" color="white" />
+              </div>
+              {/* WATCH COUNT */}
+              <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
+                <EyeIcon width={20} />
+                <span className="font-medium">
+                  <FormatNumber number={item["3sec_views"][0].view_count} />
+                </span>
+              </div>
               <Image
                 src={item.thumbnail_url}
-                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0"
+                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0 opacity-50"
                 height={960}
                 width={540}
                 alt={item.profile.username}
               />
+              {/* AVATAR */}
               <div className="absolute top-2 left-2">
                 <Avatar profile={item.profile} width={10} height={10} />
               </div>
-              <div className="absolute top-3 right-2">
-                <PlayIcon width={35} color="white" className="" />
-              </div>
-              <div className="absolute bottom-4 right-2 flex flex-col gap-2">
-                <div className="flex flex-col items-center">
-                  <FireIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_fires"][0]?.count} />
+              {/* STRIP */}
+              <div className="absolute bottom-0 w-full flex flex-row p-4 bg-base-200 bg-opacity-90 justify-between items-center">
+                <div>
+                  <span className="font-semibold text-sm">{item.country && item.country.name}</span>
+                  <span className="text-sm">
+                    <TimeAgo timestamp={item.created_at} />
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <ChatBubbleOvalLeftEllipsisIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_comments"].length} />
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <EyeIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_views"][0]?.view_count} />
-                  </span>
-                </div>
+                <Image
+                  src={`/wildfire-logo-lit.png`}
+                  alt="hero"
+                  height={120}
+                  width={120}
+                  className=""
+                  draggable={false}
+                  style={{ width: "70px", height: "auto" }}
+                />
               </div>
             </motion.div>
           ))}
@@ -130,38 +145,45 @@ export const ParallaxScroll = ({ data, onCta }: any) => {
               className="relative"
               onClick={() => onCta(item.id)}
             >
+              {/* PLAY ICON */}
+              <div className="absolute right-1/2 h-full flex justify-center bg-opacity-90">
+                <PlayIcon width={48} className="" color="white" />
+              </div>
+              {/* WATCH COUNT */}
+              <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
+                <EyeIcon width={20} />
+                <span className="font-medium">
+                  <FormatNumber number={item["3sec_views"][0].view_count} />
+                </span>
+              </div>
               <Image
                 src={item.thumbnail_url}
-                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0"
+                className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0 opacity-50"
                 height={960}
                 width={540}
                 alt={item.profile.username}
               />
+              {/* AVATAR */}
               <div className="absolute top-2 left-2">
                 <Avatar profile={item.profile} width={10} height={10} />
               </div>
-              <div className="absolute top-3 right-2">
-                <PlayIcon width={35} color="white" className="" />
-              </div>
-              <div className="absolute bottom-4 right-2 flex flex-col gap-2">
-                <div className="flex flex-col items-center">
-                  <FireIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_fires"][0]?.count} />
+              {/* STRIP */}
+              <div className="absolute bottom-0 w-full flex flex-row p-4 bg-base-200 bg-opacity-90 justify-between items-center">
+                <div>
+                  <span className="font-semibold text-sm">{item.country && item.country.name}</span>
+                  <span className="text-sm">
+                    <TimeAgo timestamp={item.created_at} />
                   </span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <ChatBubbleOvalLeftEllipsisIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_comments"].length} />
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <EyeIcon width={28} color="white" />
-                  <span className="text-base font-medium text-white text-shadow">
-                    <FormatNumber number={item["3sec_views"][0]?.view_count} />
-                  </span>
-                </div>
+                <Image
+                  src={`/wildfire-logo-lit.png`}
+                  alt="hero"
+                  height={120}
+                  width={120}
+                  className=""
+                  draggable={false}
+                  style={{ width: "70px", height: "auto" }}
+                />
               </div>
             </motion.div>
           ))}
