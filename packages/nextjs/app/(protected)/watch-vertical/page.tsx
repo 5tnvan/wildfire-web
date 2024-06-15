@@ -6,7 +6,7 @@ import VideoCard from "~~/components/wildfire/VideoCard";
 import { useFeed } from "~~/hooks/wildfire/useFeed";
 
 const Watch: NextPage = () => {
-  const { feed, fetchMore } = useFeed();
+  const { loading: loadingFeed, feed, fetchMore } = useFeed();
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -42,9 +42,14 @@ const Watch: NextPage = () => {
   }, [feed]); // Ensure to run effect whenever feed changes
 
   return (
-    <div ref={sliderRef} className="infinite-scroll">
-      {feed && feed.length > 0 ? (
-        <>
+    <>
+      {loadingFeed && feed && feed.length == 0 && (
+        <div className="flex flex-row justify-center items-center w-full h-screen-custom">
+          <span className="loading loading-ring loading-lg"></span>
+        </div>
+      )}
+      {feed && feed.length > 0 && (
+        <div ref={sliderRef} className="infinite-scroll">
           {feed.map((video, index) => (
             <VideoCard
               key={index}
@@ -55,11 +60,9 @@ const Watch: NextPage = () => {
               isPlaying={index === playingIndex}
             />
           ))}
-        </>
-      ) : (
-        <>Loading...</>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
