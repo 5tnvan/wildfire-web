@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -31,7 +31,7 @@ const Profile: NextPage = () => {
   //FETCH DIRECTLY
   const { loading: loadingProfile, profile } = useUserProfileByUsername(username);
   const { loading: loadingFollows, followers, followed, refetch: refetchFollows } = useUserFollowsByUsername(username);
-  const { loading: loadingFeed, feed } = useUserFeedByUsername(username);
+  const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -40,10 +40,44 @@ const Profile: NextPage = () => {
   const levelName = levelNames[highestLevel] || "unknown";
   const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
-  console.log("profile", profile?.id);
-  console.log("followers", followers);
+  //FETCH MORE FEED
   console.log("feed", feed);
-  console.log("incomingRes", incomingRes);
+  const carousellRef = useRef<HTMLDivElement>(null);
+  const lastItemIndex = feed.length - 1;
+
+  // Callback function for Intersection Observer
+  const callback = (entries: any) => {
+    entries.forEach((entry: any) => {
+      console.log(entry.target, entry.isIntersecting);
+      if (entry.isIntersecting) {
+        const index = entry.target.getAttribute("data-index");
+        console.log("lastItemId", lastItemIndex);
+        console.log("index", index);
+        if (index == lastItemIndex) {
+          console.log("i am hereee");
+          fetchMore();
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!carousellRef.current) return;
+
+    const options = {
+      root: carousellRef.current,
+      rootMargin: "0px",
+      threshold: 0.8, // Multiple thresholds for more accurate detection
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
+
+    videoCards.forEach(card => {
+      observer.observe(card);
+    });
+  }, [feed]); // Ensure to run effect whenever feed changes
 
   const handleFollow = async () => {
     if (followed == false) {
@@ -122,7 +156,7 @@ const Profile: NextPage = () => {
 
         {/* RENDER FEED */}
         {feed && feed.length > 0 && (
-          <div className="carousel carousel-center rounded-box w-full ml-2">
+          <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
             {feed.map((thumb: any, index: any) => (
               <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
             ))}

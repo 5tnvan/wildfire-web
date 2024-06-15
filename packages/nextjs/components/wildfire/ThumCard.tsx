@@ -5,6 +5,7 @@ import { PlayIcon } from "@heroicons/react/20/solid";
 import { EyeIcon } from "@heroicons/react/24/solid";
 
 const ThumbCard = ({ index, data, onCta }: any) => {
+
   return (
     <div
       className="carousel-item mr-2 relative bg-black cursor-pointer hover:opacity-85"
