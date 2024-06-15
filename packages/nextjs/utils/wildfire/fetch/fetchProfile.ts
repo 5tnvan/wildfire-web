@@ -35,3 +35,19 @@ export const fetchProfileByUsername = async (username: string) => {
   const { data: profileData } = await supabase.from("profiles").select("*").eq("username", username).limit(1);
   return profileData?.[0] ?? null;
 };
+
+/**
+ * FETCH: fetchProfileMatching(username)
+ * DB: supabase
+ * TABLE: "profiles"
+ **/
+
+export const fetchProfileMatching = async (username: string) => {
+  const supabase = createClient();
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("id, username, avatar_url")
+    .like("username", `${username}%`);
+  console.log("profileData", profileData);
+  return profileData;
+};

@@ -34,7 +34,7 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
   return (
     <>
       {!loadingAuthUser && profile && (
-        <details ref={dropdownRef} className="dropdown dropdown-end glow">
+        <details ref={dropdownRef} className="dropdown dropdown-end">
           <summary className="btn bg-base-100">
             <Avatar profile={profile} width={6} height={6} />
             <span>{profile.username}</span>

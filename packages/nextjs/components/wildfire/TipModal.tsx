@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";
@@ -7,7 +7,7 @@ import { RainbowKitCustomSwitchNetworkButton } from "../scaffold-eth/RainbowKitC
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
 
@@ -19,8 +19,22 @@ const TipModal = ({ data, onClose }: any) => {
   const [dollarAmountWithFee, setDollarAmountWithFee] = useState(0);
   const [addMessage, setAddMessage] = useState(false);
   const [message, setMessage] = useState("n/a");
+  const [success, setSuccess] = useState(null);
 
   console.log("data", data);
+  /**
+   * ACTION: Get network
+   **/
+  const [network, setNetwork] = useState("");
+  const { targetNetwork } = useTargetNetwork();
+
+  useEffect(() => {
+    if (targetNetwork.id == 84532 || targetNetwork.id == 8453) {
+      setNetwork("base");
+    } else if (targetNetwork.id == 11155111 || targetNetwork.id == 1) {
+      setNetwork("ethereum");
+    }
+  }, [targetNetwork]);
 
   /**
    * ACTION: Add message
@@ -52,7 +66,28 @@ const TipModal = ({ data, onClose }: any) => {
   /**
    * ACTION: Pay
    **/
-  const { writeAsync: pay, isMining } = useScaffoldWriteContract({});
+  const handleReceipt = (hash: any) => {
+    console.log("FastPayConfirm: trigger FastPayModal");
+    setSuccess(hash);
+  };
+
+  const handlePay = async () => {
+    try {
+      await pay({
+        functionName: "setPayment",
+        args: [data.wallet_id, message],
+        value: parseEther(ethAmountWithFee.toString()),
+        blockConfirmations: 1,
+        onBlockConfirmation: (txnReceipt: any) => {
+          console.log("FastPayConfirm trasactionHash", txnReceipt);
+          handleReceipt(txnReceipt.transactionHash);
+        },
+      });
+    } catch (e) {
+      console.error("Error setting greeting:", e);
+    }
+  };
+  const { writeContractAsync: pay, isMining } = useScaffoldWriteContract("WildpayContract");
 
   const handleClose = () => {
     onClose();
@@ -65,7 +100,7 @@ const TipModal = ({ data, onClose }: any) => {
         Back
       </div>
       <div id="wildui-fastpay" className="bg-base-300 rounded-lg p-5">
-        {data && data.wallet_id && (
+        {data && data.wallet_id && !success && (
           <>
             {/* AVATAR */}
             <div className="flex flex-col items-center gap-1">
@@ -200,7 +235,7 @@ const TipModal = ({ data, onClose }: any) => {
                     className={`${
                       dollarAmount === 0 && "btn-disabled"
                     } btn btn-accent bg-gradient-to-r from-cyan-600 via-lime-500 border-0 text-black w-full mt-3`}
-                    onClick={() => pay()}
+                    onClick={handlePay}
                   >
                     Confirm
                     {isMining && <span className="loading loading-ring loading-md"></span>}
@@ -208,6 +243,19 @@ const TipModal = ({ data, onClose }: any) => {
                 </div>
               </>
             )}
+          </>
+        )}
+        {data && data.wallet_id && success && (
+          <>
+            <div className="font-semibold text-3xl pt-10">{"Success 🎉."}</div>
+            <div className="text-xl mb-5">{"Here's your receipt."}</div>
+            <Link
+              href={"/transaction/payment/" + network + "/" + success}
+              className="btn btn-primary w-full mt-3 mb-2"
+              onClick={handleClose}
+            >
+              Go to transaction
+            </Link>
           </>
         )}
         {data && !data.wallet_id && (

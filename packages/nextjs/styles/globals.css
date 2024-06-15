@@ -107,3 +107,9 @@ p {
 #wildui-withdraw input[type="number"]:focus {
   outline: none;
 }
+
+/* Remove outline on focus for comment textarea input */
+.textarea:focus {
+  outline: none;
+  outline-width: 0;
+}

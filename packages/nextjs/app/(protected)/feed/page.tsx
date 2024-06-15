@@ -14,7 +14,7 @@ const Feed: NextPage = () => {
   const { following } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { feed: userFeed, fetchMore } = useUserFollowedFeed();
+  const { feed: userFeed } = useUserFollowedFeed();
   // console.log(userFeed, userFeed.length > 0);
 
   //STATES
@@ -22,7 +22,7 @@ const Feed: NextPage = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleParalaxClick = (id: any) => {
-    console.log("id", id);
+    console.log("clicked", id);
     const res = userFeed.find((item: any) => item.id === id);
     setSelectedVideo(res);
     setIsModalOpen(true);
@@ -45,26 +45,24 @@ const Feed: NextPage = () => {
         {/* FOLLOWING */}
         <div className="flex flex-col gap-3 h-screen-custom overflow-scroll pr-2">
           {following?.map((following: any, index: number) => (
-            <>
-              <Link key={index} href={"/" + following.following.username} className="">
-                <div className="">
-                  {following.following.avatar_url && (
-                    <div className="avatar">
-                      <div className="w-12 rounded-full">
-                        <Image src={following.following.avatar_url} alt="avatar" width={20} height={20} />
-                      </div>
+            <Link key={index} href={"/" + following.following.username} className="">
+              <div className="">
+                {following.following.avatar_url && (
+                  <div className="avatar">
+                    <div className="w-12 rounded-full">
+                      <Image src={following.following.avatar_url} alt="avatar" width={20} height={20} priority />
                     </div>
-                  )}
-                  {!following.following.avatar_url && (
-                    <div className="avatar placeholder">
-                      <div className="bg-base-100 text-primary-content rounded-full w-12">
-                        <span className="text-3xl">{following.following.username.charAt(0).toUpperCase()}</span>
-                      </div>
+                  </div>
+                )}
+                {!following.following.avatar_url && (
+                  <div className="avatar placeholder">
+                    <div className="bg-base-100 text-primary-content rounded-full w-12">
+                      <span className="text-3xl">{following.following.username.charAt(0).toUpperCase()}</span>
                     </div>
-                  )}
-                </div>
-              </Link>
-            </>
+                  </div>
+                )}
+              </div>
+            </Link>
           ))}
         </div>
       </div>
