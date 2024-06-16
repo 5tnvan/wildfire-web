@@ -16,8 +16,6 @@ const Feed: NextPage = () => {
   //FETCH DIRECTLY
   const { loading: loadingUserFeed, feed: userFeed, fetchMore } = useUserFollowedFeed();
 
-  console.log("feed", userFeed);
-
   //STATES
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -33,8 +31,6 @@ const Feed: NextPage = () => {
     setIsVideoModalOpen(false);
     setSelectedVideo(null);
   };
-
-  console.log("following", following);
 
   return (
     <>

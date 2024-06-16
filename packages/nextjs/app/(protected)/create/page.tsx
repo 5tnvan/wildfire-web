@@ -64,7 +64,7 @@ const Create: NextPage = () => {
       alert("You've reached your 24hrs posting limit. Try again later.");
     }
     if (limit == false && videoUrl.length > 0 && thumbnailUrl.length > 0) {
-      const success = 
+      //post
     }
   };
 

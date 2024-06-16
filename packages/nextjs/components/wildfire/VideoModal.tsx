@@ -11,10 +11,13 @@ import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
 import { fetch3Sec } from "~~/utils/wildfire/fetch/fetch3Sec";
+import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
+  //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
   //STATES
+  const insideRef = useRef<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoStats, setVideoStats] = useState<any>(null);
   const [loopCount, setLoopCount] = useState(0);
@@ -28,8 +31,6 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
-
-  const insideRef = useRef<any>(null);
 
   useOutsideClick(insideRef, () => {
     handleClose();
@@ -45,7 +46,15 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
       }
     }
     fetchData();
+    handleIncrementViews();
   }, [data.id]);
+
+  const handleWatchAgain = () => {
+    setLoopCount(0);
+    setShowWatchAgain(false);
+    videoRef.current?.play();
+    handleIncrementViews();
+  };
 
   //manually pause video
   const handleTogglePlay = () => {
@@ -71,18 +80,17 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     }
   };
 
-  console.log("videoStats", videoStats);
+  const handleIncrementViews = async () => {
+    incrementViews(data.id);
+  };
 
   const handleLike = async () => {
     if (videoStats.liked) {
       return;
     } else {
-      console.log("im here");
       //incr like
       const error = await insertLike(data.id);
-      console.log("err", error);
       if (!error) {
-        console.log("im hereeee");
         setTemporaryLiked(true); // Set temporary like state
         setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
       }
@@ -93,7 +101,6 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     setShowCommentInput(!showCommentInput);
   };
 
-  // Handle comment submission
   const handleCommentSubmit = async () => {
     if (!commentInput.trim()) {
       return; // Do not submit empty comments
@@ -132,14 +139,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             />
             {showWatchAgain && (
               <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                <div
-                  className="btn btn-primary text-black opacity-70"
-                  onClick={() => {
-                    setLoopCount(0);
-                    setShowWatchAgain(false);
-                    videoRef.current?.play();
-                  }}
-                >
+                <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
                   <EyeIcon width={16} />
                   <span className="font-medium">Watch again</span>
                 </div>

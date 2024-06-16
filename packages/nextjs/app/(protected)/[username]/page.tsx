@@ -48,7 +48,6 @@ const Profile: NextPage = () => {
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
     entries.forEach((entry: any) => {
-      console.log(entry.target, entry.isIntersecting);
       if (entry.isIntersecting) {
         const index = entry.target.getAttribute("data-index");
         console.log("lastItemId", lastItemIndex);

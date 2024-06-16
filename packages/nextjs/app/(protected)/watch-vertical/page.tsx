@@ -15,7 +15,6 @@ const Watch: NextPage = () => {
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
     entries.forEach((entry: any) => {
-      console.log(entry.target, entry.isIntersecting);
       if (entry.isIntersecting) {
         const index = parseInt(entry.target.getAttribute("data-index") || "0", 10);
         setPlayingIndex(index);

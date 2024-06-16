@@ -23,7 +23,6 @@ export const useUserFeedAll = () => {
     const data = await fetchUserFeedAll(user.user?.id);
     if (data) {
       setFeed(data);
-      console.log("data", data);
     }
     setLoading(false);
   };

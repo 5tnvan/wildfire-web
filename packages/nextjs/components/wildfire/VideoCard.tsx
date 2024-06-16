@@ -4,6 +4,7 @@ import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -36,6 +37,17 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
     }
   };
 
+  const handleWatchAgain = () => {
+    setLoopCount(0);
+    setShowWatchAgain(false);
+    videoRef.current?.play();
+    handleIncrementViews();
+  };
+
+  const handleIncrementViews = async () => {
+    incrementViews(data.id);
+  };
+
   //fetch more
   if (isPlaying) {
     if (loadNewVidsAt === index) {
@@ -52,6 +64,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
         setShowWatchAgain(false);
         videoRef.current.play();
         setShowPaused(false);
+        handleIncrementViews();
       } else {
         videoRef.current.pause();
       }
@@ -72,15 +85,8 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
         ></video>
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
-            <div
-              className="btn btn-primary text-black opacity-70"
-              onClick={() => {
-                setLoopCount(0);
-                setShowWatchAgain(false);
-                videoRef.current?.play();
-              }}
-            >
-              <EyeIcon width={16}/>
+            <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
+              <EyeIcon width={16} />
               <span className="font-medium">Watch again</span>
             </div>
           </div>

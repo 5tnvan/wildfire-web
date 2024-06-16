@@ -21,7 +21,6 @@ const TipModal = ({ data, onClose }: any) => {
   const [message, setMessage] = useState("n/a");
   const [success, setSuccess] = useState(null);
 
-  console.log("data", data);
   /**
    * ACTION: Get network
    **/
