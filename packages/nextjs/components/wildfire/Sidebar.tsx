@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { EyeIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
+import { VideoCameraIcon } from "@heroicons/react/20/solid";
 
 export const Sidebar = () => {
   return (
@@ -41,6 +42,10 @@ export const Sidebar = () => {
             </Link>
           </li> */}
         </ul>
+        <Link href="/create" className="btn btn-neutral">
+          <span>Create</span>
+          <VideoCameraIcon width={20} />
+        </Link>
         <div className="pointer-events-none flex flex-row justify-end p-1">
           <SwitchTheme className={`pointer-events-auto`} />
         </div>

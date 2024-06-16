@@ -6,6 +6,8 @@ import Link from "next/link";
 import { AuthUserContext, AuthUserFollowsContext } from "../../context";
 import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import { PencilIcon } from "@heroicons/react/24/solid";
+import AvatarModal from "~~/components/wildfire/AvatarModal";
 import FollowsModal from "~~/components/wildfire/FollowsModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
@@ -75,6 +77,13 @@ const Profile: NextPage = () => {
     setFollowsModalOpen(false);
   };
 
+  //FOLLOWS MODAL
+  const [isAvatarModalOpen, setAvatarModalOpen] = useState(false);
+
+  const closeAvatarModal = () => {
+    setAvatarModalOpen(false);
+  };
+
   return (
     <div className="flex flex-row items-start ">
       {/* MODALS */}
@@ -83,6 +92,7 @@ const Profile: NextPage = () => {
       {isFollowsModalOpen && (
         <FollowsModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
       )}
+      {isAvatarModalOpen && <AvatarModal onClose={closeAvatarModal} />}
 
       {/* NO FEED TO SHOW */}
       {!loadingFeed && feed && feed.length == 0 && (
@@ -114,16 +124,28 @@ const Profile: NextPage = () => {
         <div className="stat">
           <div className="stat-figure text-secondary">
             {profile?.avatar_url && (
-              <div className="avatar">
+              <div className="avatar online">
                 <div className="w-12 rounded-full">
                   <img src={profile?.avatar_url} />
+                </div>
+                <div
+                  className="absolute bottom-0 rounded-full bg-white p-1 right-0"
+                  onClick={() => setAvatarModalOpen(true)}
+                >
+                  <PencilIcon width={12} color="black" />
                 </div>
               </div>
             )}
             {!profile?.avatar_url && (
-              <div className="avatar placeholder">
+              <div className="avatar placeholder online">
                 <div className="bg-neutral text-neutral-content rounded-full w-12">
                   <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
+                </div>
+                <div
+                  className="absolute bottom-0 rounded-full bg-white p-1 right-0"
+                  onClick={() => setAvatarModalOpen(true)}
+                >
+                  <PencilIcon width={12} color="black" />
                 </div>
               </div>
             )}
