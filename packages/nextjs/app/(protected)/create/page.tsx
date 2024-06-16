@@ -15,8 +15,7 @@ const Create: NextPage = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  console.log("useDailyPostLimit", limit, posts, postLeft);
-  console.log("thumbnailUrl", thumbnailUrl);
+  console.log("file", file);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
