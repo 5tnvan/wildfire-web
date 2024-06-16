@@ -31,7 +31,7 @@ export const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/watch-vertical">
+            <Link href="/watch">
               <EyeIcon width={23} /> Watch
             </Link>
           </li>

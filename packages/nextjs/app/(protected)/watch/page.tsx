@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
-import VideoCard2 from "~~/components/wildfire/VideoCard2";
+import VideoCard from "~~/components/wildfire/VideoCard";
 import { useFeed } from "~~/hooks/wildfire/useFeed";
 
 const Watch: NextPage = () => {
-  const { feed, fetchMore } = useFeed();
+  const { loading: loadingFeed, feed, fetchMore } = useFeed();
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  console.log(feed);
 
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
@@ -21,17 +23,17 @@ const Watch: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!carouselRef.current) return;
+    if (!sliderRef.current) return;
 
     const options = {
-      root: carouselRef.current,
+      root: sliderRef.current,
       rootMargin: "0px",
       threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
     const observer = new IntersectionObserver(callback, options);
 
-    const videoCards = carouselRef.current.querySelectorAll(".carousel-item");
+    const videoCards = sliderRef.current.querySelectorAll(".infinite-scroll-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
@@ -39,25 +41,27 @@ const Watch: NextPage = () => {
   }, [feed]); // Ensure to run effect whenever feed changes
 
   return (
-    <div ref={carouselRef} className=" carousel carousel-center max-w-lg space-x-2 rounded-lg grow">
-      {feed && feed.length > 0 ? (
-        <>
+    <>
+      {loadingFeed && feed && feed.length == 0 && (
+        <div className="flex flex-row justify-center items-center w-full h-screen-custom">
+          <span className="loading loading-ring loading-lg"></span>
+        </div>
+      )}
+      {feed && feed.length > 0 && (
+        <div ref={sliderRef} className="infinite-scroll">
           {feed.map((video, index) => (
-            <VideoCard2
+            <VideoCard
               key={index}
               index={index}
-              author={video.profile.username}
-              videoURL={video.video_url}
+              data={video}
               lastVideoIndex={feed.length - 1}
               getVideos={fetchMore}
               isPlaying={index === playingIndex}
             />
           ))}
-        </>
-      ) : (
-        <>Loading...</>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

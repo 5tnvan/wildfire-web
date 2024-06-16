@@ -139,7 +139,7 @@ const Profile: NextPage = () => {
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feed && feed.length == 0 && (
           <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
-            <Link className="btn btn-base-100" href={"/watch-vertical"}>
+            <Link className="btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
             </Link>
           </div>
