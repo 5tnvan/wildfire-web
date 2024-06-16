@@ -41,7 +41,6 @@ const Profile: NextPage = () => {
   const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
   //FETCH MORE FEED
-  console.log("feed", feed);
   const carousellRef = useRef<HTMLDivElement>(null);
   const lastItemIndex = feed.length - 1;
 

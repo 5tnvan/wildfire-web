@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import { AuthUserContext, AuthUserFollowsContext } from "../../context";
@@ -14,7 +14,7 @@ import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useUserFeedAll } from "~~/hooks/wildfire/useUserFeedAll";
+import { useProfileFeed } from "~~/hooks/wildfire/useProfileFeed";
 import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
@@ -28,7 +28,7 @@ const Profile: NextPage = () => {
   const { loading: loadingFollows, followers, followed, refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { loading: loadingFeed, feed } = useUserFeedAll();
+  const { loading: loadingFeed, feed, fetchMore } = useProfileFeed();
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -36,6 +36,43 @@ const Profile: NextPage = () => {
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
   const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
+
+  //FETCH MORE FEED
+  const carousellRef = useRef<HTMLDivElement>(null);
+  const lastItemIndex = feed.length - 1;
+
+  // Callback function for Intersection Observer
+  const callback = (entries: any) => {
+    entries.forEach((entry: any) => {
+      if (entry.isIntersecting) {
+        const index = entry.target.getAttribute("data-index");
+        console.log("lastItemId", lastItemIndex);
+        console.log("index", index);
+        if (index == lastItemIndex) {
+          console.log("i am hereee");
+          fetchMore();
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!carousellRef.current) return;
+
+    const options = {
+      root: carousellRef.current,
+      rootMargin: "0px",
+      threshold: 0.8, // Multiple thresholds for more accurate detection
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
+
+    videoCards.forEach(card => {
+      observer.observe(card);
+    });
+  }, [feed]); // Ensure to run effect whenever feed changes
 
   const handleUnfollow = async () => {
     if (followed == true) {
@@ -97,7 +134,7 @@ const Profile: NextPage = () => {
       {/* NO FEED TO SHOW */}
       {!loadingFeed && feed && feed.length == 0 && (
         <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
-          <Link className="btn btn-base-100" href={"/watch-vertical"}>
+          <Link className="btn btn-base-100" href={"/create"}>
             🤫 You haven't posted, yet.
           </Link>
         </div>
@@ -110,9 +147,9 @@ const Profile: NextPage = () => {
         </div>
       )}
 
-      {/* FEED */}
+      {/* RENDER FEED */}
       {feed && feed.length > 0 && (
-        <div className="carousel carousel-center rounded-box w-full ml-2">
+        <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
           {feed.map((thumb: any, index: any) => (
             <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
           ))}

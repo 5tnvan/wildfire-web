@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";
@@ -7,11 +7,16 @@ import { RainbowKitCustomSwitchNetworkButton } from "../scaffold-eth/RainbowKitC
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { AuthUserContext } from "~~/app/context";
 import { useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
 
 const TipModal = ({ data, onClose }: any) => {
+  //CONSUME CONTEXT
+  const { profile } = useContext(AuthUserContext);
+
+  //STATES
   const price = useGlobalState(state => state.nativeCurrency.price);
   const { address: connectedAddress } = useAccount();
   const [ethAmountWithFee, setEthAmountWithFee] = useState(0);
@@ -19,7 +24,7 @@ const TipModal = ({ data, onClose }: any) => {
   const [dollarAmountWithFee, setDollarAmountWithFee] = useState(0);
   const [addMessage, setAddMessage] = useState(false);
   const [message, setMessage] = useState("n/a");
-  const [success, setSuccess] = useState(null);
+  const [successHash, setSuccessHash] = useState(null);
 
   /**
    * ACTION: Get network
@@ -66,8 +71,8 @@ const TipModal = ({ data, onClose }: any) => {
    * ACTION: Pay
    **/
   const handleReceipt = (hash: any) => {
-    console.log("FastPayConfirm: trigger FastPayModal");
-    setSuccess(hash);
+    console.log("Receipt hash", hash);
+    setSuccessHash(hash);
   };
 
   const handlePay = async () => {
@@ -87,11 +92,11 @@ const TipModal = ({ data, onClose }: any) => {
         },
       );
     } catch (e) {
-      console.error("Error setting greeting:", e);
+      console.error("Error setting payment", e);
     }
   };
 
-  const { writeContractAsync: pay, isMining } = useScaffoldWriteContract("WildpayContract");
+  const { writeContractAsync: pay, isMining } = useScaffoldWriteContract("WildpayEthContract");
 
   const handleClose = () => {
     onClose();
@@ -104,7 +109,7 @@ const TipModal = ({ data, onClose }: any) => {
         Back
       </div>
       <div id="wildui-fastpay" className="bg-base-300 rounded-lg p-5">
-        {data && data.wallet_id && !success && (
+        {data && data.wallet_id && !successHash && (
           <>
             {/* AVATAR */}
             <div className="flex flex-col items-center gap-1">
@@ -112,6 +117,7 @@ const TipModal = ({ data, onClose }: any) => {
               <div>
                 <span className="font-semibold text-primary mr-1">to</span>
                 <span className="font-semibold ">@{data.username}</span>
+                <span className="font-semibold ">{data.wallet_id}</span>
               </div>
             </div>
             {/* INPUT */}
@@ -163,26 +169,26 @@ const TipModal = ({ data, onClose }: any) => {
 
             {/* PAY AS */}
             <div className="mt-8">
-              {!data.wallet_id && (
+              {!profile.wallet_id && (
                 <>
                   <div>You have no verified wallet, yet.</div>
                   <div className="flex justify-center">
-                    <Link href="/settings" className="btn btn-neutral w-full mt-3" onClick={onClose}>
+                    <Link href="https://www.wildpay.app/settings" className="btn btn-neutral w-full mt-3" onClick={onClose}>
                       Verify a Wallet
                     </Link>
                   </div>
                 </>
               )}
-              {data.wallet_id && !connectedAddress && (
+              {profile.wallet_id && !connectedAddress && (
                 <>
                   <div className="flex btn btn-base-100 h-full items-center justify-between pt-2 pb-2 mt-2">
                     <div className="flex items-center">
                       <span className="font-semibold text-primary mr-1 text-base">from</span>
-                      <Avatar profile={data} width={8} height={8} />
-                      <span className="ml-1 font-semibold text-base">{data.username}</span>
+                      <Avatar profile={profile} width={8} height={8} />
+                      <span className="ml-1 font-semibold text-base">{profile.username}</span>
                     </div>
                     <div className="flex items-center">
-                      <Address address={data.wallet_id} />
+                      <Address address={profile.wallet_id} />
                       <span className="text-success ml-1">
                         <CheckCircleIcon width={16} />
                       </span>
@@ -193,14 +199,14 @@ const TipModal = ({ data, onClose }: any) => {
                   </div>
                 </>
               )}
-              {data.wallet_id && connectedAddress && data.wallet_id == connectedAddress && (
+              {profile.wallet_id && connectedAddress && profile.wallet_id == connectedAddress && (
                 <>
                   <RainbowKitCustomSwitchNetworkButton btn="base" />
                   <div className="flex btn btn-base-100 h-full items-center justify-between pt-2 pb-2 mt-2 mb-2">
                     <div className="flex items-center">
                       <span className="font-semibold text-primary mr-1 text-base">from</span>
-                      <Avatar profile={data} width={8} height={8} />
-                      <span className="ml-2 font-semibold text-base">{data.username}</span>
+                      <Avatar profile={profile} width={8} height={8} />
+                      <span className="ml-2 font-semibold text-base">{profile.username}</span>
                     </div>
                     <div className="flex items-center">
                       <Address address={connectedAddress} />
@@ -211,13 +217,13 @@ const TipModal = ({ data, onClose }: any) => {
                   </div>
                 </>
               )}
-              {data.wallet_id && connectedAddress && data.wallet_id !== connectedAddress && (
+              {profile.wallet_id && connectedAddress && profile.wallet_id !== connectedAddress && (
                 <>
                   <div className="flex btn btn-base-100 h-full items-center justify-between pt-2 pb-2 mt-2">
                     <div className="flex items-center">
                       <span className="font-semibold text-primary mr-1 text-base">from</span>
-                      <Avatar profile={data} width="8" height={undefined} />
-                      <span className="ml-2 font-semibold text-base">{data.username}</span>
+                      <Avatar profile={profile} width="8" height={undefined} />
+                      <span className="ml-2 font-semibold text-base">{profile.username}</span>
                     </div>
                     <div className="flex items-center">
                       <Address address={connectedAddress} />
@@ -232,7 +238,7 @@ const TipModal = ({ data, onClose }: any) => {
             </div>
 
             {/* CONFIRM */}
-            {data.wallet_id && connectedAddress && data.wallet_id == connectedAddress && (
+            {profile.wallet_id && connectedAddress && profile.wallet_id == connectedAddress && (
               <>
                 <div className="flex justify-center">
                   <button
@@ -249,12 +255,12 @@ const TipModal = ({ data, onClose }: any) => {
             )}
           </>
         )}
-        {data && data.wallet_id && success && (
+        {successHash && (
           <>
             <div className="font-semibold text-3xl pt-10">{"Success 🎉."}</div>
             <div className="text-xl mb-5">{"Here's your receipt."}</div>
             <Link
-              href={"/transaction/payment/" + network + "/" + success}
+              href={"https://www.wildpay.app/transaction/payment/" + network + "/" + successHash}
               className="btn btn-primary w-full mt-3 mb-2"
               onClick={handleClose}
             >

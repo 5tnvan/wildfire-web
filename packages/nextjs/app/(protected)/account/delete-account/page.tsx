@@ -36,7 +36,7 @@ const DeleteAccount: NextPage = () => {
   };
 
   return (
-    <>
+    <div className="p-2 flex flex-col">
       {user && profile && (
         <div className="flex flex-col items-center grow gap-2 py-5">
           <Avatar profile={profile} width={16} height={16} />
@@ -88,7 +88,7 @@ const DeleteAccount: NextPage = () => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

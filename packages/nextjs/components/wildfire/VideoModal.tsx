@@ -197,16 +197,15 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                 )}
                 {videoStats?.["3sec_comments"]?.map((comment: any, id: number) => (
                   <div key={id} className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
-                    <div className="flex flex-row items-center gap-1">
+                    <Link href={"/" + comment.profile.username} className="flex flex-row items-center gap-1">
                       <Avatar profile={comment.profile} width={6} height={6} />
                       <span className="text-sm">{comment.profile.username}</span>
-                    </div>
+                    </Link>
                     <div className="text-sm opacity-50">{comment.comment}</div>
                   </div>
                 ))}
-                {/* Comment Input */}
                 {showCommentInput && (
-                  <div>
+                  <div className="">
                     <textarea
                       className="textarea textarea-primary absolute w-full h-full top-0 rounded-lg"
                       placeholder="Start typing..."
@@ -216,15 +215,14 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <PaperAirplaneIcon
                       width={22}
                       color="orange"
-                      className="absolute bottom-2 right-2 hover:opacity-75 cursor-pointer"
+                      className="absolute bottom-3 right-2 hover:opacity-75 cursor-pointer"
                       onClick={() => handleCommentSubmit()}
                     />
                   </div>
                 )}
               </div>
               {/* BOTTOM INFO */}
-
-              <div className="flex flex-row gap-2 justify-between">
+              <div className="flex flex-row gap-2 justify-between mt-2">
                 <div className="rounded-full flex flex-row justify-center items-center bg-zinc-200 dark:bg-zinc-900 gap-1 grow">
                   <EyeIcon width={20} />
                   <span className="text-base font-normal">

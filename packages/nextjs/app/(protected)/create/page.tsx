@@ -176,18 +176,18 @@ const Create: NextPage = () => {
               <>
                 {limit == true && <XCircleIcon width={48} color="red" />}
                 {limit == false && <CheckCircleIcon width={48} color="green" />}
+                <div>
+                  You can post <span className="text-primary font-semibold">{postLeft}x</span> today
+                </div>
                 {posts && posts.length > 0 && (
                   <div className="flex flex-row gap-1">
-                    You posted{" "}
+                    Last posted 
                     <span className="text-primary font-semibold">
                       <TimeAgo timestamp={posts[0].created_at} />
                     </span>
                     ago
                   </div>
                 )}
-                <div>
-                  You can post <span className="text-primary font-semibold">{postLeft}x</span> today
-                </div>
               </>
             )}
           </div>
