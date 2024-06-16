@@ -46,7 +46,7 @@ export const Sidebar = () => {
           <span>Create</span>
           <VideoCameraIcon width={20} />
         </Link>
-        <div className="pointer-events-none flex flex-row justify-end p-1">
+        <div className="pointer-events-none flex flex-row justify-center p-1">
           <SwitchTheme className={`pointer-events-auto`} />
         </div>
       </div>
