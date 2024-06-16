@@ -151,10 +151,10 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
       <div className="video-info ml-2 self-end">
         {/* USER INFO */}
         <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
-          <div className="flex flex-row items-center gap-2">
+          <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
             <Avatar profile={data.profile} width={10} height={10} />
             <div className="font-semibold text-primary">{data.profile.username}</div>
-          </div>
+          </Link>
           <div className="flex flex-row gap-2">
             {data.country && (
               <div className="flex flex-row gap-1">

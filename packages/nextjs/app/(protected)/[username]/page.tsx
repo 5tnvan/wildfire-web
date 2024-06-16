@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { NextPage } from "next";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
-import { AuthContext } from "~~/app/context";
+import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
 import FollowsModal from "~~/components/wildfire/FollowsModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
@@ -27,10 +27,16 @@ const Profile: NextPage = () => {
 
   //CONSUME PROVIDERS
   const { user } = useContext(AuthContext);
+  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
   const { loading: loadingProfile, profile } = useUserProfileByUsername(username);
-  const { loading: loadingFollows, followers, followed, refetch: refetchFollows } = useUserFollowsByUsername(username);
+  const {
+    loading: loadingFollows,
+    followers,
+    followed,
+    refetch: refetchProfileFollows,
+  } = useUserFollowsByUsername(username);
   const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
@@ -80,7 +86,10 @@ const Profile: NextPage = () => {
   const handleFollow = async () => {
     if (followed == false) {
       const error = await insertFollow(user.id, profile.id);
-      if (!error) refetchFollows();
+      if (!error) {
+        refetchProfileFollows();
+        refetchAuthUserFollows();
+      }
     } else {
       setFollowsModalOpen(true);
     }
@@ -90,7 +99,8 @@ const Profile: NextPage = () => {
     if (followed == true) {
       const error = await deleteFollow(user.id, profile.id);
       if (!error) {
-        refetchFollows();
+        refetchProfileFollows();
+        refetchAuthUserFollows();
         closeFollowsModal();
       }
     }
