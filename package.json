@@ -45,11 +45,13 @@
   },
   "dependencies": {
     "@apollo/client": "^3.10.5",
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.4",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",
     "graphql": "^16.8.2",
+    "react-dropzone": "^14.2.3",
     "tailwind-merge": "^2.3.0"
   }
 }
