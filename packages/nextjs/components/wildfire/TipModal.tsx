@@ -117,7 +117,6 @@ const TipModal = ({ data, onClose }: any) => {
               <div>
                 <span className="font-semibold text-primary mr-1">to</span>
                 <span className="font-semibold ">@{data.username}</span>
-                <span className="font-semibold ">{data.wallet_id}</span>
               </div>
             </div>
             {/* INPUT */}
