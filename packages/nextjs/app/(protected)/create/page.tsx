@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useContext, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { NextPage } from "next";
-import { XCircleIcon } from "@heroicons/react/20/solid";
+import { MapPinIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import { CheckCircleIcon, ChevronRightIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
 import { AuthUserContext } from "~~/app/context";
+import LocationModal from "~~/components/wildfire/LocationModal";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
 import { ACCESS_KEY, HOSTNAME, STORAGE_ZONE_NAME } from "~~/constants/BunnyAPI";
+import { useCountries } from "~~/hooks/wildfire/useCountries";
 import { useDailyPostLimit } from "~~/hooks/wildfire/useDailyPostLimit";
 import { insertVideo } from "~~/utils/wildfire/crud/3sec";
 
 const Create: NextPage = () => {
+  const router = useRouter();
   //CONSUME PROVIDER
   const { profile } = useContext(AuthUserContext);
 
@@ -18,10 +22,12 @@ const Create: NextPage = () => {
   const { isLoading: isLoadingLimit, limit, posts, postLeft } = useDailyPostLimit();
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [countryId, setCountryId] = useState<string | null>(null);
+  const [countryName, setCountryName] = useState<string | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  console.log("file", file);
+  const { countries } = useCountries();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -64,7 +70,7 @@ const Create: NextPage = () => {
     event.preventDefault();
   };
 
-  const handleSubmit = async () => {
+  const handleSubmitPost = async () => {
     if (limit === true) {
       alert("You've reached your 24hrs posting limit. Try again later.");
       return;
@@ -86,8 +92,8 @@ const Create: NextPage = () => {
 
         if (videoPath && thumbnailPath) {
           // Insert record into '3sec' table
-          const res = await insertVideo(videoPath, thumbnailPath, null);
-          if (res) alert("Video uploaded successfully!");
+          const error = await insertVideo(videoPath, thumbnailPath, countryId);
+          if (!error) router.push("/profile");
         }
       } catch (error) {
         console.error("Upload failed:", error);
@@ -115,7 +121,7 @@ const Create: NextPage = () => {
     const response = await fetch(bunnyUrl, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${ACCESS_KEY ?? ""}`,
+        AccessKey: ACCESS_KEY ?? "",
         "Content-Type": contentType,
       },
       body: file,
@@ -201,6 +207,16 @@ const Create: NextPage = () => {
     });
   };
 
+  const handleSetLocation = (country_id: any, country_name: any) => {
+    setIsLocationModalOpen(true);
+    setCountryId(country_id);
+    setCountryName(country_name);
+  };
+
+  const closeLocationModal = () => {
+    setIsLocationModalOpen(false);
+  };
+
   return (
     <div className="flex flex-row p-2 pt-0 h-screen-custom">
       <div className="flex flex-col">
@@ -278,8 +294,8 @@ const Create: NextPage = () => {
         {videoUrl && (
           <div className="flex items-center justify-between flex-row rounded-lg grow w-full">
             {thumbnailUrl && (
-              <div className="w-20 m-auto">
-                <img src={thumbnailUrl} alt="thumb" className="rounded-lg" />
+              <div className="w-1/3 flex flex-col items-center grow">
+                <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-[70px] glow" />
                 <span className="text-sm">Thumbnail</span>
               </div>
             )}
@@ -293,10 +309,21 @@ const Create: NextPage = () => {
                 loop
               />
             </div>
-            <div className="btn btn-primary m-auto" onClick={handleSubmit}>
-              Post Now <ChevronRightIcon width={14} />
-            </div>
+            {limit == false && (
+              <div className="flex flex-col w-1/3 ml-3 gap-2">
+                <div className="btn btn-outline m-auto" onClick={() => setIsLocationModalOpen(true)}>
+                  <MapPinIcon width={14} />
+                  {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
+                </div>
+                <div className="btn btn-primary m-auto px-12" onClick={handleSubmitPost}>
+                  Post Now
+                </div>
+              </div>
+            )}
           </div>
+        )}
+        {isLocationModalOpen && (
+          <LocationModal data={countries} onClose={closeLocationModal} onCta={handleSetLocation} />
         )}
       </div>
     </div>
