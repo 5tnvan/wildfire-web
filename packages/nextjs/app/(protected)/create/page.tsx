@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { NextPage } from "next";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { CheckCircleIcon, ChevronRightIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
+import { AuthUserContext } from "~~/app/context";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
+import { ACCESS_KEY, HOSTNAME, STORAGE_ZONE_NAME } from "~~/constants/BunnyAPI";
 import { useDailyPostLimit } from "~~/hooks/wildfire/useDailyPostLimit";
+import { insertVideo } from "~~/utils/wildfire/crud/3sec";
 
 const Create: NextPage = () => {
+  //CONSUME PROVIDER
+  const { profile } = useContext(AuthUserContext);
+
   //FETCH DIRECTLY
   const { isLoading: isLoadingLimit, limit, posts, postLeft } = useDailyPostLimit();
   const [file, setFile] = useState<File | null>(null);
@@ -58,13 +64,68 @@ const Create: NextPage = () => {
     event.preventDefault();
   };
 
-  const handleSubmit = () => {
-    if (limit == true) {
+  const handleSubmit = async () => {
+    if (limit === true) {
       alert("You've reached your 24hrs posting limit. Try again later.");
+      return;
     }
-    if (limit == false && videoUrl.length > 0 && thumbnailUrl.length > 0) {
-      //post
+    if (limit === false && videoUrl.length > 0 && thumbnailUrl.length > 0 && file) {
+      try {
+        // Fetch the thumbnail blob
+        const thumbnailBlob = await fetch(thumbnailUrl).then(res => res.blob());
+        console.log("thumbnailBlob", thumbnailBlob);
+        console.log("videoBlob", file);
+
+        // Upload video
+        const videoPath = await uploadToBunny(file, "video");
+        console.log("videoPath", videoPath);
+
+        // Upload thumbnail
+        const thumbnailPath = await uploadToBunny(thumbnailBlob, "thumbnail");
+        console.log("thumbnailPath", thumbnailPath);
+
+        if (videoPath && thumbnailPath) {
+          // Insert record into '3sec' table
+          const res = await insertVideo(videoPath, thumbnailPath, null);
+          if (res) alert("Video uploaded successfully!");
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+        alert("Failed to upload video. Please try again.");
+      }
     }
+  };
+
+  const uploadToBunny = async (file: File | Blob, type: "video" | "thumbnail") => {
+    const now = new Date().getTime();
+    let bunnyUrl, pullZoneUrl, contentType;
+
+    if (type === "video") {
+      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.mp4`;
+      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.mp4`;
+      contentType = "video/mp4";
+    } else if (type === "thumbnail") {
+      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.jpg`;
+      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.jpg`;
+      contentType = "image/jpeg";
+    } else {
+      throw new Error("Unsupported file type");
+    }
+
+    const response = await fetch(bunnyUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${ACCESS_KEY ?? ""}`,
+        "Content-Type": contentType,
+      },
+      body: file,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload ${type}`);
+    }
+
+    return pullZoneUrl;
   };
 
   const handleValidationFailure = (errors: string[]) => {
@@ -180,7 +241,7 @@ const Create: NextPage = () => {
                 </div>
                 {posts && posts.length > 0 && (
                   <div className="flex flex-row gap-1">
-                    Last posted 
+                    Last posted
                     <span className="text-primary font-semibold">
                       <TimeAgo timestamp={posts[0].created_at} />
                     </span>
