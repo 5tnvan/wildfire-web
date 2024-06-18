@@ -10,10 +10,6 @@ import { PlayIcon } from "@heroicons/react/24/solid";
 export const ParallaxScrollItem = ({ data }: any) => {
   return (
     <>
-      {/* PLAY ICON */}
-      <div className="absolute right-1/2 h-full flex justify-center bg-opacity-90">
-        <PlayIcon width={48} className="" color="white" />
-      </div>
       {/* WATCH COUNT */}
       <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
         <EyeIcon width={20} />
@@ -23,7 +19,7 @@ export const ParallaxScrollItem = ({ data }: any) => {
       </div>
       <Image
         src={data.thumbnail_url}
-        className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0 opacity-50"
+        className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0"
         height={960}
         width={540}
         alt={data.profile.username}

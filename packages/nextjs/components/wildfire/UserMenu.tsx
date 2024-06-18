@@ -75,7 +75,7 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
               </li>
             )}
             {launchApp && (
-              <li className="bg-primary rounded-full">
+              <li className="bg-base-200 rounded-full">
                 <Link href={"/feed"} className="flex flex-row justify-between">
                   <Image alt="wildpay" src="/fire-icon-36-36.png" width={18} height={18} />
                   <span>Launch App</span>

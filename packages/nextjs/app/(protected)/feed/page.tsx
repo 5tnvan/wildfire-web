@@ -44,7 +44,7 @@ const Feed: NextPage = () => {
           </div>
         )}
 
-        {/* LOADING FEED */}
+        {/* INITAL LOADING FEED */}
         {!loadingFollows &&
           following &&
           following.length > 0 &&
@@ -58,7 +58,12 @@ const Feed: NextPage = () => {
 
         {/* RENDER FEED */}
         {userFeed && userFeed.length > 0 && (
-          <ParallaxScroll data={userFeed} onCta={handleParalaxClick} fetchMore={() => fetchMore()} />
+          <ParallaxScroll
+            data={userFeed}
+            onCta={handleParalaxClick}
+            fetchMore={() => fetchMore()}
+            loading={loadingUserFeed}
+          />
         )}
 
         {/* MODAL */}

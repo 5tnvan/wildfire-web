@@ -6,7 +6,7 @@ import { useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import { cn } from "~~/utils/cn";
 
-export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
+export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const lastItemId = data[data.length - 1]?.id;
 
@@ -42,7 +42,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
     const options = {
       root: gridRef.current,
       rootMargin: "0px",
-      threshold: 0.8, // Multiple thresholds for more accurate detection
+      threshold: 0.5, // Multiple thresholds for more accurate detection
     };
 
     const observer = new IntersectionObserver(callback, options);
@@ -99,6 +99,18 @@ export const ParallaxScroll = ({ data, onCta, fetchMore }: any) => {
           ))}
         </div>
       </div>
+      {/* FETCH MORE LOADING FEED */}
+      {loading && (
+        <div className="flex flex-row justify-evenly items-end mt-5">
+          <div className="grow flex flex-row justify-center">
+            <span className="loading loading-dots loading-sm"></span>
+          </div>
+          <div className="grow"></div>
+          <div className="grow flex flex-row justify-center">
+            <span className="loading loading-dots loading-sm"></span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
