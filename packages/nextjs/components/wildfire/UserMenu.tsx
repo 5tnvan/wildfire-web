@@ -58,9 +58,10 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
               </Link>
             </li>
             {wildpay && (
-              <li className="bg-primary rounded-full">
+              <li className="bg-blue-600 rounded-full">
                 <Link
-                  href="https://www.wildpay.app/home"
+                  href={"https://www.wildpay.app/" + profile.username}
+                  target="new"
                   onClick={closeDropdown}
                   className="flex flex-row justify-between"
                 >

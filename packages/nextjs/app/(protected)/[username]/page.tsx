@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { NextPage } from "next";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
-import FollowsModal from "~~/components/wildfire/FollowsModal";
+import FollowersModal from "~~/components/wildfire/FollowersModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
@@ -71,7 +71,7 @@ const Profile: NextPage = () => {
     const options = {
       root: carousellRef.current,
       rootMargin: "0px",
-      threshold: 0.8, // Multiple thresholds for more accurate detection
+      threshold: 0.3, // Multiple thresholds for more accurate detection
     };
 
     const observer = new IntersectionObserver(callback, options);
@@ -143,7 +143,7 @@ const Profile: NextPage = () => {
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
         {isFollowsModalOpen && (
-          <FollowsModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
+          <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
 
         {/* NO FEED TO SHOW */}
@@ -155,7 +155,7 @@ const Profile: NextPage = () => {
           </div>
         )}
 
-        {/* LOADING FEED */}
+        {/* LOADING INITIAL FEED */}
         {loadingFeed && feed && feed.length == 0 && (
           <div className="flex flex-row justify-center items-center h-screen-custom w-full grow">
             <span className="loading loading-ring loading-lg"></span>
@@ -164,15 +164,22 @@ const Profile: NextPage = () => {
 
         {/* RENDER FEED */}
         {feed && feed.length > 0 && (
-          <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
-            {feed.map((thumb: any, index: any) => (
-              <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
-            ))}
-          </div>
+          <>
+            <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
+              {feed.map((thumb: any, index: any) => (
+                <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
+              ))}
+            </div>
+          </>
         )}
-
+        {/* FETCH MORE */}
+        {/* {loadingFeed && (
+          <div className="flex flex-row justify-center items-center h-screen-custom grow mx-4">
+            <span className="loading loading-dots loading-sm"></span>
+          </div>
+        )} */}
         <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
-          <div className="stat">
+          <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
                 <div className="avatar">
@@ -192,8 +199,8 @@ const Profile: NextPage = () => {
             <div className="stat-title">{levelName}</div>
             <div className="stat-value text-3xl">{profile.username}</div>
             {/* <div className="stat-desc">Level up</div> */}
-          </div>
-          <div className="stat" onClick={() => setFollowsModalOpen(true)}>
+          </Link>
+          <div className="stat cursor-pointer hover:opacity-85" onClick={() => setFollowsModalOpen(true)}>
             <div className="stat-figure text-primary">
               <UserIcon width={60} />
             </div>
@@ -203,9 +210,9 @@ const Profile: NextPage = () => {
               {!loadingFollows && followers && followers.length == 0 && "0"}
               {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
             </div>
-            {/* <div className="stat-desc">See followers</div> */}
+            <div className="stat-desc">See followers</div>
           </div>
-          <div className="stat">
+          <Link href={"https://www.wildpay.app/" + profile?.username} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-primary">
               <CircleStackIcon width={60} />
             </div>
@@ -215,7 +222,7 @@ const Profile: NextPage = () => {
             <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
               {balance} ETH
             </Link>
-          </div>
+          </Link>
           <div className="px-5 my-2">
             <div className="btn bg-base-200 w-full relative" onClick={handleFollow}>
               {loadingFollows && <span className="loading loading-ring loading-sm"></span>}

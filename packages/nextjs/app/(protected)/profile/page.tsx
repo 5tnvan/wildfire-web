@@ -8,7 +8,8 @@ import { NextPage } from "next";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import AvatarModal from "~~/components/wildfire/AvatarModal";
-import FollowsModal from "~~/components/wildfire/FollowsModal";
+import FollowersModal from "~~/components/wildfire/FollowersModal";
+import FollowingModal from "~~/components/wildfire/FollowingModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
@@ -25,7 +26,13 @@ const Profile: NextPage = () => {
 
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
-  const { loading: loadingFollows, followers, followed, refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
+  const {
+    loading: loadingFollows,
+    followers,
+    following,
+    followed,
+    refetchAuthUserFollows,
+  } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
   const { loading: loadingFeed, feed, fetchMore } = useProfileFeed();
@@ -79,7 +86,7 @@ const Profile: NextPage = () => {
       const error = await deleteFollow(profile.id, profile.id);
       if (!error) {
         refetchAuthUserFollows();
-        closeFollowsModal();
+        closeFollowersModal();
       }
     }
   };
@@ -108,13 +115,20 @@ const Profile: NextPage = () => {
   };
 
   //FOLLOWS MODAL
-  const [isFollowsModalOpen, setFollowsModalOpen] = useState(false);
+  const [isFollowersModalOpen, setFollowersModalOpen] = useState(false);
 
-  const closeFollowsModal = () => {
-    setFollowsModalOpen(false);
+  const closeFollowersModal = () => {
+    setFollowersModalOpen(false);
   };
 
   //FOLLOWS MODAL
+  const [isFollowingModalOpen, setFollowingModalOpen] = useState(false);
+
+  const closeFollowingModal = () => {
+    setFollowingModalOpen(false);
+  };
+
+  //AVATAR MODAL
   const [isAvatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const closeAvatarModal = () => {
@@ -126,9 +140,10 @@ const Profile: NextPage = () => {
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
-      {isFollowsModalOpen && (
-        <FollowsModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
+      {isFollowersModalOpen && (
+        <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowersModal} onCta={handleUnfollow} />
       )}
+      {isFollowingModalOpen && <FollowingModal data={{ profile, following, followed }} onClose={closeFollowingModal} />}
       {isAvatarModalOpen && <AvatarModal onClose={closeAvatarModal} />}
 
       {/* NO FEED TO SHOW */}
@@ -191,7 +206,7 @@ const Profile: NextPage = () => {
           <div className="stat-value text-3xl">{levelName}</div>
           {/* <div className="stat-desc">Level up</div> */}
         </div>
-        <div className="stat" onClick={() => setFollowsModalOpen(true)}>
+        <div className="stat cursor-pointer" onClick={() => setFollowersModalOpen(true)}>
           <div className="stat-figure text-primary">
             <UserIcon width={60} />
           </div>
@@ -201,19 +216,28 @@ const Profile: NextPage = () => {
             {!loadingFollows && followers && followers.length == 0 && "0"}
             {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
           </div>
-          {/* <div className="stat-desc">See followers</div> */}
+          <div className="stat-desc">See followers</div>
         </div>
-        <div className="stat">
+        <div className="stat cursor-pointer" onClick={() => setFollowingModalOpen(true)}>
+          <div className="stat-figure text-primary">
+            <UserIcon width={60} />
+          </div>
+          <div className="stat-title">Following</div>
+          <div className="stat-value text-primary">
+            {!loadingFollows && following && following.length > 0 && <FormatNumber number={following.length} />}
+            {!loadingFollows && following && following.length == 0 && "0"}
+            {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
+          </div>
+          <div className="stat-desc">See following</div>
+        </div>
+        <Link href={"https://www.wildpay.app/" + profile?.username} target="new" className="stat">
           <div className="stat-figure text-primary">
             <CircleStackIcon width={60} />
           </div>
-
           <div className="stat-title">Balance</div>
           <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
-          <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
-            {balance} ETH
-          </Link>
-        </div>
+          <div className="stat-desc">{balance} ETH</div>
+        </Link>
         <div className="stat">
           <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
             Tip Now

@@ -28,7 +28,7 @@ const Watch: NextPage = () => {
     const options = {
       root: sliderRef.current,
       rootMargin: "0px",
-      threshold: 0.8, // Multiple thresholds for more accurate detection
+      threshold: 0.3, // Multiple thresholds for more accurate detection
     };
 
     const observer = new IntersectionObserver(callback, options);

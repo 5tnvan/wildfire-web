@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";
@@ -8,7 +8,7 @@ import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { AuthUserContext } from "~~/app/context";
-import { useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
 
@@ -98,6 +98,12 @@ const TipModal = ({ data, onClose }: any) => {
 
   const { writeContractAsync: pay, isMining } = useScaffoldWriteContract("WildpayEthContract");
 
+  const insideRef = useRef<any>(null);
+
+  useOutsideClick(insideRef, () => {
+    handleClose();
+  });
+
   const handleClose = () => {
     onClose();
   };
@@ -108,7 +114,7 @@ const TipModal = ({ data, onClose }: any) => {
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
-      <div id="wildui-fastpay" className="bg-base-300 rounded-lg p-5">
+      <div ref={insideRef} id="wildui-fastpay" className="bg-base-300 rounded-lg p-5">
         {data && data.wallet_id && !successHash && (
           <>
             {/* AVATAR */}

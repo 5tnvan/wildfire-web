@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Avatar } from "../Avatar";
 import { ChevronLeftIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
+import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import {
   checkFileExists,
   deleteProfileAvatars,
@@ -42,7 +43,7 @@ const AvatarModal = ({ onClose }: any) => {
 
       // delete old file from storage
       if (fileExists?.bool) {
-        deleteProfileAvatars(fileExists?.data); 
+        deleteProfileAvatars(fileExists?.data);
       }
 
       // upload new avatar
@@ -75,13 +76,22 @@ const AvatarModal = ({ onClose }: any) => {
     refetchAuthUserFollows();
   };
 
+  const insideRef = useRef<any>(null);
+
+  useOutsideClick(insideRef, () => {
+    handleClose();
+  });
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
       <div onClick={handleClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2">
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
-      <div className="content p-8 rounded-lg bg-base-200 overflow-scroll flex flex-col items-center mb-2 gap-1">
+      <div
+        ref={insideRef}
+        className="content p-8 rounded-lg bg-base-200 overflow-scroll flex flex-col items-center mb-2 gap-1"
+      >
         <Avatar profile={profile} width={16} height={16} />
         <div className="mb-2 font-semibold">{profile.username}</div>
         {screen == "change-avatar" && (
