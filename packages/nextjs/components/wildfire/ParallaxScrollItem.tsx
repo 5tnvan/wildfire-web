@@ -5,7 +5,6 @@ import { Avatar } from "../Avatar";
 import FormatNumber from "../wildfire/FormatNumber";
 import { TimeAgo } from "../wildfire/TimeAgo";
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
 
 export const ParallaxScrollItem = ({ data }: any) => {
   return (
