@@ -212,7 +212,7 @@ const Profile: NextPage = () => {
             </div>
             <div className="stat-desc">See followers</div>
           </div>
-          <Link href={"https://www.wildpay.app/" + profile?.username} className="stat cursor-pointer hover:opacity-85">
+          <Link href={"https://www.wildpay.app/" + profile?.username} target="new" className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-primary">
               <CircleStackIcon width={60} />
             </div>

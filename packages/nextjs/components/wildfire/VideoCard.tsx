@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
+import TipModal from "./TipModal";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
@@ -27,6 +28,13 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+
+  //TIP MODAL
+  const [isTipModalOpen, setTipModalOpen] = useState(false);
+
+  const closeTipModal = () => {
+    setTipModalOpen(false);
+  };
 
   //manually pause video
   const handleTogglePlay = () => {
@@ -121,6 +129,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
 
   return (
     <div className="infinite-scroll-item flex flex-row justify-center" data-index={index}>
+      {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
       <div className="video-wrapper relative">
         <video
           id={index}
@@ -168,7 +177,9 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
         </div>
         {/* VIDEO INFO */}
         <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
-          <div className="btn btn-primary w-full mb-2">Tip Now</div>
+          <div className="btn btn-primary w-full mb-2" onClick={() => setTipModalOpen(true)}>
+            Tip Now
+          </div>
           {/* COMMENTS */}
           <div className="grow m-h-[180px] overflow-scroll relative">
             {data["3sec_comments"].length == 0 && !tempComment && (

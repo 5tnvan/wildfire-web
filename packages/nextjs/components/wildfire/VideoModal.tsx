@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
+import TipModal from "./TipModal";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
@@ -31,6 +32,13 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+
+  //TIP MODAL
+  const [isTipModalOpen, setTipModalOpen] = useState(false);
+
+  const closeTipModal = () => {
+    setTipModalOpen(false);
+  };
 
   useOutsideClick(insideRef, () => {
     handleClose();
@@ -127,6 +135,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
           Back
         </div>
         <div ref={insideRef} className="flex">
+          {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
           {/* VIDEO PLAYER */}
           <div className="relative">
             <video
@@ -176,7 +185,9 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             </div>
             {/* VIEW LIKES COMMENTS */}
             <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
-              <div className="btn btn-primary w-full mb-2">Tip Now</div>
+              <div className="btn btn-primary w-full mb-2" onClick={() => setTipModalOpen(true)}>
+                Tip Now
+              </div>
               {/* COMMENTS */}
               <div className="grow m-h-[180px] overflow-scroll relative">
                 {/* If no comments yet */}
