@@ -22,7 +22,7 @@ const FollowingModal = ({ data, onClose }: any) => {
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
-      <div ref={insideRef} className="content p-5 rounded-lg bg-base-200 w-1/2 h-2/3 overflow-scroll relative">
+      <div ref={insideRef} className="content p-5 rounded-lg bg-base-200 w-full md:w-1/2 h-2/3 overflow-scroll relative">
         <div className="flex flex-col items-center mb-2">
           <div className="font-semibold items-center">@{data.profile.username}</div>
           <div className="items-center">{data.following.length} following</div>

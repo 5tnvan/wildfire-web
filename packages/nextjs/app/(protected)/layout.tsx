@@ -28,7 +28,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div id="auth-ui" className="flex flex-row">
+      <div id="auth-ui" className="flex flex-col md:flex-row">
         <Sidebar />
         <div id="auth-ui-right-wrapper" className="w-full">
           <Topbar />

@@ -129,12 +129,12 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div onClick={handleClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2">
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col md:flex-row items-center justify-center z-50">
+        <div onClick={handleClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2 z-10">
           <ChevronLeftIcon width={20} color="black" />
           Back
         </div>
-        <div ref={insideRef} className="flex">
+        <div ref={insideRef} className="md:flex">
           {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
           {/* VIDEO PLAYER */}
           <div className="relative">
@@ -164,7 +164,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             )}
           </div>
           {/* RIGHT PANEL */}
-          <div className="video-info ml-2 self-end">
+          <div className="hidden md:block video-info ml-2 self-end">
             {/* USER LOCATION TIME */}
             <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
               <Link href={`/${data.profile.username}`} className="flex flex-row items-center gap-2">
@@ -184,7 +184,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
               </div>
             </div>
             {/* VIEW LIKES COMMENTS */}
-            <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
+            <div className="w-full md:w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
               <div className="btn btn-primary w-full mb-2" onClick={() => setTipModalOpen(true)}>
                 Tip Now
               </div>

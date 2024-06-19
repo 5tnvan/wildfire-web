@@ -90,7 +90,7 @@ const AvatarModal = ({ onClose }: any) => {
       </div>
       <div
         ref={insideRef}
-        className="content p-8 rounded-lg bg-base-200 overflow-scroll flex flex-col items-center mb-2 gap-1"
+        className="content w-full md:w-fit p-8 rounded-lg bg-base-200 overflow-scroll flex flex-col items-center mb-2 gap-1"
       >
         <Avatar profile={profile} width={16} height={16} />
         <div className="mb-2 font-semibold">{profile.username}</div>

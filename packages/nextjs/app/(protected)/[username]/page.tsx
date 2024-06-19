@@ -138,7 +138,7 @@ const Profile: NextPage = () => {
 
   if (profile) {
     return (
-      <div className="flex flex-row items-start ">
+      <div className="flex flex-col-reverse md:flex-row items-start ">
         {/* MODALS */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
@@ -148,8 +148,8 @@ const Profile: NextPage = () => {
 
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feed && feed.length == 0 && (
-          <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
-            <Link className="btn btn-base-100" href={"/watch"}>
+          <div className="flex flex-row justify-center items-center w-full md:h-screen-custom grow">
+            <Link className="mt-5 md:mt-0 btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
             </Link>
           </div>
@@ -178,7 +178,7 @@ const Profile: NextPage = () => {
             <span className="loading loading-dots loading-sm"></span>
           </div>
         )} */}
-        <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
+        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-secondary">
               {profile?.avatar_url && (

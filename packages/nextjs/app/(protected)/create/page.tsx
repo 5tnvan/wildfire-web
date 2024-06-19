@@ -218,7 +218,7 @@ const Create: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-row p-2 pt-0 h-screen-custom">
+    <div className="flex flex-col md:flex-row p-2 pt-0 h-screen-custom">
       <div className="flex flex-col">
         {/* DRAG N DROP */}
         <div
@@ -271,8 +271,8 @@ const Create: NextPage = () => {
       </div>
 
       {/* PREVIEW */}
-      <div className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow ml-2 relative">
-        <div className="flex font-semibold">Preview</div>
+      <div className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow md:ml-2 relative mt-2 md:mt-0">
+        <div className="flex font-semibold mb-2">Preview</div>
         {!videoUrl && (
           <div className="flex flex-col justify-center items-center rounded-lg grow">
             <div className="flex flex-col justify-center items-center h-[640px] w-[360px] bg-neutral rounded-lg">
@@ -292,9 +292,9 @@ const Create: NextPage = () => {
           </div>
         )}
         {videoUrl && (
-          <div className="flex items-center justify-between flex-row rounded-lg grow w-full">
+          <div className="flex flex-col md:flex-row items-center justify-between rounded-lg grow w-full">
             {thumbnailUrl && (
-              <div className="w-1/3 flex flex-col items-center grow">
+              <div className="hidden md:flex w-1/3 flex-col items-center grow">
                 <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-[70px] glow" />
                 <span className="text-sm">Thumbnail</span>
               </div>
@@ -310,12 +310,12 @@ const Create: NextPage = () => {
               />
             </div>
             {limit == false && (
-              <div className="flex flex-col w-1/3 ml-3 gap-2">
-                <div className="btn btn-outline m-auto" onClick={() => setIsLocationModalOpen(true)}>
+              <div className="flex flex-col w-full ml-0 mt-3 md:mt-0 md:w-1/3 md:ml-3 gap-2">
+                <div className="btn btn-outline m-auto w-full md:w-auto" onClick={() => setIsLocationModalOpen(true)}>
                   <MapPinIcon width={14} />
                   {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
                 </div>
-                <div className="btn btn-primary m-auto px-12" onClick={handleSubmitPost}>
+                <div className="btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
                   Post Now
                 </div>
               </div>

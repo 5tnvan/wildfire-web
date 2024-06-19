@@ -34,7 +34,31 @@ const Feed: NextPage = () => {
 
   return (
     <>
-      <div id="feed-page" className="flex flex-row">
+      <div id="feed-page" className="flex flex-col md:flex-row-reverse">
+        {/* FOLLOWING */}
+        <div className="flex flex-row md:flex-col gap-2 md:gap-3 md:h-screen-custom overflow-scroll pl-2 md:pl-0 pr-2">
+          {following?.map((following: any, index: number) => (
+            <Link key={index} href={"/" + following.following.username} className="">
+              <div className="">
+                {following.following.avatar_url && (
+                  <div className="avatar">
+                    <div className="w-10 md:w-12 rounded-full">
+                      <Image src={following.following.avatar_url} alt="avatar" width={20} height={20} priority />
+                    </div>
+                  </div>
+                )}
+                {!following.following.avatar_url && (
+                  <div className="avatar placeholder">
+                    <div className="bg-base-100 text-primary-content rounded-full w-10 md:w-12">
+                      <span className="text-3xl">{following.following.username.charAt(0).toUpperCase()}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+
         {/* FIRST TIME USER */}
         {!loadingFollows && following && following.length == 0 && (
           <div className="flex flex-row justify-center items-center grow">
@@ -68,30 +92,6 @@ const Feed: NextPage = () => {
 
         {/* MODAL */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
-
-        {/* FOLLOWING */}
-        <div className="flex flex-col gap-3 h-screen-custom overflow-scroll pr-2">
-          {following?.map((following: any, index: number) => (
-            <Link key={index} href={"/" + following.following.username} className="">
-              <div className="">
-                {following.following.avatar_url && (
-                  <div className="avatar">
-                    <div className="w-12 rounded-full">
-                      <Image src={following.following.avatar_url} alt="avatar" width={20} height={20} priority />
-                    </div>
-                  </div>
-                )}
-                {!following.following.avatar_url && (
-                  <div className="avatar placeholder">
-                    <div className="bg-base-100 text-primary-content rounded-full w-12">
-                      <span className="text-3xl">{following.following.username.charAt(0).toUpperCase()}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
       </div>
     </>
   );

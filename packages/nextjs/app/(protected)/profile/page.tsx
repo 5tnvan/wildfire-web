@@ -136,7 +136,7 @@ const Profile: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-row items-start ">
+    <div className="flex flex-col-reverse md:flex-row items-start ">
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
@@ -164,7 +164,7 @@ const Profile: NextPage = () => {
 
       {/* RENDER FEED */}
       {feed && feed.length > 0 && (
-        <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
+        <div className="carousel carousel-center rounded-box w-full md:ml-2" ref={carousellRef}>
           {feed.map((thumb: any, index: any) => (
             <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
           ))}
@@ -172,7 +172,7 @@ const Profile: NextPage = () => {
       )}
 
       {/* STAT */}
-      <div className="stats shadow flex flex-col grow w-[350px] h-full py-5 mx-2">
+      <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
         <div className="stat">
           <div className="stat-figure text-secondary">
             {profile?.avatar_url && (

@@ -128,7 +128,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
   }, [isPlaying]);
 
   return (
-    <div className="infinite-scroll-item flex flex-row justify-center" data-index={index}>
+    <div className="infinite-scroll-item flex flex-col md:flex-row justify-center" data-index={index}>
       {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
       <div className="video-wrapper relative">
         <video
@@ -157,7 +157,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           </div>
         )}
       </div>
-      <div className="video-info ml-2 self-end">
+      <div className="video-info hidden md:block ml-2 self-end">
         {/* USER INFO */}
         <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
           <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
