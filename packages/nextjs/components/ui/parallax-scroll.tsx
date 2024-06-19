@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { ParallaxScrollItem } from "../wildfire/ParallaxScrollItem";
-import { useScroll, useTransform } from "framer-motion";
+// import { useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import { cn } from "~~/utils/cn";
 
@@ -11,14 +11,14 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
   const lastItemId = data[data.length - 1]?.id;
 
   //parallax scroll
-  const { scrollYProgress } = useScroll({
-    container: gridRef,
-    offset: ["start start", "end start"],
-  });
+  // const { scrollYProgress } = useScroll({
+  //   container: gridRef,
+  //   offset: ["start start", "end start"],
+  // });
 
-  const translateFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const translateSecond = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const translateThird = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  // const translateFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  // const translateSecond = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  // const translateThird = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
   const firstPart = data.filter((_: any, index: number) => index % 3 === 0);
   const secondPart = data.filter((_: any, index: number) => index % 3 === 1);
@@ -61,7 +61,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
           {firstPart.map((item: any) => (
             <motion.div
               data-index={item.id}
-              style={{ y: translateFirst }}
+              // style={{ y: translateFirst }}
               key={`grid-1-${item.id}`}
               className="grid-item relative bg-black hover:opacity-85 cursor-pointer rounded-lg"
               onClick={() => {
@@ -76,7 +76,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
           {secondPart.map((item: any) => (
             <motion.div
               data-index={item.id}
-              style={{ y: translateSecond }}
+              // style={{ y: translateSecond }}
               key={`grid-2-${item.id}`}
               className="grid-item relative bg-black hover:opacity-85 cursor-pointer rounded-lg"
               onClick={() => onCta(item.id)}
@@ -89,7 +89,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
           {thirdPart.map((item: any) => (
             <motion.div
               data-index={item.id}
-              style={{ y: translateThird }}
+              // style={{ y: translateThird }}
               key={`grid-3-${item.id}`}
               className="grid-item relative bg-black hover:opacity-85 cursor-pointer rounded-lg"
               onClick={() => onCta(item.id)}
@@ -101,11 +101,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
       </div>
       {/* FETCH MORE LOADING FEED */}
       {loading && (
-        <div className="flex flex-row justify-evenly items-end mt-5">
-          <div className="grow flex flex-row justify-center">
-            <span className="loading loading-dots loading-sm"></span>
-          </div>
-          <div className="grow"></div>
+        <div className="flex flex-row justify-evenly items-end my-5">
           <div className="grow flex flex-row justify-center">
             <span className="loading loading-dots loading-sm"></span>
           </div>

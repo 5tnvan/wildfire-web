@@ -139,6 +139,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           onClick={handleTogglePlay}
           onEnded={handleVideoEnd}
           muted={false}
+          controls={false}
         ></video>
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">

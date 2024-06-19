@@ -145,6 +145,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
               className="w-auto h-screen rounded-lg"
               onClick={handleTogglePlay}
               onEnded={handleVideoEnd}
+              controls={false}
             />
             {showWatchAgain && (
               <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">

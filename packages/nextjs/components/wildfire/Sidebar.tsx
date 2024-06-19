@@ -13,6 +13,9 @@ export const Sidebar = () => {
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
   return (
     <>
       <div id="auth-ui-sidebar-sm" className="md:hidden text-base-content p-3 bg-base-200">
@@ -34,7 +37,7 @@ export const Sidebar = () => {
               style={{ width: "70px", height: "auto" }}
             />
           </Link>
-          <Link href="/create" className="p-3 rounded-full bg-base-100">
+          <Link href="/create" className="p-3 rounded-full bg-base-100" onClick={closeMenu}>
             <VideoCameraIcon width={15} />
           </Link>
         </div>
@@ -42,17 +45,19 @@ export const Sidebar = () => {
           <div id="auth-ui-sidebar-md" className="w-full text-base-content">
             <ul className="grow text-base">
               <li className="my-1">
-                <Link href="/feed" className="btn bg-zinc-200 dark:bg-zinc-950 w-full">
+                <Link href="/feed" className="btn bg-zinc-200 dark:bg-zinc-950 w-full" onClick={closeMenu}>
                   <HomeIcon width={23} /> Feed
                 </Link>
               </li>
               <li className="my-1">
-                <Link href="/watch" className="btn bg-zinc-200 dark:bg-zinc-950 w-full">
+                <Link href="/watch" className="btn bg-zinc-200 dark:bg-zinc-950 w-full" onClick={closeMenu}>
                   <EyeIcon width={23} /> Watch
                 </Link>
               </li>
             </ul>
-            <SwitchTheme className={`pointer-events-auto`} />
+            <div onClick={closeMenu}>
+              <SwitchTheme className={`pointer-events-auto`} />
+            </div>
           </div>
         )}
       </div>
