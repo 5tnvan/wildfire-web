@@ -124,7 +124,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
           onClick={handleTogglePlay}
           onEnded={handleVideoEnd}
           muted={isMuted}
-          controls={false}
         ></video>
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
@@ -142,7 +141,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
             <PlayIcon className="h-16 w-16 text-white" />
           </div>
         )}
-        <div className="absolute inset-0 items-start p-2" onClick={handleTogglePlay}>
+        <div className="absolute inset-0 items-start p-2">
           <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
             <Avatar profile={data.profile} width={10} height={10} />
             <div className="font-semibold text-white">{data.profile.username}</div>

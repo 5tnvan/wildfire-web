@@ -8,9 +8,13 @@ import { useFeed } from "~~/hooks/wildfire/useFeed";
 const Watch: NextPage = () => {
   const { loading: loadingFeed, feed, fetchMore } = useFeed();
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  console.log(feed);
+  // Toggle mute state
+  const handleOnCtaMute = (mute: any) => {
+    setIsMuted(mute);
+  };
 
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
@@ -57,6 +61,8 @@ const Watch: NextPage = () => {
               lastVideoIndex={feed.length - 1}
               getVideos={fetchMore}
               isPlaying={index === playingIndex}
+              isMuted={isMuted}
+              onCtaMute={handleOnCtaMute}
             />
           ))}
         </div>

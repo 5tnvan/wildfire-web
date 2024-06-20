@@ -19,6 +19,7 @@ const Feed: NextPage = () => {
   //STATES
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   const handleParalaxClick = (id: any) => {
     console.log("clicked", id);
@@ -30,6 +31,11 @@ const Feed: NextPage = () => {
   const closeModal = () => {
     setIsVideoModalOpen(false);
     setSelectedVideo(null);
+  };
+
+  // Toggle mute state
+  const handleOnCtaMute = (mute: any) => {
+    setIsMuted(mute);
   };
 
   return (
@@ -87,6 +93,8 @@ const Feed: NextPage = () => {
             onCta={handleParalaxClick}
             fetchMore={() => fetchMore()}
             loading={loadingUserFeed}
+            isMuted={isMuted}
+            onCtaMute={handleOnCtaMute}
           />
         )}
 

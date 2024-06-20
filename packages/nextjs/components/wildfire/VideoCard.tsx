@@ -1,18 +1,21 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
 import TipModal from "./TipModal";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
 import { AuthUserContext } from "~~/app/context";
 import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
 import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
-const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) => {
+const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos, onCtaMute }: any) => {
+  const router = useRouter();
+
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
 
@@ -34,6 +37,11 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
 
   const closeTipModal = () => {
     setTipModalOpen(false);
+  };
+
+  // Toggle mute state globally
+  const handleToggleMute = () => {
+    onCtaMute(!isMuted);
   };
 
   //manually pause video
@@ -114,8 +122,6 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
   useEffect(() => {
     if (videoRef.current) {
       if (isPlaying) {
-        console.log("data", data);
-        console.log("data", data.liked, temporaryLiked);
         setLoopCount(0);
         setShowWatchAgain(false);
         videoRef.current.play();
@@ -138,8 +144,7 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
           className="video rounded-lg"
           onClick={handleTogglePlay}
           onEnded={handleVideoEnd}
-          muted={false}
-          controls={false}
+          muted={isMuted}
         ></video>
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
@@ -157,6 +162,46 @@ const VideoCard = ({ index, data, isPlaying, lastVideoIndex, getVideos }: any) =
             <PlayIcon className="h-16 w-16 text-white" />
           </div>
         )}
+        <div className="absolute inset-0 items-start p-2">
+          <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
+            <Avatar profile={data.profile} width={10} height={10} />
+            <div className="font-semibold text-white">{data.profile.username}</div>
+          </Link>
+        </div>
+        <div className="absolute top-2 right-2">
+          <div className=" p-2 text-white" onClick={handleToggleMute}>
+            {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
+          </div>
+        </div>
+        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full" onClick={handleTogglePlay}>
+          {/* BOTTOM INFO */}
+          <div className="flex flex-row gap-2 justify-between w-full">
+            <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
+              <EyeIcon width={20} />
+              <span className="text-base font-normal">
+                <FormatNumber number={data["3sec_views"][0]?.view_count} />
+              </span>
+            </div>
+            <div
+              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
+              onClick={() => router.push("/login")}
+            >
+              <FireIcon width={20} />
+              <span className="text-base font-normal">
+                <FormatNumber number={data["3sec_fires"][0]?.count} />
+              </span>
+            </div>
+            <div
+              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
+              onClick={() => router.push("/login")}
+            >
+              <ChatBubbleOvalLeftEllipsisIcon width={20} />
+              <span className="text-base font-normal">
+                <FormatNumber number={commentCount} />
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="video-info hidden md:block ml-2 self-end">
         {/* USER INFO */}
