@@ -17,10 +17,7 @@ const Landing: NextPage = () => {
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center py-8 lg:py-16">
             <h1 className="text-5xl font-bold">wildfire</h1>
             <h3 className="text-lg">A 3 seconds video app that pays off</h3>
-            <Link
-              href="https://youtube.com/clip/UgkxjdMK-9RyykIG7JHpuWkTQX4h8w7Mlbr6?si=UsxzkYpD2LuV91O8"
-              className="btn btn-outline text-base"
-            >
+            <Link href="/preview" className="btn btn-outline text-base">
               Watch Preview
             </Link>
           </div>
