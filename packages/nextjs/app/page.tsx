@@ -67,7 +67,7 @@ const Landing: NextPage = () => {
               <h2 className="text-left text-balance text-3xl font-semibold tracking-[-0.015em] text-white">
                 Got 3 seconds?
               </h2>
-              <p className="mt-4 text-left  text-base/6 text-neutral-200">
+              <p className="mt-4 text-left  text-base/6 text-neutral-200 text-shadow">
                 Become a Web3 Creator by posting a 3-second video each day.
               </p>
             </div>
