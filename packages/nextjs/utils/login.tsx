@@ -28,7 +28,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `http://3seconds.me/callback`,
+      redirectTo: `https://3seconds.me/callback`,
     },
   });
 
