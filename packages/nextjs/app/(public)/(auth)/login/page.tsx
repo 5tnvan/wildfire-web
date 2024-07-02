@@ -1,12 +1,13 @@
 "use client";
 
 import { useContext, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
-import { login } from "~~/utils/login";
+import { login, signInWithGoogle } from "~~/utils/login";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -82,10 +83,34 @@ const Login: NextPage = () => {
           )}
         </form>
         <div className="flex flex-col items-center my-5">
-          <div>
-            {`Don't have an account? `}
-            <Link href="https://www.wildpay.app/getstarted" className="link">
-              Register with Wildpay
+          <div className="flex flex-col gap-3 items-center justify-center">
+            <button
+              className="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150"
+              onClick={() => signInWithGoogle()}
+            >
+              <Image
+                className="w-6 h-6"
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                loading="lazy"
+                alt="google logo"
+                width={10}
+                height={10}
+              />
+              <span>Login with Google</span>
+            </button>
+            <Link
+              className="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150"
+              href="https://www.wildpay.app/getstarted"
+            >
+              <Image
+                className="w-6 h-6"
+                src="/wildpay-logo.svg"
+                loading="lazy"
+                alt="google logo"
+                width={10}
+                height={10}
+              />
+              <span>Register with Wildpay</span>
             </Link>
           </div>
           {/* <div>

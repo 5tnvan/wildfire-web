@@ -1,13 +1,17 @@
 "use client";
 
+import { useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AuthContext } from "./context";
 import type { NextPage } from "next";
 import { WobbleCard } from "~~/components/ui/wooble-card";
 import { Footer } from "~~/components/wildfire/Footer";
 import { Header } from "~~/components/wildfire/Header";
 
 const Landing: NextPage = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+
   return (
     <>
       <Header />
@@ -16,10 +20,17 @@ const Landing: NextPage = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center py-8 lg:py-16">
             <h1 className="text-5xl font-bold">wildfire</h1>
-            <h3 className="text-lg">A 3 seconds video app that pays off</h3>
-            <Link href="/preview" className="btn btn-outline text-base">
-              Watch Preview
-            </Link>
+            <h3 className="text-lg">A 3 seconds video-sharing app that pays off</h3>
+            {isAuthenticated && (
+              <Link href="/feed" className="btn btn-outline text-base">
+                Launch App
+              </Link>
+            )}
+            {!isAuthenticated && (
+              <Link href="/preview" className="btn btn-outline text-base">
+                Watch Preview
+              </Link>
+            )}
           </div>
           <Image
             src={`/app.png`}

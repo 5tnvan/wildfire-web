@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createClient } from "~~/utils/supabase/server";
 
 /* LOGIN ACTIONS */
@@ -20,4 +21,21 @@ export async function login(formData: FormData) {
   }
 
   console.log("login success");
+}
+
+export async function signInWithGoogle() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `http://localhost:3000/callback`,
+    },
+  });
+
+  if (error) {
+    console.log(error);
+    redirect("/error");
+  }
+
+  redirect(data.url);
 }
