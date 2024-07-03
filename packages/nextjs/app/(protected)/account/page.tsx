@@ -60,7 +60,11 @@ const Account: NextPage = () => {
   );
   const MyVerifiedWalletCTA = () => (
     <>
-      {profile?.wallet_id && <div className="link font-normal" onClick={() => setVerifyWalletModalOpen(true)}>View</div>}
+      {profile?.wallet_id && (
+        <div className="link font-normal" onClick={() => setVerifyWalletModalOpen(true)}>
+          View
+        </div>
+      )}
       {!profile?.wallet_id && (
         <div className="link font-normal" onClick={() => setVerifyWalletModalOpen(true)}>
           Verify Wallet
