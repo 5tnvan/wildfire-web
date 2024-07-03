@@ -121,6 +121,11 @@ img {
   outline-width: 0;
 }
 
+/* STEPS */
+
+.steps-vertical .step:before { height: 322%!important; }
+.steps-vertical .step { grid-template-rows: max-content; }
+
 @media (min-width: 640px) {
   
 }

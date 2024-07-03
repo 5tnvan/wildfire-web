@@ -3,7 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { NextPage } from "next";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
@@ -24,9 +24,10 @@ import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
 const Profile: NextPage = () => {
   const { username } = useParams();
   const price = useGlobalState(state => state.nativeCurrency.price);
+  const router = useRouter();
 
   //CONSUME PROVIDERS
-  const { user } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
@@ -111,10 +112,14 @@ const Profile: NextPage = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleThumbClick = (id: any) => {
-    console.log("id", id);
-    const res = feed.find((item: any) => item.id === id);
-    setSelectedVideo(res);
-    setIsVideoModalOpen(true);
+    if (isAuthenticated == false) {
+      router.push("/login");
+    } else {
+      console.log("id", id);
+      const res = feed.find((item: any) => item.id === id);
+      setSelectedVideo(res);
+      setIsVideoModalOpen(true);
+    }
   };
 
   const closeVideoModal = () => {
@@ -145,7 +150,6 @@ const Profile: NextPage = () => {
         {isFollowsModalOpen && (
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
-
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feed && feed.length == 0 && (
           <div className="flex flex-row justify-center items-center w-full md:h-screen-custom grow">
@@ -212,7 +216,11 @@ const Profile: NextPage = () => {
             </div>
             <div className="stat-desc">See followers</div>
           </div>
-          <Link href={"https://www.wildpay.app/" + profile?.username} target="new" className="stat cursor-pointer hover:opacity-85">
+          <Link
+            href={"https://www.wildpay.app/" + profile?.username}
+            target="new"
+            className="stat cursor-pointer hover:opacity-85"
+          >
             <div className="stat-figure text-primary">
               <CircleStackIcon width={60} />
             </div>
@@ -224,25 +232,39 @@ const Profile: NextPage = () => {
             </Link>
           </Link>
           <div className="px-5 my-2">
-            <div className="btn bg-base-200 w-full relative" onClick={handleFollow}>
-              {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
-              {!loadingFollows && followed == true && (
-                <>
-                  <span>Following</span>
-                  <CheckCircleIcon width={18} className="absolute right-3 opacity-30" />
-                </>
-              )}
-              {!loadingFollows && followed == false && (
-                <>
-                  <span>Follow</span>
-                </>
-              )}
-            </div>
+            {isAuthenticated == false && (
+              <Link href="/login" className="btn bg-base-200 w-full relative">
+                Follow
+              </Link>
+            )}
+            {isAuthenticated == true && (
+              <div className="btn bg-base-200 w-full relative" onClick={handleFollow}>
+                {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
+                {!loadingFollows && followed == true && (
+                  <>
+                    <span>Following</span>
+                    <CheckCircleIcon width={18} className="absolute right-3 opacity-30" />
+                  </>
+                )}
+                {!loadingFollows && followed == false && (
+                  <>
+                    <span>Follow</span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
           <div className="px-5">
-            <div className="btn btn-primary w-full" onClick={() => setTipModalOpen(true)}>
-              Tip Now
-            </div>
+            {isAuthenticated == true && (
+              <div className="btn btn-primary w-full" onClick={() => setTipModalOpen(true)}>
+                Tip Now
+              </div>
+            )}
+            {isAuthenticated == false && (
+              <Link href="/login" className="btn btn-primary w-full">
+                Tip Now
+              </Link>
+            )}
           </div>
         </div>
       </div>

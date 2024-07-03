@@ -7,7 +7,6 @@ import { UserMenu } from "./UserMenu";
 import { AuthContext, AuthUserContext } from "~~/app/context";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
-
 /**
  * Site header
  */

@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AuthContext } from "../context";
 import { Sidebar } from "~~/components/wildfire/Sidebar";
 import { Topbar } from "~~/components/wildfire/Topbar";
@@ -12,6 +12,7 @@ import { Topbar } from "~~/components/wildfire/Topbar";
  **/
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
+  const { username } = useParams();
 
   /* CONSUME CONTEXT */
   const { isAuthenticated } = useContext(AuthContext);
@@ -21,10 +22,10 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
    * Redirect to login, if not authenticated
    */
   useEffect(() => {
-    if (isAuthenticated == false) {
+    if (isAuthenticated == false && !username) {
       router.push("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, username, router]);
 
   return (
     <>
