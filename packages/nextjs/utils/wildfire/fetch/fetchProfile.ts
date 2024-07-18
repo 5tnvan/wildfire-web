@@ -55,3 +55,17 @@ export const fetchProfileMatching = async (username: string) => {
   console.log("profileData", profileData);
   return profileData;
 };
+
+/**
+ * FETCH: fetchProfileFromWalletId(wallet_id)
+ * DB: supabase
+ * TABLE: "profiles"
+ **/
+
+export const fetchProfileFromWalletId = async (wallet_id: string) => {
+  const supabase = createClient();
+
+  const { data: profileData, error } = await supabase.from("profiles").select("*").ilike("wallet_id", wallet_id);
+  if (error) console.log(error);
+  return profileData?.[0] ?? null;
+};

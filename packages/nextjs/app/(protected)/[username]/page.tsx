@@ -11,6 +11,7 @@ import FollowersModal from "~~/components/wildfire/FollowersModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
+import TransactionsModal from "~~/components/wildfire/TransactionsModal";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useUserFeedByUsername } from "~~/hooks/wildfire/useUserFeedByUsername";
@@ -90,6 +91,8 @@ const Profile: NextPage = () => {
       if (!error) {
         refetchProfileFollows();
         refetchAuthUserFollows();
+      } else {
+        console.log("error", error);
       }
     } else {
       setFollowsModalOpen(true);
@@ -141,12 +144,20 @@ const Profile: NextPage = () => {
     setFollowsModalOpen(false);
   };
 
+  //TRANSACTIONS MODAL
+  const [isTransactionsModalOpen, setTransactionsModalOpen] = useState(false);
+
+  const closeTransactionsModal = () => {
+    setTransactionsModalOpen(false);
+  };
+
   if (profile) {
     return (
       <div className="flex flex-col-reverse md:flex-row items-start ">
         {/* MODALS */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
+        {isTransactionsModalOpen && <TransactionsModal data={profile} onClose={closeTransactionsModal} />}
         {isFollowsModalOpen && (
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
@@ -216,21 +227,15 @@ const Profile: NextPage = () => {
             </div>
             <div className="stat-desc">See followers</div>
           </div>
-          <Link
-            href={"https://www.wildpay.app/" + profile?.username}
-            target="new"
-            className="stat cursor-pointer hover:opacity-85"
-          >
+          <div onClick={() => setTransactionsModalOpen(true)} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-primary">
               <CircleStackIcon width={60} />
             </div>
 
             <div className="stat-title">Balance</div>
             <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
-            <Link href={"https://www.wildpay.app/" + profile?.username} className="stat-desc">
-              {balance} ETH
-            </Link>
-          </Link>
+            <div className="stat-desc">{balance} ETH</div>
+          </div>
           <div className="px-5 my-2">
             {isAuthenticated == false && (
               <Link href="/login" className="btn bg-base-200 w-full relative">
