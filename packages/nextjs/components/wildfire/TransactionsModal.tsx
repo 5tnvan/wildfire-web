@@ -53,7 +53,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
       );
     }
     return transactions.map((tx: any) => (
-      <div key={tx.id} className="rounded-lg shadow-md p-4 mb-4 bg-white">
+      <div key={tx.id} className="rounded-lg shadow-md p-4 mb-4 bg-base-100">
         <div>
           <strong>From:</strong> {profiles[tx.sender]?.username || tx.sender}
         </div>
