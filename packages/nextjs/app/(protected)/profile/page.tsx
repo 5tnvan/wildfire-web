@@ -13,6 +13,7 @@ import FollowingModal from "~~/components/wildfire/FollowingModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
+import TransactionsModal from "~~/components/wildfire/TransactionsModal";
 import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useProfileFeed } from "~~/hooks/wildfire/useProfileFeed";
@@ -135,11 +136,19 @@ const Profile: NextPage = () => {
     setAvatarModalOpen(false);
   };
 
+  //TRANSACTIONS MODAL
+  const [isTransactionsModalOpen, setTransactionsModalOpen] = useState(false);
+
+  const closeTransactionsModal = () => {
+    setTransactionsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col-reverse md:flex-row items-start ">
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
+      {isTransactionsModalOpen && <TransactionsModal data={profile} onClose={closeTransactionsModal} />}
       {isFollowersModalOpen && (
         <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowersModal} onCta={handleUnfollow} />
       )}
@@ -230,14 +239,14 @@ const Profile: NextPage = () => {
           </div>
           <div className="stat-desc">See following</div>
         </div>
-        <Link href={"https://www.wildpay.app/" + profile?.username} target="new" className="stat">
+        <div onClick={() => setTransactionsModalOpen(true)} className="stat cursor-pointer hover:opacity-85">
           <div className="stat-figure text-primary">
             <CircleStackIcon width={60} />
           </div>
           <div className="stat-title">Balance</div>
           <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
           <div className="stat-desc">{balance} ETH</div>
-        </Link>
+        </div>
         <div className="stat">
           <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
             Tip Now
