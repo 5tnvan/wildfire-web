@@ -125,20 +125,15 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
           onEnded={handleVideoEnd}
           muted={isMuted}
         ></video>
+        <div className="absolute inset-0 flex m-auto justify-center items-center z-10 h-2/3" onClick={handleTogglePlay}>
+          {showPaused && <PlayIcon className="h-16 w-16 text-white" />}
+        </div>
         {showWatchAgain && (
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
             <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
               <EyeIcon width={16} />
               <span className="font-medium">Watch again</span>
             </div>
-          </div>
-        )}
-        {showPaused && (
-          <div
-            className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-30"
-            onClick={handleTogglePlay}
-          >
-            <PlayIcon className="h-16 w-16 text-white" />
           </div>
         )}
         <div className="absolute inset-0 items-start p-2">
@@ -152,7 +147,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
             {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
           </div>
         </div>
-        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full" onClick={handleTogglePlay}>
+        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full">
           {/* BOTTOM INFO */}
           <div className="flex flex-row gap-2 justify-between w-full">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">

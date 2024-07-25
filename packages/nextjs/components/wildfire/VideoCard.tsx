@@ -24,7 +24,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
   const [loadNewVidsAt, setloadNewVidsAt] = useState(lastVideoIndex);
   const [loopCount, setLoopCount] = useState(0);
   const [showWatchAgain, setShowWatchAgain] = useState(false);
-  const [showPaused, setShowPaused] = useState(false);
+  const [showPaused, setShowPaused] = useState(true);
   const [likeCount, setLikeCount] = useState<any>(data["3sec_fires"][0]?.count);
   const [temporaryLiked, setTemporaryLiked] = useState(false);
   const [commentCount, setCommentCount] = useState<any>(data["3sec_comments"]?.length);
@@ -46,6 +46,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
 
   //manually pause video
   const handleTogglePlay = () => {
+    console.log("clicked");
     if (videoRef.current) {
       if (videoRef.current.paused) {
         videoRef.current.play();
@@ -142,24 +143,18 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
           ref={videoRef}
           src={data.video_url}
           className="video rounded-lg"
-          onClick={handleTogglePlay}
           onEnded={handleVideoEnd}
           muted={isMuted}
         ></video>
+        <div className="absolute inset-0 flex m-auto justify-center items-center z-10 h-2/3" onClick={handleTogglePlay}>
+          {showPaused && <PlayIcon className="h-16 w-16 text-white" />}
+        </div>
         {showWatchAgain && (
-          <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
             <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
               <EyeIcon width={16} />
               <span className="font-medium">Watch again</span>
             </div>
-          </div>
-        )}
-        {showPaused && (
-          <div
-            className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-30"
-            onClick={handleTogglePlay}
-          >
-            <PlayIcon className="h-16 w-16 text-white" />
           </div>
         )}
         <div className="absolute inset-0 items-start p-2">
@@ -173,8 +168,8 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
             {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
           </div>
         </div>
-        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full" onClick={handleTogglePlay}>
-          {/* BOTTOM INFO */}
+        {/* BOTTOM INFO MOBILE */}
+        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full">
           <div className="flex flex-row gap-2 justify-between w-full">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
               <EyeIcon width={20} />
