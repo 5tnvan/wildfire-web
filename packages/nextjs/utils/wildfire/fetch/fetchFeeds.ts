@@ -13,8 +13,9 @@ export const fetchFeedWithRange = async (from: any, to: any) => {
   const { data } = await supabase
     .from("3sec_desc_view")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, video_url, created_at, suppressed, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
+    .neq("suppressed", true)
     .range(from, to);
 
   return data;
