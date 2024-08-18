@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AuthContext } from "./context";
 import type { NextPage } from "next";
+import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
 import { WobbleCard } from "~~/components/ui/wooble-card";
 import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { Footer } from "~~/components/wildfire/Footer";
@@ -20,6 +21,8 @@ const Landing: NextPage = () => {
     setAndroidTestModalOpen(false);
   };
 
+  const cards = data.map((card, index) => <Card key={card.src} card={card} index={index} />);
+
   return (
     <>
       <Header />
@@ -29,7 +32,7 @@ const Landing: NextPage = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center pb-0 pt-8 lg:pt-16">
             <h1 className="text-5xl font-bold">wildfire</h1>
-            <h3 className="text-lg">A 3 seconds video-sharing app that pays off</h3>
+            <h3 className="text-lg">A 3-second super dApp that pays off.</h3>
             {isAuthenticated && (
               <Link href="/feed" className="btn btn-outline text-base">
                 Launch App
@@ -95,7 +98,7 @@ const Landing: NextPage = () => {
               </Link>
             </div>
           </div>
-          <Image
+          {/* <Image
             src={`/app.png`}
             alt="wildfire"
             width={400}
@@ -103,7 +106,17 @@ const Landing: NextPage = () => {
             style={{ width: "auto", height: "auto" }}
             className="px-5 mb-12"
             priority
-          />
+          /> */}
+        </div>
+
+        <div className="w-full h-full py-20">
+          <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+            The future of 3C's:
+          </h2>
+          <h3 className="max-w-7xl pl-4 mx-auto text-xl font-normal text-neutral-800 dark:text-neutral-200 font-sans">
+            Content & Commerce & Community
+          </h3>
+          <Carousel items={cards} />
         </div>
 
         {/* 3-GRID */}
@@ -114,10 +127,10 @@ const Landing: NextPage = () => {
           >
             <div className="max-w-xs">
               <h2 className="text-left text-balance text-3xl font-semibold tracking-[-0.015em] text-white">
-                Got 3 seconds?
+               Got 3 seconds?
               </h2>
               <p className="mt-4 text-left  text-base/6 text-neutral-200 text-shadow">
-                Become a Web3 Creator by posting a 3-second video each day.
+                Boost creative problem-solving in the face of extreme limits.
               </p>
             </div>
             <Image
@@ -131,19 +144,19 @@ const Landing: NextPage = () => {
           </WobbleCard>
           <WobbleCard containerClassName="col-span-1 bg-primary min-h-[300px]">
             <h2 className="max-w-80  text-left text-balance text-3xl font-semibold tracking-[-0.015em] text-black">
-              Extremely. Short. Content.
+              Looped. For. Learning.
             </h2>
             <p className="mt-4 max-w-[26rem] text-left  text-base/6 text-black">
-              No more doom scrolling—stay informed about the world, 24/7, in just 3 seconds.
+            No more dopamine hits — stay informed about the world, 24/7, through repetitive learning.
             </p>
           </WobbleCard>
           <WobbleCard containerClassName="col-span-1 lg:col-span-3 bg-zinc-900 min-h-[500px] lg:min-h-[600px] xl:min-h-[300px]">
             <div className="max-w-sm">
               <h2 className="max-w-sm md:max-w-lg  text-left text-balance text-3xl font-semibold tracking-[-0.015em] text-white">
-                Web3 pays 100%.
+                No ads. No censorship.
               </h2>
               <p className="mt-4 max-w-[26rem] text-left  text-base/6 text-neutral-200">
-                Creators get paid instantly, and retain all their revenue.
+                Just 100% you and your supporters. Decentralized.
               </p>
             </div>
             <Image
@@ -161,5 +174,65 @@ const Landing: NextPage = () => {
     </>
   );
 };
+
+const DummyContent = () => {
+  return (
+    <>
+      {[...new Array(3).fill(1)].map((_, index) => {
+        return (
+          <div key={"dummy-content" + index} className="bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 rounded-3xl mb-4">
+            <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl mx-auto">
+              <span className="font-bold text-neutral-700 dark:text-neutral-200">
+                The first rule of Apple club is that you boast about Apple club.
+              </span>{" "}
+              Keep a journal, quickly jot down a grocery list, and take amazing class notes. Want to convert those notes
+              to text? No problem. Langotiya jeetu ka mara hua yaar is ready to capture every thought.
+            </p>
+            <Image
+              src="https://assets.aceternity.com/macbook.png"
+              alt="Macbook mockup from Aceternity UI"
+              height="500"
+              width="500"
+              className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain"
+            />
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const data = [
+  {
+    category: "Content",
+    title: "3 seconds a day.",
+    src: "https://images.unsplash.com/photo-1719937206930-84afb0daf141?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    content: <DummyContent />,
+  },
+  {
+    category: "Storytelling",
+    title: "Stitched into a story.",
+    src: "https://images.unsplash.com/photo-1513171920216-2640b288471b?q=80&w=1709&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    content: <DummyContent />,
+  },
+  {
+    category: "Audience",
+    title: "Grow with Gen Z and Gen Alpha.",
+    src: "/premium_photo-1687989651281-d9dfee04ec74.png",
+    content: <DummyContent />,
+  },
+  {
+    category: "E-commerce",
+    title: "Your store accepts crypto.",
+    src: "https://images.unsplash.com/photo-1599202875854-23b7cd490ff4?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    content: <DummyContent />,
+  },
+  {
+    category: "Community",
+    title: "Go beyond virtual.",
+    src: "/ezgif-3-489a4dc383.gif",
+    content: <DummyContent />,
+  },
+];
 
 export default Landing;
