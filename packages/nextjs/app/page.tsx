@@ -217,7 +217,7 @@ const data = [
   },
   {
     category: "Audience",
-    title: "Grow with Gen Z and Gen Alpha.",
+    title: "Grow with Gen Z and Alpha.",
     src: "/premium_photo-1687989651281-d9dfee04ec74.png",
     content: <DummyContent />,
   },
