@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Image, { ImageProps } from "next/image";
-import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import { ArrowLongLeftIcon, ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "~~/utils/cn";
 
 interface CarouselProps {
@@ -95,14 +95,14 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
           onClick={scrollLeft}
           disabled={!canScrollLeft}
         >
-          <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+          <ArrowLongLeftIcon className="h-6 w-6 text-gray-500" />
         </button>
         <button
           className="relative z-40 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-50"
           onClick={scrollRight}
           disabled={!canScrollRight}
         >
-          <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+          <ArrowLongRightIcon className="h-6 w-6 text-gray-500" />
         </button>
       </div>
     </div>
