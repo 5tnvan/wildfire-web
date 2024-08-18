@@ -212,7 +212,7 @@ const data = [
   {
     category: "Storytelling",
     title: "Stitched into a story.",
-    src: "https://images.unsplash.com/photo-1513171920216-2640b288471b?q=80&w=1709&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "/ezgif-4-e1d7762367.gif",
     content: <DummyContent />,
   },
   {
