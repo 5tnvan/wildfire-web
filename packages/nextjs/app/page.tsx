@@ -127,7 +127,7 @@ const Landing: NextPage = () => {
           >
             <div className="max-w-xs">
               <h2 className="text-left text-balance text-3xl font-semibold tracking-[-0.015em] text-white">
-               Got 3 seconds?
+                Got 3 seconds?
               </h2>
               <p className="mt-4 text-left  text-base/6 text-neutral-200 text-shadow">
                 Boost creative problem-solving in the face of extreme limits.
@@ -147,7 +147,7 @@ const Landing: NextPage = () => {
               Looped. For. Learning.
             </h2>
             <p className="mt-4 max-w-[26rem] text-left  text-base/6 text-black">
-            No more dopamine hits — stay informed about the world, 24/7, through repetitive learning.
+              No more dopamine hits — stay informed about the world, 24/7, through repetitive learning.
             </p>
           </WobbleCard>
           <WobbleCard containerClassName="col-span-1 lg:col-span-3 bg-zinc-900 min-h-[500px] lg:min-h-[600px] xl:min-h-[300px]">
@@ -169,6 +169,20 @@ const Landing: NextPage = () => {
             />
           </WobbleCard>
         </div>
+
+        <a
+          href="https://www.producthunt.com/posts/wildfire-got-3-seconds?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-wildfire&#0045;got&#0045;3&#0045;seconds"
+          target="_blank"
+          className="flex flex-col items-center mt-20 mb-10"
+        >
+          <img
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=481265&theme=neutral"
+            alt="Wildfire: Got 3 Seconds? - A 3-second super dApp that pays off | Product Hunt"
+            style={{ width: "250px", height: "54px" }}
+            width="250"
+            height="54"
+          />
+        </a>
       </div>
       <Footer />
     </>

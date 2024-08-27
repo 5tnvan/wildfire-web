@@ -21,6 +21,7 @@ const nextConfig = {
       "poalybuqvwrnukxylhad.supabase.co",
       "wildfire.b-cdn.net",
       "images.unsplash.com",
+      "api.producthunt.com",
     ],
   },
 };
