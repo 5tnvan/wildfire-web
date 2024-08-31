@@ -29,7 +29,7 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
   const [loopCount, setLoopCount] = useState(0);
   const [showWatchAgain, setShowWatchAgain] = useState(false);
   const [showPaused, setShowPaused] = useState(false);
-  const [commentCount, setCommentCount] = useState<any>(data["3sec_comments"]?.length);
+  const [commentCount] = useState<any>(data["3sec_comments"]?.length);
 
   // Toggle mute state globally
   const handleToggleMute = () => {
