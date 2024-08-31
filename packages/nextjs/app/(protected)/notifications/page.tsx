@@ -1,6 +1,5 @@
 "use client";
 
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRef } from "react";
@@ -93,7 +92,7 @@ const Notifications: NextPage = () => {
           </details>
         </>
       )} */}
-      {allNotifications.map((notif, index) => {
+      {allNotifications.map((notif) => {
         let message: React.ReactNode = "";
 
         if (notif.type === "follow") {
