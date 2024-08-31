@@ -12,7 +12,7 @@ import { Topbar } from "~~/components/wildfire/Topbar";
  **/
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { username } = useParams();
+  const { username, video_id } = useParams();
 
   /* CONSUME CONTEXT */
   const { isAuthenticated } = useContext(AuthContext);
@@ -22,10 +22,10 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
    * Redirect to login, if not authenticated
    */
   useEffect(() => {
-    if (isAuthenticated == false && !username) {
+    if (isAuthenticated == false && !(username || video_id)) {
       router.push("/login");
     }
-  }, [isAuthenticated, username, router]);
+  }, [isAuthenticated, username, video_id, router]);
 
   return (
     <>

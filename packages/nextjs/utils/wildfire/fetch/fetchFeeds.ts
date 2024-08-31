@@ -3,22 +3,53 @@
 import { createClient } from "~~/utils/supabase/server";
 
 /**
+ * FETCH: fetchRandomFeed()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ **/
+
+export const fetchRandomFeed = async (limit: any) => {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("3sec_random_view")
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      {count : 'exact'}
+    )
+    .neq("suppressed", true)
+    .limit(limit);
+
+  return data;
+};
+
+/**
  * FETCH: fetchFeedWithRange()
  * DB: supabase
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchFeedWithRange = async (from: any, to: any) => {
+export const fetchVideoAndRandomFeed = async (video_id:any, limit:any) => {
   const supabase = createClient();
-  const { data } = await supabase
-    .from("3sec_desc_view")
+  const { data: data1 } = await supabase
+    .from("3sec")
     .select(
-      "id, thumbnail_url, video_url, created_at, suppressed, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+    )
+    .eq("id", video_id)
+    .single();
+
+    const { data: data2 } = await supabase
+    .from("3sec_random_view")
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .neq("suppressed", true)
-    .range(from, to);
+    .neq("id", video_id)
+    .limit(limit-1)
 
-  return data;
+    const combinedData = data2 ? [data1, ...data2] : data2;
+  
+  return combinedData;
 };
 
 /**

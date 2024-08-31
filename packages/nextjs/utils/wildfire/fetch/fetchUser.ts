@@ -35,17 +35,17 @@ export const fetchProfile = async () => {
 };
 
 /**
- * FETCH: fetchProfiles()
+ * FETCH: fetchProfilesWithRange()
  * DB: supabase
  * TABLE: "profiles"
  **/
 
-export const fetchProfiles = async () => {
+export const fetchProfilesWithRange = async (from: any, to: any) => {
   const supabase = createClient();
   const { data: profileData } = await supabase
-    .from("profiles")
-    .select(`*, profile_bios ( id )`)
-    .order("id", { ascending: false });
+    .from("profiles_random_view")
+    .select(`*`)
+    .range(from, to);
   return profileData;
 };
 

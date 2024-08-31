@@ -13,7 +13,7 @@ const getRange = (page: number, range: number) => {
 
 /**
  * useFeed HOOK
- * Use this to get feed of videos
+ * Use this to get feed of videos from authenticated user
  **/
 export const useProfileFeed = () => {
   const range = 3;

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Avatar } from "../Avatar";
 import FormatNumber from "../wildfire/FormatNumber";
 import { TimeAgo } from "../wildfire/TimeAgo";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
 export const ParallaxScrollItem = ({ data }: any) => {
   return (
@@ -28,12 +28,17 @@ export const ParallaxScrollItem = ({ data }: any) => {
         <Avatar profile={data.profile} width={10} height={10} />
       </div>
       {/* STRIP */}
-      <div className="absolute bottom-0 w-full flex flex-row p-4 bg-base-200 bg-opacity-90 justify-between items-center">
-        <div>
-          <span className="font-semibold text-sm">{data.country && data.country.name}</span>
-          <span className="text-sm">
+      <div className="absolute bottom-0 w-full flex flex-row py-6 px-4 bg-base-200 bg-opacity-90 justify-between items-center">
+        <div className="flex flex-row">
+          <span className="text-base mr-2">
             <TimeAgo timestamp={data.created_at} />
           </span>
+          {data.country && (
+            <div className="font-semibold text-base flex flex-row gap-1">
+              <MapPinIcon width={15} />
+              <span>{data.country.name}</span>
+            </div>
+          )}
         </div>
         <Image
           src={`/wildfire-logo-lit.png`}

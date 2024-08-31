@@ -4,6 +4,7 @@ import { useContext } from "react";
 import Link from "next/link";
 import { Search } from "./Search";
 import { UserMenu } from "./UserMenu";
+import { Notification } from "./UserNotification";
 import { AuthContext } from "~~/app/context";
 
 export const Topbar = () => {
@@ -14,8 +15,9 @@ export const Topbar = () => {
     <>
       <div id="auth-ui-topbar" className="flex flex-row gap-1 m-2">
         <Search />
-        {isAuthenticated == true && <UserMenu launchApp={false} wildpay={true} />}
-        {isAuthenticated == false && (
+        {isAuthenticated && <Notification />}
+        {isAuthenticated && <UserMenu launchApp={false} wildpay={true} />}
+        {!isAuthenticated && (
           <Link href="/login" className="btn btn-outline btn-small mx-2">
             Login
           </Link>

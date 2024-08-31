@@ -11,13 +11,18 @@ import { AuthUserContext } from "~~/app/context";
 import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
+import { insertTip } from "~~/utils/wildfire/crud/3sec_tips";
+import { useRouter } from "next/navigation";
 
-const TipModal = ({ data, onClose }: any) => {
+const TipModal = ({ data, video_id, onClose }: any) => {
+  console.log("video_id", video_id);
+  const router = useRouter();
+  const price = useGlobalState(state => state.nativeCurrency.price);
+  
   //CONSUME CONTEXT
   const { profile } = useContext(AuthUserContext);
 
   //STATES
-  const price = useGlobalState(state => state.nativeCurrency.price);
   const { address: connectedAddress } = useAccount();
   const [ethAmountWithFee, setEthAmountWithFee] = useState(0);
   const [dollarAmount, setDollarAmount] = useState(0);
@@ -68,19 +73,33 @@ const TipModal = ({ data, onClose }: any) => {
   };
 
   /**
-   * ACTION: Pay
+   * ACTION: Show receipt
    **/
   const handleReceipt = (hash: any) => {
     console.log("Receipt hash", hash);
     setSuccessHash(hash);
   };
 
+  /**
+   * ACTION: Save transaction
+   **/
+  const saveTransaction = (hash: any) => {
+    console.log("saveTransaction", video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
+    insertTip(video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
+    setSuccessHash(hash);
+  };
+
+  /**
+   * ACTION: Pay
+   **/
   const handlePay = async () => {
+    const constructedMessage = video_id ? `${video_id} ${message}` : message;
+
     try {
       await pay(
         {
           functionName: "setPayment",
-          args: [data.wallet_id, message],
+          args: [data.wallet_id, constructedMessage],
           value: parseEther(ethAmountWithFee.toString()),
         },
         {
@@ -88,6 +107,7 @@ const TipModal = ({ data, onClose }: any) => {
           onBlockConfirmation: (txnReceipt: any) => {
             console.log("FastPayConfirm trasactionHash", txnReceipt);
             handleReceipt(txnReceipt.transactionHash);
+            saveTransaction(txnReceipt.transactionHash);
           },
         },
       );
@@ -105,7 +125,11 @@ const TipModal = ({ data, onClose }: any) => {
   });
 
   const handleClose = () => {
-    onClose();
+    if(successHash) {
+      router.push("/v/" + video_id);
+    } else {
+      onClose();
+    }
   };
 
   return (
@@ -178,7 +202,7 @@ const TipModal = ({ data, onClose }: any) => {
                 <>
                   <div>You have no verified wallet, yet.</div>
                   <div className="flex justify-center">
-                    <Link href="https://www.wildpay.app/settings" className="btn btn-neutral w-full mt-3" onClick={onClose}>
+                    <Link href="/account" className="btn btn-neutral w-full mt-3" onClick={onClose}>
                       Verify a Wallet
                     </Link>
                   </div>
@@ -268,8 +292,9 @@ const TipModal = ({ data, onClose }: any) => {
               href={"https://www.wildpay.app/transaction/payment/" + network + "/" + successHash}
               className="btn btn-primary w-full mt-3 mb-2"
               onClick={handleClose}
+              target="_blank"
             >
-              Go to transaction
+              See receipt.
             </Link>
           </>
         )}

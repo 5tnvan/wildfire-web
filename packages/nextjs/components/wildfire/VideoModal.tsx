@@ -135,7 +135,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
           Back
         </div>
         <div ref={insideRef} className="md:flex">
-          {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
+          {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
           {/* VIDEO PLAYER */}
           <div className="relative">
             <video

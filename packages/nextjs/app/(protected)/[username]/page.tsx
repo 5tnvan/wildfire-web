@@ -232,7 +232,7 @@ const Profile: NextPage = () => {
               <CircleStackIcon width={60} />
             </div>
 
-            <div className="stat-title">Balance</div>
+            <div className="stat-title">Received</div>
             <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
             <div className="stat-desc">{balance} ETH</div>
           </div>

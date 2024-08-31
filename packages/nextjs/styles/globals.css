@@ -126,8 +126,10 @@ img {
 .steps-vertical .step:before { height: 322%!important; }
 .steps-vertical .step { grid-template-rows: max-content; }
 
-@media (min-width: 640px) {
-  
+@media (max-width: 640px) {
+  .h-screen-custom {
+    height: auto !important;
+  } 
 }
 
 @media (min-width: 768px) { 

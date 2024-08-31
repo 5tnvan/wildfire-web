@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { NextPage } from "next";
 import VideoCard from "~~/components/wildfire/VideoCard";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
+import { useVideo } from "~~/hooks/wildfire/useVideo";
 
-const Watch: NextPage = () => {
-  const { loading: loadingFeed, feed, fetchMore } = useFeed();
+const Video: NextPage = () => {
+  const { video_id } = useParams();
+  const { loading: loadingFeed, feed, fetchMore } = useVideo(video_id);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  console.log("feed", feed);
 
   // Toggle mute state
   const handleOnCtaMute = (mute: any) => {
@@ -46,6 +46,7 @@ const Watch: NextPage = () => {
     });
   }, [feed]); // Ensure to run effect whenever feed changes
 
+
   return (
     <>
       {loadingFeed && feed && feed.length == 0 && (
@@ -57,7 +58,7 @@ const Watch: NextPage = () => {
         <div ref={sliderRef} className="infinite-scroll">
           {feed.map((video, index) => (
             <VideoCard
-              key={index}
+              key={video.id + index}
               index={index}
               data={video}
               feedLength={feed.length}
@@ -73,4 +74,4 @@ const Watch: NextPage = () => {
   );
 };
 
-export default Watch;
+export default Video;

@@ -8,32 +8,29 @@ import TipModal from "./TipModal";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext } from "~~/app/context";
-import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { incrementViews } from "~~/utils/wildfire/incrementViews";
+import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
+import { useGlobalState } from "~~/services/store/store";
+import ShareModal from "./ShareModal";
 
-const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos, onCtaMute }: any) => {
+const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
-  //CONSUME PROVIDERS
-  const { profile } = useContext(AuthUserContext);
+  const price = useGlobalState(state => state.nativeCurrency.price);
+
+  //SHARE MODAL
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+
+  const closeShareModal = () => {
+    setShareModalOpen(false);
+  };
 
   //STATES
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [loadNewVidsAt, setloadNewVidsAt] = useState(lastVideoIndex);
+  const [loadNewVidsAt, setloadNewVidsAt] = useState(feedLength - 1);
   const [loopCount, setLoopCount] = useState(0);
   const [showWatchAgain, setShowWatchAgain] = useState(false);
   const [showPaused, setShowPaused] = useState(false);
   const [commentCount, setCommentCount] = useState<any>(data["3sec_comments"]?.length);
-  const [tempComment, setTempComment] = useState<any>("");
-  const [showCommentInput, setShowCommentInput] = useState(false);
-  const [commentInput, setCommentInput] = useState("");
-
-  //TIP MODAL
-  const [isTipModalOpen, setTipModalOpen] = useState(false);
-
-  const closeTipModal = () => {
-    setTipModalOpen(false);
-  };
 
   // Toggle mute state globally
   const handleToggleMute = () => {
@@ -75,20 +72,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
     incrementViews(data.id);
   };
 
-  const handleCommentSubmit = async () => {
-    if (!commentInput.trim()) {
-      return; // Do not submit empty comments
-    }
-
-    const error = await insertComment(data.id, commentInput);
-    if (!error) {
-      setTempComment(commentInput); // Store the new comment temporarily
-      setCommentCount((prevCount: any) => prevCount + 1); // Increment count
-      setCommentInput(""); // Clear the input field
-      setShowCommentInput(false);
-    }
-  };
-
   //fetch more
   if (isPlaying) {
     if (loadNewVidsAt === index) {
@@ -96,6 +79,11 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
       getVideos();
     }
   }
+  
+  // Calculate total tips in USD
+  const totalTipsUsd = data["3sec_tips"]?.reduce((acc: number, tip: any) => {
+    return acc + convertEthToUsd(tip.amount, price);
+  }, 0) || 0;
 
   //auto play when video is in view (based on isPlaying)
   useEffect(() => {
@@ -114,7 +102,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
 
   return (
     <div className="infinite-scroll-item flex flex-col md:flex-row justify-center" data-index={index}>
-      {isTipModalOpen && <TipModal data={data.profile} onClose={closeTipModal} />}
+      {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
       <div className="video-wrapper relative">
         <video
           id={index}
@@ -197,51 +185,37 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
         </div>
         {/* VIDEO INFO */}
         <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
-          <div className="btn btn-primary w-full mb-2" onClick={() => router.push("/login")}>
-            Tip Now
-          </div>
+        {data["3sec_tips"]?.length > 0 ?
+            (<div className="flex flex-row items-top">
+                <div className="btn btn-primary w-1/2 mb-2" onClick={() => router.push("/login")}>
+                  Tip Now
+                </div>
+                <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+            </div>) : (<div className="btn btn-primary w-full mb-2" onClick={() => router.push("/login")}>
+                  Tip Now
+                </div>)}
           {/* COMMENTS */}
           <div className="grow m-h-[180px] overflow-scroll relative">
-            {data["3sec_comments"].length == 0 && !tempComment && (
+            {data["3sec_comments"].length == 0 && (
               <div className="flex flex-row gap-2 items-center justify-center h-full">
                 Be first to comment <ChatBubbleOvalLeftEllipsisIcon width={20} />
               </div>
             )}
-            {/* Render tempComment if it exists */}
-            {tempComment && (
-              <div className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
-                <div className="flex flex-row items-center gap-1">
-                  <Avatar profile={profile} width={6} height={6} />
-                  <span className="text-sm">{profile.username}</span>
-                </div>
-                <div className="text-sm opacity-50">{tempComment}</div>
-              </div>
-            )}
             {data["3sec_comments"].map((comment: any, id: number) => (
-              <div key={id} className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
-                <Link href={"/" + comment.profile.username} className="flex flex-row items-center gap-1">
-                  <Avatar profile={comment.profile} width={6} height={6} />
-                  <span className="text-sm">{comment.profile.username}</span>
-                </Link>
-                <div className="text-sm opacity-50">{comment.comment}</div>
-              </div>
+              <>
+                <div key={id} className="flex flex-col gap-2 p-3 rounded-full">
+                  <div className="flex flex-row gap-2 justify-between items-center">
+                    <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
+                      <Avatar profile={comment.profile} width={6} height={6} />
+                      <span className="text-sm">{comment.profile.username}</span>
+                    </Link>
+                    <div className="text-xs opacity-55"><TimeAgo timestamp={comment.created_at} /></div>
+                  </div>
+                  <div className="text-sm opacity-75">{comment.comment}</div>
+                </div>
+
+              </>
             ))}
-            {showCommentInput && (
-              <div className="">
-                <textarea
-                  className="textarea textarea-primary absolute w-full h-full top-0 rounded-lg"
-                  placeholder="Start typing..."
-                  value={commentInput}
-                  onChange={e => setCommentInput(e.target.value)}
-                ></textarea>
-                <PaperAirplaneIcon
-                  width={22}
-                  color="orange"
-                  className="absolute bottom-2 right-2 hover:opacity-75 cursor-pointer"
-                  onClick={() => handleCommentSubmit()}
-                />
-              </div>
-            )}
           </div>
           {/* BOTTOM INFO */}
           <div className="flex flex-row gap-2 justify-betwee mt-2">
@@ -269,6 +243,11 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
                 <FormatNumber number={commentCount} />
               </span>
             </div>
+            <div
+              className="btn bg-zinc-200 dark:bg-zinc-900"
+              onClick={() => setShareModalOpen(true)}>
+              <PaperAirplaneIcon width={18} />
+            </div>
           </div>
         </div>
       </div>
@@ -276,4 +255,4 @@ const VideoCard = ({ index, data, isPlaying, isMuted, lastVideoIndex, getVideos,
   );
 };
 
-export default VideoCard;
+export default VideoCardPreview;

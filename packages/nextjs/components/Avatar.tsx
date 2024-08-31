@@ -16,7 +16,7 @@ export const Avatar = ({ profile, width, height }: Props) => {
   }
   return (
     <>
-      {profile.avatar_url && (
+      {profile?.avatar_url && (
         <div className={`rounded-full w-${width} h-${height} border border-primary glow`}>
           <Image
             alt="img"
@@ -27,7 +27,7 @@ export const Avatar = ({ profile, width, height }: Props) => {
           />
         </div>
       )}
-      {!profile.avatar_url && (
+      {!profile?.avatar_url && (
         <div
           className={`flex justify-center items-center w-${width} h-${width} rounded-full border border-primary bg-base-200 glow`}
         >

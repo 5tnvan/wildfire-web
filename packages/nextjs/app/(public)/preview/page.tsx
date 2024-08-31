@@ -74,7 +74,7 @@ const Preview: NextPage = () => {
                 key={index}
                 index={index}
                 data={video}
-                lastVideoIndex={feed.length - 1}
+                feedLength={feed.length}
                 getVideos={fetchMore}
                 isPlaying={index === playingIndex}
                 isMuted={isMuted}

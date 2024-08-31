@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { VideoCameraIcon } from "@heroicons/react/20/solid";
-import { EyeIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
 
@@ -88,12 +88,12 @@ export const Sidebar = () => {
               <EyeIcon width={23} /> Watch
             </Link>
           </li>
-          {/* <li>
-            <Link href="/watch">
+          <li>
+            <Link href="/creators">
               <SparklesIcon width={23} />
               Discover
             </Link>
-          </li> */}
+          </li>
         </ul>
         <Link href="/create" className="btn btn-neutral">
           <span>Create</span>
