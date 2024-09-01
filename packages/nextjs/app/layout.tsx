@@ -4,9 +4,7 @@ import WildfireApp from "./wildfireLayout";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
-import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 import { useEffect, useState } from "react";
-import { useVideo } from "~~/hooks/wildfire/useVideo";
 import { fetchVideo } from "~~/utils/wildfire/fetch/fetchVideo";
 
 /**
@@ -27,7 +25,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       init();
     }
   }, [video_id]);
-  
+
   return (
     <html suppressHydrationWarning>
       <head>
