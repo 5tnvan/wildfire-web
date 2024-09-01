@@ -13,7 +13,7 @@ export const fetchRandomFeed = async (limit: any) => {
   const { data } = await supabase
     .from("3sec_random_view")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
       {count : 'exact'}
     )
     .neq("suppressed", true)

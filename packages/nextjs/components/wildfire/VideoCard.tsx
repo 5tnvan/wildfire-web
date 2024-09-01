@@ -255,7 +255,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   className="px-4 py-2 rounded-3xl flex flex-row items-center gap-2 mb-1 bg-base-100"
                   target="_blank"
                 >
-                  <Avatar profile={tip.tipper} width={6} height={6} />
+                  <div className="w-[20px] h-[20px]"><Avatar profile={tip.tipper} width={6} height={6} /></div>
                   <span className="text-sm font-semibold">tipped</span>
                   <div className="badge badge-primary">${convertEthToUsd(tip.amount, price)}</div>
                   <span className="text-sm">{tip.comment}</span>

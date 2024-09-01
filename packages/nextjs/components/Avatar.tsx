@@ -22,8 +22,8 @@ export const Avatar = ({ profile, width, height }: Props) => {
             alt="img"
             src={profile.avatar_url}
             className="avatar-img rounded-full bg-cover"
-            width={100}
-            height={100}
+            width={50}
+            height={50}
           />
         </div>
       )}
