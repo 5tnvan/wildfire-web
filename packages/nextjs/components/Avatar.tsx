@@ -31,7 +31,7 @@ export const Avatar = ({ profile, width, height }: Props) => {
         <div
           className={`flex justify-center items-center w-${width} h-${width} rounded-full border border-primary bg-base-200 glow`}
         >
-          <div className={`${textSize} text-primary`}>{profile.username.charAt(0).toUpperCase()}</div>
+          <div className={`${textSize} text-primary`}>{profile?.username.charAt(0).toUpperCase()}</div>
         </div>
       )}
     </>
