@@ -4,7 +4,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { NextPage } from "next";
 import { AuthContext } from "~~/app/context";
-import VideoCardPreview from "~~/components/wildfire/VideoCardPreview";
 import { useFeed } from "~~/hooks/wildfire/useFeed";
 import VideoCard from "~~/components/wildfire/VideoCard";
 
