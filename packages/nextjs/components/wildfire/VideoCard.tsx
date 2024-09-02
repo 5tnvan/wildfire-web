@@ -38,8 +38,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [commentInput, setCommentInput] = useState("");
   const [toast, setToast] = useState<any>(null);
 
-  console.log("toast", toast);
-
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
 
