@@ -6,6 +6,7 @@ import { NextPage } from "next";
 import { AuthContext } from "~~/app/context";
 import VideoCardPreview from "~~/components/wildfire/VideoCardPreview";
 import { useFeed } from "~~/hooks/wildfire/useFeed";
+import VideoCard from "~~/components/wildfire/VideoCard";
 
 const Preview: NextPage = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -70,7 +71,7 @@ const Preview: NextPage = () => {
         {feed && feed.length > 0 && (
           <div ref={sliderRef} className="infinite-scroll">
             {feed.map((video, index) => (
-              <VideoCardPreview
+              <VideoCard
                 key={index}
                 index={index}
                 data={video}

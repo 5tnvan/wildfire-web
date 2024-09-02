@@ -41,8 +41,8 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
         <details ref={dropdownRef} className="dropdown dropdown-end">
           <summary className="btn bg-base-100">
             <Avatar profile={profile} width={6} height={6} />
-            <span>{profile.username}</span>
-            <ChevronDownIcon width={12} />
+            <span className="hidden md:block">{profile.username}</span>
+            <ChevronDownIcon width={12} className="hidden md:block" />
           </summary>
           <ul className="p-2 menu dropdown-content z-20 bg-base-100 rounded-box w-52 border border-base-200">
             <li>

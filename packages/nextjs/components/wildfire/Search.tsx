@@ -54,7 +54,7 @@ export const Search = () => {
 
       {/* SEARCH RESULTS */}
       {isSearchLoading && (
-        <div className="bg-base-200 rounded-lg p-4 mt-2 absolute top-11 w-full z-10">
+        <div className="bg-base-200 rounded-lg p-4 mt-2 absolute top-11 w-full z-20">
           <div className="flex flex-col gap-2">
             <span className="loading loading-ring loading-sm"></span>
           </div>

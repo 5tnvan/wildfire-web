@@ -88,7 +88,7 @@ export const Notification = () => {
             <BellAlertIcon width={20} />
             {unreadCount > 0 && <div className="w-2 h-2 rounded-full bg-red-600 absolute top-0 right-0"></div>}
           </div>
-          {unreadCount > 0 && <span>{unreadCount}</span>}
+          {unreadCount > 0 && <span className="hidden md:block">{unreadCount}</span>}
         </summary>
         <ul className="p-2 menu dropdown-content z-20 bg-base-100 rounded-box w-96 border border-base-200">
           <div className="max-h-screen overflow-y-auto">

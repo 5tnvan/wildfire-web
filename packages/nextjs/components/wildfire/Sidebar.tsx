@@ -54,6 +54,12 @@ export const Sidebar = () => {
                   <EyeIcon width={23} /> Watch
                 </Link>
               </li>
+              <li className="my-1">
+                <Link href="/creators" className="btn bg-zinc-200 dark:bg-zinc-950 w-full" onClick={closeMenu}>
+                  <SparklesIcon width={23} />
+                  Discover
+                </Link>
+              </li>
             </ul>
             <div onClick={closeMenu}>
               <SwitchTheme className={`pointer-events-auto`} />

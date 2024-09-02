@@ -36,6 +36,9 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+  const [toast, setToast] = useState<any>(null);
+
+  console.log("toast", toast);
 
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
@@ -93,15 +96,19 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   };
 
   const handleLike = async () => {
-    if (data.liked) {
-      return;
+    //incr like
+    const error = await insertLike(data.id);
+    if (!error) {
+      setTemporaryLiked(true); // Set temporary like state
+      setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
     } else {
-      //incr like
-      const error = await insertLike(data.id);
-      if (!error) {
-        setTemporaryLiked(true); // Set temporary like state
-        setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
-      }
+      console.log("You already liked this post");
+    setToast("You already liked this post");
+
+    // Set the toast back to null after 4 seconds
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
     }
   };
 
@@ -153,8 +160,18 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
 
   return (
     <div className="infinite-scroll-item flex flex-col md:flex-row justify-center" data-index={index}>
+      {/* MODAL */}
       {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
       {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
+
+      {/* TOASTS */}
+      {toast && <div className="toast z-20">
+        <div className="alert alert-info">
+          <span>{toast}</span>
+        </div>
+      </div>}
+
+      {/* VIDEO WRAPPER */}
       <div className="video-wrapper relative">
         <video
           id={index}
@@ -187,7 +204,18 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
           </div>
         </div>
         {/* BOTTOM INFO MOBILE */}
-        <div className="flex md:hidden absolute bottom-0 items-end p-2 w-full">
+        <div className="flex flex-col md:hidden absolute bottom-0 items-end p-2 w-full z-10">
+          <div className="flex flex-row gap-2 justify-between w-full">
+            {data["3sec_tips"]?.length > 0 ?
+              (<div className="flex flex-row items-top w-full">
+                <div className="btn btn-primary w-1/2 mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
+                  Tip Now
+                </div>
+                <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+              </div>) : (<div className="btn btn-primary w-full mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
+                Tip Now
+              </div>)}
+          </div>
           <div className="flex flex-row gap-2 justify-between w-full">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
               <EyeIcon width={20} />
@@ -195,27 +223,42 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <FormatNumber number={data["3sec_views"][0]?.view_count} />
               </span>
             </div>
-            <div
+            {/* <div
               className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
-              onClick={() => router.push("/login")}
+              onClick={isAuthenticated ? () => console.log() : () => router.push("/login")}
             >
               <FireIcon width={20} />
               <span className="text-base font-normal">
                 <FormatNumber number={data["3sec_fires"][0]?.count} />
               </span>
+            </div> */}
+            <div
+              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
+              onClick={isAuthenticated ? handleLike : () => router.push("/login")}>
+              {(data.liked || temporaryLiked) && <FireIcon width={20} color="red" />}
+              {!data.liked && !temporaryLiked && <FireIcon width={20} />}
+              <span className="text-base font-normal">
+                <FormatNumber number={likeCount} />
+              </span>
             </div>
             <div
               className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
-              onClick={() => router.push("/login")}
+              onClick={isAuthenticated ? () => console.log() : () => router.push("/login")}
             >
               <ChatBubbleOvalLeftEllipsisIcon width={20} />
               <span className="text-base font-normal">
                 <FormatNumber number={commentCount} />
               </span>
             </div>
+            <div
+              className="btn bg-zinc-200 dark:bg-zinc-900"
+              onClick={() => setShareModalOpen(true)}>
+              <PaperAirplaneIcon width={18} />
+            </div>
           </div>
         </div>
       </div>
+      {/* INFO BLOCK ON THE RIGHT */}
       <div className="video-info hidden md:block ml-2 self-end">
         {/* USER INFO */}
         <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
@@ -234,8 +277,9 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
             </div>
           </div>
         </div>
-        {/* VIDEO INFO */}
+        {/* THE REST */}
         <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
+          {/* TIP NOW */}
           {data["3sec_tips"]?.length > 0 ?
             (<div className="flex flex-row items-top">
               <div className="btn btn-primary w-1/2 mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
@@ -247,7 +291,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
             </div>)}
           {/* COMMENTS */}
           <div className="grow m-h-[180px] overflow-scroll relative">
-            {/* TIPS */}
+            {/* Render individual tips */}
             {data["3sec_tips"] && data["3sec_tips"].map((tip: any, id: number) => (
               <div key={tip.id + tip.transaction_hash + id} className="flex flex-row rounded-full items-center gap-2 px-3 pl-0 justify-between">
                 <Link
@@ -263,6 +307,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="text-xs opacity-55"><TimeAgo timestamp={tip.created_at} /></div>
               </div>
             ))}
+            {/* Render individual comments */}
             {data["3sec_comments"].length == 0 && !tempComment && (
               <div className="flex flex-row gap-2 items-center justify-center h-full">
                 Be first to comment <ChatBubbleOvalLeftEllipsisIcon width={20} />
@@ -312,7 +357,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
             )}
           </div>
           {/* BOTTOM INFO */}
-          <div className="flex flex-row gap-2 justify-betwee mt-2">
+          <div className="flex flex-row gap-2 justify-between mt-2">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
               <EyeIcon width={20} />
               <span className="text-base font-normal">

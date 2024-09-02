@@ -10,8 +10,10 @@ import { WobbleCard } from "~~/components/ui/wooble-card";
 import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { Footer } from "~~/components/wildfire/Footer";
 import { Header } from "~~/components/wildfire/Header";
+import { useRouter } from "next/navigation";
 
 const Landing: NextPage = () => {
+  const router = useRouter();
   const { isAuthenticated } = useContext(AuthContext);
 
   //TIP MODAL
@@ -22,6 +24,10 @@ const Landing: NextPage = () => {
   };
 
   const cards = data.map((card, index) => <Card key={card.src} card={card} index={index} />);
+
+  if(isAuthenticated) {
+    router.push("/feed");
+  }
 
   return (
     <>

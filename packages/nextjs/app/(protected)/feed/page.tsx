@@ -68,7 +68,7 @@ const Feed: NextPage = () => {
         {/* FIRST TIME USER */}
         {!loadingFollows && following && following.length == 0 && (
           <div className="flex flex-row justify-center items-center grow">
-            <Link className="btn btn-base-100" href={"/watch"}>
+            <Link className="btn btn-base-100" href={"/creators"}>
               🥳 Start following someone
             </Link>
           </div>

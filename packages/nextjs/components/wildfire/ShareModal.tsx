@@ -35,7 +35,7 @@ const ShareModal = ({ data, onClose }: any) => {
         <h2 className="text-xl">Share video 🔗</h2>
         <div className="join">
           <input
-            className="input input-bordered join-item min-w-[350px]"
+            className="input input-bordered join-item md:min-w-[350px]"
             readOnly
             value={"https://3seconds.me/v/" + data}
           />
