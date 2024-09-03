@@ -7,6 +7,10 @@ import { ThemeProvider } from "~~/components/ThemeProvider";
 import { useEffect, useState } from "react";
 import { fetchVideo } from "~~/utils/wildfire/fetch/fetchVideo";
 
+const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : `http://localhost:${process.env.PORT || 3000}`;
+
 /**
  * SE-2 APP LAYOUT
  * Entry point to the app
@@ -28,12 +32,14 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html suppressHydrationWarning>
-      <head>
-        <title>{videoMetadata?.profile?.username || "Wildfire"}</title>
-        <meta name="description" content={"3-second app"} />
-        <meta property="og:image" content={videoMetadata?.thumbnail_url || "/adaptive-icon-small.png"} />
-        <meta name="twitter:image" content={videoMetadata?.thumbnail_url || "/adaptive-icon-small.png"} />
-      </head>
+      {videoMetadata &&
+        <head>
+          <title>{videoMetadata.profile.username} | wildfire</title>
+          <meta name="description" content={"3-second app"} />
+          <meta property="og:image" content={videoMetadata.thumbnail_url} />
+          <meta name="twitter:image" content={videoMetadata.thumbnail_url} />
+        </head>
+      }
       <body>
         <ThemeProvider>
           <ScaffoldEthAppWithProviders>

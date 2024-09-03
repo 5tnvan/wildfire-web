@@ -37,7 +37,7 @@ const ShareModal = ({ data, onClose }: any) => {
           <input
             className="input input-bordered join-item md:min-w-[350px]"
             readOnly
-            value={"https://3seconds.me/v/" + data}
+            value={"https://www.3seconds.me/v/" + data}
           />
           <button
             className="btn join-item rounded-r-full"
