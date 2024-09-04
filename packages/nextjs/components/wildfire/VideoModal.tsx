@@ -207,15 +207,17 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <div className="text-sm opacity-50">{tempComment}</div>
                   </div>
                 )}
-                {videoStats?.["3sec_comments"]?.map((comment: any, id: number) => (
-                  <div key={id} className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
-                    <Link href={"/" + comment.profile.username} className="flex flex-row items-center gap-1">
-                      <Avatar profile={comment.profile} width={6} height={6} />
-                      <span className="text-sm">{comment.profile.username}</span>
-                    </Link>
-                    <div className="text-sm opacity-50">{comment.comment}</div>
-                  </div>
-                ))}
+                {videoStats?.["3sec_comments"]
+                  ?.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Sort in descending order
+                  .map((comment: any, id: number) => (
+                    <div key={id} className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
+                      <Link href={"/" + comment.profile.username} className="flex flex-row items-center gap-1">
+                        <Avatar profile={comment.profile} width={6} height={6} />
+                        <span className="text-sm">{comment.profile.username}</span>
+                      </Link>
+                      <div className="text-sm opacity-50">{comment.comment}</div>
+                    </div>
+                  ))}
                 {showCommentInput && (
                   <div className="">
                     <textarea

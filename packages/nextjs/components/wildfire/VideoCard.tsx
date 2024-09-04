@@ -305,7 +305,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="text-xs opacity-55"><TimeAgo timestamp={tip.created_at} /></div>
               </div>
             ))}
-            {/* Render individual comments */}
+            {/* Render be first to comment */}
             {data["3sec_comments"].length == 0 && !tempComment && (
               <div className="flex flex-row gap-2 items-center justify-center h-full">
                 Be first to comment <ChatBubbleOvalLeftEllipsisIcon width={20} />
@@ -323,19 +323,22 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="text-sm opacity-50">{tempComment}</div>
               </div>
             )}
-            {data["3sec_comments"].map((comment: any, id: number) => (
-              <>
-                <div key={comment.id || id} className="flex flex-col gap-2 p-3 rounded-full">
-                  <div className="flex flex-row gap-2 justify-between items-center">
-                    <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
-                      <Avatar profile={comment.profile} width={6} height={6} />
-                      <span className="text-sm">{comment.profile.username}</span>
-                    </Link>
-                    <div className="text-xs opacity-55"><TimeAgo timestamp={comment.created_at} /></div>
+            {/* Render comments */}
+            {data["3sec_comments"]
+            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Sort in descending order
+            .map((comment: any, id: number) => (
+              <div key={comment.id || id} className="flex flex-col gap-2 p-3 rounded-full">
+                <div className="flex flex-row gap-2 justify-between items-center">
+                  <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
+                    <Avatar profile={comment.profile} width={6} height={6} />
+                    <span className="text-sm">{comment.profile.username}</span>
+                  </Link>
+                  <div className="text-xs opacity-55">
+                    <TimeAgo timestamp={comment.created_at} />
                   </div>
-                  <div className="text-sm opacity-75">{comment.comment}</div>
                 </div>
-              </>
+                <div className="text-sm opacity-75">{comment.comment}</div>
+              </div>
             ))}
             {showCommentInput && (
               <div className="">
