@@ -13,6 +13,7 @@ import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
 import { fetch3Sec } from "~~/utils/wildfire/fetch/fetch3Sec";
 import { incrementViews } from "~~/utils/wildfire/incrementViews";
+import ShareModal from "./ShareModal";
 
 const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   //CONSUME PROVIDERS
@@ -32,12 +33,20 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+  const [toast, setToast] = useState<any>(null);
 
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
 
   const closeTipModal = () => {
     setTipModalOpen(false);
+  };
+
+  //SHARE MODAL
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+
+  const closeShareModal = () => {
+    setShareModalOpen(false);
   };
 
   useOutsideClick(insideRef, () => {
@@ -93,15 +102,19 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   };
 
   const handleLike = async () => {
-    if (videoStats.liked) {
-      return;
+    //incr like
+    const error = await insertLike(data.id);
+    if (!error) {
+      setTemporaryLiked(true); // Set temporary like state
+      setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
     } else {
-      //incr like
-      const error = await insertLike(data.id);
-      if (!error) {
-        setTemporaryLiked(true); // Set temporary like state
-        setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
-      }
+      console.log("You already liked this post");
+    setToast("You already liked this post");
+
+    // Set the toast back to null after 4 seconds
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
     }
   };
 
@@ -136,6 +149,13 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
         </div>
         <div ref={insideRef} className="md:flex">
           {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
+          {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
+          {/* TOASTS */}
+          {toast && <div className="toast z-20">
+            <div className="alert alert-info">
+              <span>{toast}</span>
+            </div>
+          </div>}
           {/* VIDEO PLAYER */}
           <div className="relative">
             <video
@@ -205,18 +225,24 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                       <span className="text-sm">{profile.username}</span>
                     </div>
                     <div className="text-sm opacity-50">{tempComment}</div>
+                    <div className="text-xs opacity-55">just now</div>
                   </div>
                 )}
                 {videoStats?.["3sec_comments"]
                   ?.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Sort in descending order
                   .map((comment: any, id: number) => (
-                    <div key={id} className="flex flex-row gap-2 mb-2 p-3 rounded-full items-center">
-                      <Link href={"/" + comment.profile.username} className="flex flex-row items-center gap-1">
+                    <div key={comment.id || id} className="flex flex-col gap-2 p-3 rounded-full">
+                    <div className="flex flex-row gap-2 justify-between items-center">
+                      <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
                         <Avatar profile={comment.profile} width={6} height={6} />
                         <span className="text-sm">{comment.profile.username}</span>
                       </Link>
-                      <div className="text-sm opacity-50">{comment.comment}</div>
+                      <div className="text-xs opacity-55">
+                        <TimeAgo timestamp={comment.created_at} />
+                      </div>
                     </div>
+                    <div className="text-sm opacity-75">{comment.comment}</div>
+                  </div>
                   ))}
                 {showCommentInput && (
                   <div className="">
@@ -262,6 +288,11 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <FormatNumber number={commentCount} />
                   </span>
                 </div>
+                <div
+              className="btn bg-zinc-200 dark:bg-zinc-900"
+              onClick={() => setShareModalOpen(true)}>
+              <PaperAirplaneIcon width={18} />
+            </div>
               </div>
             </div>
           </div>
