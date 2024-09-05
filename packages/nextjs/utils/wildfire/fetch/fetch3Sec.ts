@@ -54,7 +54,7 @@ export const fetchLastVideoPosts = async (user_id: any) => {
     .select("id, created_at")
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })
-    .limit(2);
+    .limit(6);
 
   return data;
 };
