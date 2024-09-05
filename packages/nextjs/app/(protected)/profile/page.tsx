@@ -21,6 +21,7 @@ import { useGlobalState } from "~~/services/store/store";
 import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { deleteFollow } from "~~/utils/wildfire/crud/followers";
+import UsernameModal from "~~/components/wildfire/UsernameModal";
 
 const Profile: NextPage = () => {
   const price = useGlobalState(state => state.nativeCurrency.price);
@@ -136,6 +137,13 @@ const Profile: NextPage = () => {
     setAvatarModalOpen(false);
   };
 
+  //AVATAR MODAL
+  const [isUsernameModalOpen, setUsernameModalOpen] = useState(false);
+
+  const closeUsernameModal = () => {
+    setUsernameModalOpen(false);
+  };
+
   //TRANSACTIONS MODAL
   const [isTransactionsModalOpen, setTransactionsModalOpen] = useState(false);
 
@@ -154,6 +162,7 @@ const Profile: NextPage = () => {
       )}
       {isFollowingModalOpen && <FollowingModal data={{ profile, following, followed }} onClose={closeFollowingModal} />}
       {isAvatarModalOpen && <AvatarModal onClose={closeAvatarModal} />}
+      {isUsernameModalOpen && <UsernameModal onClose={closeUsernameModal} />}
 
       {/* NO FEED TO SHOW */}
       {!loadingFeed && feed && feed.length == 0 && (
@@ -183,6 +192,11 @@ const Profile: NextPage = () => {
       {/* STAT */}
       <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
         <div className="stat">
+          <div className="stat-title">Level</div>
+          <div className="stat-value text-3xl">{levelName}</div>
+          <a href="https://www.wildpay.app/levels" className="stat-desc">Level up</a>
+        </div>
+        <div className="stat">
           <div className="stat-figure text-secondary">
             {profile?.avatar_url && (
               <div className="avatar online">
@@ -211,9 +225,9 @@ const Profile: NextPage = () => {
               </div>
             )}
           </div>
-          <div className="stat-title">Level</div>
-          <div className="stat-value text-3xl">{levelName}</div>
-          {/* <div className="stat-desc">Level up</div> */}
+          {/* <div className="stat-title">Username</div> */}
+          <div className="stat-value text-3xl">{profile?.username}</div>
+          <div className="stat-desc cursor-pointer" onClick={() => setUsernameModalOpen(true)}>Change</div>
         </div>
         <div className="stat cursor-pointer" onClick={() => setFollowersModalOpen(true)}>
           <div className="stat-figure text-primary">
@@ -243,7 +257,7 @@ const Profile: NextPage = () => {
           <div className="stat-figure text-primary">
             <CircleStackIcon width={60} />
           </div>
-          <div className="stat-title">Received</div>
+          <div className="stat-title">Incoming</div>
           <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
           <div className="stat-desc">{balance} ETH</div>
         </div>
