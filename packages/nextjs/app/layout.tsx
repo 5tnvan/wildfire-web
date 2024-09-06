@@ -30,7 +30,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <html suppressHydrationWarning>
       {videoMetadata &&
         <head>
-          <title>{videoMetadata.profile.username} | wildfire</title>
+          <title>{videoMetadata.profile.username}</title>
           <meta name="description" content={"3-second app"} />
           <meta property="og:image" content={videoMetadata.thumbnail_url} />
           <meta name="twitter:image" content={videoMetadata.thumbnail_url} />

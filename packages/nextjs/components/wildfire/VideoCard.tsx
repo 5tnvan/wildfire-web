@@ -7,7 +7,7 @@ import { TimeAgo } from "./TimeAgo";
 import TipModal from "./TipModal";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
+import { HeartIcon, PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext } from "~~/app/context";
 import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
@@ -209,7 +209,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="btn btn-primary w-1/2 mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
                   Tip Now
                 </div>
-                <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+                <div className="btn bg-base-300 w-1/2 text-sm"><HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
               </div>) : (<div className="btn btn-primary w-full mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
                 Tip Now
               </div>)}
@@ -221,15 +221,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <FormatNumber number={data["3sec_views"][0]?.view_count} />
               </span>
             </div>
-            {/* <div
-              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
-              onClick={isAuthenticated ? () => console.log() : () => router.push("/login")}
-            >
-              <FireIcon width={20} />
-              <span className="text-base font-normal">
-                <FormatNumber number={data["3sec_fires"][0]?.count} />
-              </span>
-            </div> */}
             <div
               className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
               onClick={isAuthenticated ? handleLike : () => router.push("/login")}>
@@ -283,7 +274,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
               <div className="btn btn-primary w-1/2 mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
                 Tip Now
               </div>
-              <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+              <div className="btn bg-base-300 w-1/2 text-sm"><HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
             </div>) : (<div className="btn btn-primary w-full mb-2" onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}>
               Tip Now
             </div>)}
