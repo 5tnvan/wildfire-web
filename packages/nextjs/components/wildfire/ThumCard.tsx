@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FormatNumber from "./FormatNumber";
 import { TimeAgo } from "./TimeAgo";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import { EyeIcon } from "@heroicons/react/24/solid";
 
 const ThumbCard = ({ index, data, onCta }: any) => {
@@ -17,12 +18,18 @@ const ThumbCard = ({ index, data, onCta }: any) => {
           <FormatNumber number={data["3sec_views"][0].view_count} />
         </span>
       </div>
-      <div className="absolute bottom-0 w-full flex flex-row p-4 bg-base-200 justify-between items-center">
-        <div>
-          <span className="font-semibold text-sm">{data.country && data.country.name}</span>
-          <span className="text-sm">
+      {/* STRIP */}
+      <div className="absolute bottom-0 w-full flex flex-row py-6 px-4 bg-base-200 bg-opacity-90 justify-between items-center">
+        <div className="flex flex-row">
+          <span className="text-base mr-2">
             <TimeAgo timestamp={data.created_at} />
           </span>
+          {data.country && (
+            <div className="font-semibold text-base flex flex-row gap-1">
+              <MapPinIcon width={15} />
+              <span>{data.country.name}</span>
+            </div>
+          )}
         </div>
         <Image
           src={`/wildfire-logo-lit.png`}

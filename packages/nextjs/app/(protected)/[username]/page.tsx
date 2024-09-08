@@ -206,13 +206,13 @@ const Profile: NextPage = () => {
               {!profile?.avatar_url && (
                 <div className="avatar placeholder">
                   <div className="bg-neutral text-neutral-content rounded-full w-12">
-                    <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
+                    <span className="text-xl">{profile?.username.charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
               )}
             </div>
             <div className="stat-title">{levelName}</div>
-            <div className="stat-value text-3xl">{profile.username}</div>
+            <div className="stat-value text-xl">{profile.username}</div>
             {/* <div className="stat-desc">Level up</div> */}
           </Link>
           <div className="stat cursor-pointer hover:opacity-85" onClick={() => setFollowsModalOpen(true)}>

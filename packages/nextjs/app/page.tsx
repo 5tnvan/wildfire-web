@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AuthContext } from "./context";
 import type { NextPage } from "next";
 import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
@@ -10,7 +11,6 @@ import { WobbleCard } from "~~/components/ui/wooble-card";
 import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { Footer } from "~~/components/wildfire/Footer";
 import { Header } from "~~/components/wildfire/Header";
-import { useRouter } from "next/navigation";
 
 const Landing: NextPage = () => {
   const router = useRouter();
@@ -25,7 +25,7 @@ const Landing: NextPage = () => {
 
   const cards = data.map((card, index) => <Card key={card.src} card={card} index={index} />);
 
-  if(isAuthenticated) {
+  if (isAuthenticated) {
     router.push("/feed");
   }
 
