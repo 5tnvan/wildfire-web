@@ -1,10 +1,11 @@
-"use client"
+"use client";
+
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import WildfireApp from "./wildfireLayout";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
-import { useEffect, useState } from "react";
 import { fetchVideo } from "~~/utils/wildfire/fetch/fetchVideo";
 
 /**
@@ -28,14 +29,14 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html suppressHydrationWarning>
-      {videoMetadata &&
+      {videoMetadata && (
         <head>
           <title>{videoMetadata.profile.username}</title>
           <meta name="description" content={"3-second app"} />
           <meta property="og:image" content={videoMetadata.thumbnail_url} />
           <meta name="twitter:image" content={videoMetadata.thumbnail_url} />
         </head>
-      }
+      )}
       <body>
         <ThemeProvider>
           <ScaffoldEthAppWithProviders>

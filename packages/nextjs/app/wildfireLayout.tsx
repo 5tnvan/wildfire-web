@@ -23,14 +23,16 @@ const WildfireApp = ({ children }: { children: React.ReactNode }) => {
   const { loading: loadingAuth, isAuthenticated, user, refetch: refetchAuth } = useAuth(); //<AuthContext>
   const { loading: loadingAuthUser, profile, refetch: refetchAuthUser } = useUserProfile(); //<AuthUserContext>
   const { account, refetch: refetchAuthUserAccount } = useUserAccount(); //<AuthUserAccountContext>
-  const { loading: loadingFollows, followers, following, followed, refetch: refetchAuthUserFollows } = useUserFollows(); //<AuthUserContext>
+  const { loading: loadingFollows, followers, following, followed, refetch: refetchAuthUserFollows } = useUserFollows(); //<AuthUserFollowsContext>
 
   return (
     <>
       <AuthContext.Provider value={{ loadingAuth, isAuthenticated, user, refetchAuth }}>
         <AuthUserContext.Provider value={{ loadingAuthUser, profile, account, refetchAuthUser }}>
           <AuthUserAccountContext.Provider value={{ account, refetchAuthUserAccount }}>
-            <AuthUserFollowsContext.Provider value={{ loadingFollows, followers, following, followed, refetchAuthUserFollows }}>
+            <AuthUserFollowsContext.Provider
+              value={{ loadingFollows, followers, following, followed, refetchAuthUserFollows }}
+            >
               {children}
             </AuthUserFollowsContext.Provider>
           </AuthUserAccountContext.Provider>

@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "./context";
+import { AuthContext, AuthUserFollowsContext } from "./context";
 import type { NextPage } from "next";
 import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
 import { WobbleCard } from "~~/components/ui/wooble-card";
@@ -15,6 +15,8 @@ import { Header } from "~~/components/wildfire/Header";
 const Landing: NextPage = () => {
   const router = useRouter();
   const { isAuthenticated } = useContext(AuthContext);
+
+  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //TIP MODAL
   const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);
@@ -27,6 +29,7 @@ const Landing: NextPage = () => {
 
   if (isAuthenticated) {
     router.push("/feed");
+    refetchAuthUserFollows();
   }
 
   return (
