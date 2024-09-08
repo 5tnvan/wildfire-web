@@ -6195,6 +6195,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-picker-react@npm:^4.12.0":
+  version: 4.12.0
+  resolution: "emoji-picker-react@npm:4.12.0"
+  dependencies:
+    flairup: 1.0.0
+  peerDependencies:
+    react: ">=16"
+  checksum: 2c8b10e8ae14922d571c239183e7760e6386460c3cc4e737dbc45b151f1b3be775252d0bf0292e0627661fa9e34bbeb78548a7940a2e10c8cc9d718b906a1aec
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^7.0.1":
   version: 7.0.3
   resolution: "emoji-regex@npm:7.0.3"
@@ -7599,6 +7610,13 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: 4c172680e8f8c1f78839486e14a43ef82e9decd0e74145f40707cc42e7420506d5ec92d9a11c22bd2c48fb0c384ea05dd30e10dd152fefeec6f2f75282a8b844
+  languageName: node
+  linkType: hard
+
+"flairup@npm:1.0.0":
+  version: 1.0.0
+  resolution: "flairup@npm:1.0.0"
+  checksum: cf062568ed211c95b3ed4e378046803519616426c450d37d7659c10a8ad842f862bef1216aa55ddd91971433a5883272004286a06a13c27b428bc5f740d97c50
   languageName: node
   linkType: hard
 
@@ -12810,6 +12828,7 @@ __metadata:
     "@supabase/ssr": ^0.3.0
     "@supabase/supabase-js": ^2.43.4
     clsx: ^2.1.1
+    emoji-picker-react: ^4.12.0
     framer-motion: ^11.2.10
     graphql: ^16.8.2
     husky: ^8.0.1

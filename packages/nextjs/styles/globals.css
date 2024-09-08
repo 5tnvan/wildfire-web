@@ -120,6 +120,10 @@ img {
   outline: none;
   outline-width: 0;
 }
+input:focus {
+  outline: none;
+  outline-width: 0;
+}
 
 /* STEPS */
 

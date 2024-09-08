@@ -4,8 +4,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { NextPage } from "next";
 import { AuthContext } from "~~/app/context";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
 import VideoCard from "~~/components/wildfire/VideoCard";
+import { useFeed } from "~~/hooks/wildfire/useFeed";
 
 const Preview: NextPage = () => {
   const { isAuthenticated } = useContext(AuthContext);
