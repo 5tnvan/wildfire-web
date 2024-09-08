@@ -389,31 +389,33 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
             )} */}
           </div>
           {/* Comment input */}
-          <div className="w-full max-w-sm min-w-[200px] mt-2">
-            <div className="relative w-full pl-3 pr-10 py-2 bg-transparent border border-slate-200 rounded-full transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow">
-              <div className="absolute top-2.5 left-2.5">
-                <Avatar profile={profile} width={5} height={5} />
-              </div>
-              <input
-                type="text"
-                className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
-                style={{ width: "87%" }}
-                placeholder="Type your comment..."
-                value={commentInput}
-                onChange={e => setCommentInput(e.target.value)}
-                maxLength={100}
-              />
-              {commentInput.length > 0 && (
-                <div
-                  className="text-sm absolute w-5 h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer"
-                  onClick={() => handleCommentSubmit()}
-                >
-                  Post
+          {isAuthenticated && (
+            <div className="w-full max-w-sm min-w-[200px] mt-2">
+              <div className="relative w-full pl-3 pr-10 py-2 bg-transparent border border-slate-200 rounded-full transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow">
+                <div className="absolute top-2.5 left-2.5">
+                  <Avatar profile={profile} width={5} height={5} />
                 </div>
-              )}
-              {/* <FaceSmileIcon width={30} color="black" className="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600" /> */}
+                <input
+                  type="text"
+                  className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
+                  style={{ width: "87%" }}
+                  placeholder="Type your comment..."
+                  value={commentInput}
+                  onChange={e => setCommentInput(e.target.value)}
+                  maxLength={100}
+                />
+                {commentInput.length > 0 && (
+                  <div
+                    className="text-sm absolute w-5 h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer"
+                    onClick={() => handleCommentSubmit()}
+                  >
+                    Post
+                  </div>
+                )}
+                {/* <FaceSmileIcon width={30} color="black" className="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600" /> */}
+              </div>
             </div>
-          </div>
+          )}
           {/* BOTTOM: VIEWS & LIKES & COMMENTS COUNT */}
           <div className="flex flex-row gap-2 justify-between mt-2">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
