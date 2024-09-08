@@ -197,7 +197,7 @@ const Profile: NextPage = () => {
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
-                <div className="avatar">
+                <div className="avatar placeholder">
                   <div className="w-12 rounded-full">
                     <img src={profile?.avatar_url} />
                   </div>
