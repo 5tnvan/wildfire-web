@@ -9,7 +9,7 @@ import { useFeed } from "~~/hooks/wildfire/useFeed";
 
 const Preview: NextPage = () => {
   const { isAuthenticated } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, fetchMore } = useFeed();
+  const { loading: loadingFeed, feed, fetchMore } = useFeed("default");
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true); // New state for mute toggle
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -68,7 +68,7 @@ const Preview: NextPage = () => {
           </div>
         )}
         {feed && feed.length > 0 && (
-          <div ref={sliderRef} className="infinite-scroll">
+          <div ref={sliderRef} className="infinite-scroll flex flex-col items-center">
             {feed.map((video, index) => (
               <VideoCard
                 key={index}
