@@ -159,7 +159,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   }, [isPlaying]);
 
   return (
-    <div className="infinite-scroll-item flex flex-col md:flex-row justify-center" data-index={index}>
+    <div className="infinite-scroll-item flex flex-col md:flex-row" data-index={index}>
       {/* MODAL */}
       {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
       {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
