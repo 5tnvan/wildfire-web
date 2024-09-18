@@ -20,6 +20,7 @@ const Create: NextPage = () => {
 
   //FETCH DIRECTLY
   const { isLoading: isLoadingLimit, limit, posts, postLeft } = useDailyPostLimit();
+  const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [countryId, setCountryId] = useState<string | null>(null);
@@ -77,6 +78,7 @@ const Create: NextPage = () => {
     }
     if (limit === false && videoUrl.length > 0 && thumbnailUrl.length > 0 && file) {
       try {
+        setLoading(true);
         // Fetch the thumbnail blob
         const thumbnailBlob = await fetch(thumbnailUrl).then(res => res.blob());
         console.log("thumbnailBlob", thumbnailBlob);
@@ -93,10 +95,14 @@ const Create: NextPage = () => {
         if (videoPath && thumbnailPath) {
           // Insert record into '3sec' table
           const error = await insertVideo(videoPath, thumbnailPath, countryId);
-          if (!error) router.push("/profile");
+          if (!error) {
+            setLoading(false);
+            router.push("/profile");
+          }
         }
       } catch (error) {
         console.error("Upload failed:", error);
+        setLoading(false);
         alert("Failed to upload video. Please try again.");
       }
     }
@@ -315,8 +321,9 @@ const Create: NextPage = () => {
                   <MapPinIcon width={14} />
                   {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
                 </div>
-                <div className="btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
+                <div className="relative btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
                   Post Now
+                  {loading && <span className="absolute loading loading-ring loading-md ml-1 right-4"></span>}
                 </div>
               </div>
             )}

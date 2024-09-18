@@ -36,6 +36,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+  const [loadingComment, setLoadingComment] = useState(false);
   const [toast, setToast] = useState<any>(null);
 
   //TIP MODAL
@@ -118,13 +119,14 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     if (!commentInput.trim()) {
       return; // Do not submit empty comments
     }
-
+    setLoadingComment(true);
     const error = await insertComment(data.id, commentInput);
     if (!error) {
       setTempComment(commentInput); // Store the new comment temporarily
       setCommentCount((prevCount: any) => prevCount + 1); // Increment count
       setCommentInput(""); // Clear the input field
       setShowCommentInput(false);
+      setLoadingComment(false);
     }
   };
 
@@ -406,10 +408,11 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 />
                 {commentInput.length > 0 && (
                   <div
-                    className="text-sm absolute w-5 h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer"
+                    className="text-sm absolute w-fit h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer flex flex-row items-center"
                     onClick={() => handleCommentSubmit()}
                   >
-                    Post
+                    <span>Post</span>
+                    {loadingComment && <span className="loading loading-ring loading-xs ml-1"></span>}
                   </div>
                 )}
                 {/* <FaceSmileIcon width={30} color="black" className="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600" /> */}
