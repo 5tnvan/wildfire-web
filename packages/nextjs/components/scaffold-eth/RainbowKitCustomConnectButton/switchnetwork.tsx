@@ -1,9 +1,11 @@
 "use client";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+
+import { useTargetNetwork } from "@/hooks/scaffold-eth/useTargetNetwork";
+
 import { SwitchNetworkDropdown } from "./SwitchNetworkDropdown";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 
 type RainbowKitCustomConnectButtonProps = {
   btn: string;

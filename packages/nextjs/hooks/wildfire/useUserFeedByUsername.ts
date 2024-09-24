@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import { fetchProfileByUsername } from "@/utils/wildfire/fetch/fetchProfile";
+
 import { fetchUserFeedWithRange } from "../../utils/wildfire/fetch/fetchFeeds";
 import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
-import { fetchProfileByUsername } from "~~/utils/wildfire/fetch/fetchProfile";
 
 const getRange = (page: number, range: number) => {
   const from = page * range;

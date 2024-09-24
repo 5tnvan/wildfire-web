@@ -2,7 +2,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: process.env.NEXT_PUBLIC_IGNORE_BUILD_ERROR === "true",
   },
@@ -15,13 +15,37 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: [
-      "daisyui.com",
-      "media1.tenor.com",
-      "poalybuqvwrnukxylhad.supabase.co",
-      "wildfire.b-cdn.net",
-      "images.unsplash.com",
-      "api.producthunt.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "daisyui.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "media1.tenor.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "poalybuqvwrnukxylhad.supabase.co",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "wildfire.b-cdn.net",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.producthunt.com",
+        pathname: "**",
+      },
     ],
   },
 };

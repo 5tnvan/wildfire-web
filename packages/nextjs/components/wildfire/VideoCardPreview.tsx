@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Avatar } from "../Avatar";
-import FormatNumber from "./FormatNumber";
-import { TimeAgo } from "./TimeAgo";
+
+import { useGlobalState } from "@/services/store/store";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { incrementViews } from "@/utils/wildfire/incrementViews";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
-import { incrementViews } from "~~/utils/wildfire/incrementViews";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { useGlobalState } from "~~/services/store/store";
+
+import { Avatar } from "../Avatar";
+import FormatNumber from "./FormatNumber";
 import ShareModal from "./ShareModal";
+import { TimeAgo } from "./TimeAgo";
 
 const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
@@ -78,11 +80,12 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
       getVideos();
     }
   }
-  
+
   // Calculate total tips in USD
-  const totalTipsUsd = data["3sec_tips"]?.reduce((acc: number, tip: any) => {
-    return acc + convertEthToUsd(tip.amount, price);
-  }, 0) || 0;
+  const totalTipsUsd =
+    data["3sec_tips"]?.reduce((acc: number, tip: any) => {
+      return acc + convertEthToUsd(tip.amount, price);
+    }, 0) || 0;
 
   //auto play when video is in view (based on isPlaying)
   useEffect(() => {
@@ -184,15 +187,18 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
         </div>
         {/* VIDEO INFO */}
         <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
-        {data["3sec_tips"]?.length > 0 ?
-            (<div className="flex flex-row items-top">
-                <div className="btn btn-primary w-1/2 mb-2" onClick={() => router.push("/login")}>
-                  Tip Now
-                </div>
-                <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
-            </div>) : (<div className="btn btn-primary w-full mb-2" onClick={() => router.push("/login")}>
-                  Tip Now
-                </div>)}
+          {data["3sec_tips"]?.length > 0 ? (
+            <div className="flex flex-row items-top">
+              <div className="btn btn-primary w-1/2 mb-2" onClick={() => router.push("/login")}>
+                Tip Now
+              </div>
+              <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+            </div>
+          ) : (
+            <div className="btn btn-primary w-full mb-2" onClick={() => router.push("/login")}>
+              Tip Now
+            </div>
+          )}
           {/* COMMENTS */}
           <div className="grow m-h-[180px] overflow-scroll relative">
             {data["3sec_comments"].length == 0 && (
@@ -208,11 +214,12 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
                       <Avatar profile={comment.profile} width={6} height={6} />
                       <span className="text-sm">{comment.profile.username}</span>
                     </Link>
-                    <div className="text-xs opacity-55"><TimeAgo timestamp={comment.created_at} /></div>
+                    <div className="text-xs opacity-55">
+                      <TimeAgo timestamp={comment.created_at} />
+                    </div>
                   </div>
                   <div className="text-sm opacity-75">{comment.comment}</div>
                 </div>
-
               </>
             ))}
           </div>
@@ -242,9 +249,7 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
                 <FormatNumber number={commentCount} />
               </span>
             </div>
-            <div
-              className="btn bg-zinc-200 dark:bg-zinc-900"
-              onClick={() => setShareModalOpen(true)}>
+            <div className="btn bg-zinc-200 dark:bg-zinc-900" onClick={() => setShareModalOpen(true)}>
               <PaperAirplaneIcon width={18} />
             </div>
           </div>

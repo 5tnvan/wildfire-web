@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ParallaxScrollItem } from "../wildfire/ParallaxScrollItem";
+
+import { cn } from "@/utils/cn";
 // import { useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
-import { cn } from "~~/utils/cn";
+
+import { ParallaxScrollItem } from "../wildfire/ParallaxScrollItem";
 
 export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
   const gridRef = useRef<HTMLDivElement>(null);

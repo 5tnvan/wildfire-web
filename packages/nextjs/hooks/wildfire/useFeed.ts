@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchRandomFeed } from "~~/utils/wildfire/fetch/fetchFeeds";
-import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
-import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
+
+import { User } from "@supabase/supabase-js";
+
+import { fetchRandomFeed } from "@/utils/wildfire/fetch/fetchFeeds";
+import { fetchLikes } from "@/utils/wildfire/fetch/fetchLikes";
 
 /**
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useFeed = () => {
+export const useFeed = (user: User | null) => {
   const range = 3;
 
   const [loading, setLoading] = useState(false);
@@ -29,28 +31,25 @@ export const useFeed = () => {
     setPage(prevPage => prevPage + 1); // Increase page by 1 to triggter fetchFeed
   };
 
-  const fetchFeed = async () => {
-    setLoading(true);
-    const user = await fetchUser();
-    const data = await fetchRandomFeed(range);
-
-    if (data) {
-      // Check if each post is liked by the user
-      const likedPostsPromises = data.map(async (post: any) => {
-        return fetchLikes(post, user.user?.id);
-      });
-
-      // Wait for all promises to resolve
-      const masterData = await Promise.all(likedPostsPromises);
-
-      setFeed(existingFeed => [...existingFeed, ...masterData]);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchFeed();
-  }, [page, triggerRefetch]);
+    (async () => {
+      setLoading(true);
+      const data = await fetchRandomFeed(range);
+
+      if (data) {
+        // Check if each post is liked by the user
+        const likedPostsPromises = data.map(async (post: any) => {
+          return fetchLikes(post, user?.id);
+        });
+
+        // Wait for all promises to resolve
+        const masterData = await Promise.all(likedPostsPromises);
+
+        setFeed(existingFeed => [...existingFeed, ...masterData]);
+      }
+      setLoading(false);
+    })();
+  }, [page, triggerRefetch, user]);
 
   return { loading, feed, fetchMore, refetch };
 };

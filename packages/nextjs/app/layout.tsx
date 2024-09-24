@@ -1,11 +1,15 @@
-"use client"
-import { useParams } from "next/navigation";
-import WildfireApp from "./wildfireLayout";
-import "@rainbow-me/rainbowkit/styles.css";
-import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
-import { ThemeProvider } from "~~/components/ThemeProvider";
+"use client";
+
 import { useEffect, useState } from "react";
-import { fetchVideo } from "~~/utils/wildfire/fetch/fetchVideo";
+import { useParams } from "next/navigation";
+
+import "@rainbow-me/rainbowkit/styles.css";
+
+import { ScaffoldEthAppWithProviders } from "@/components/ScaffoldEthAppWithProviders";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { fetchVideo } from "@/utils/wildfire/fetch/fetchVideo";
+
+import WildfireApp from "./wildfireLayout";
 
 /**
  * SE-2 APP LAYOUT
@@ -15,27 +19,25 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const { video_id } = useParams();
   const [videoMetadata, setVideoMetadata] = useState<any>();
 
-  const init = async () => {
-    const res = await fetchVideo(video_id);
-    setVideoMetadata(res);
-  };
-
   useEffect(() => {
     if (video_id) {
-      init();
+      (async () => {
+        const res = await fetchVideo(video_id);
+        setVideoMetadata(res);
+      })();
     }
   }, [video_id]);
 
   return (
     <html suppressHydrationWarning>
-      {videoMetadata &&
+      {videoMetadata && (
         <head>
           <title>{videoMetadata.profile.username} | wildfire</title>
           <meta name="description" content={"3-second app"} />
           <meta property="og:image" content={videoMetadata.thumbnail_url} />
           <meta name="twitter:image" content={videoMetadata.thumbnail_url} />
         </head>
-      }
+      )}
       <body>
         <ThemeProvider>
           <ScaffoldEthAppWithProviders>

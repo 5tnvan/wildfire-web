@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
-import VideoCard from "~~/components/wildfire/VideoCard";
-import { useVideo } from "~~/hooks/wildfire/useVideo";
+import { useParams } from "next/navigation";
+
+import { AuthContext } from "@/app/context";
+import VideoCard from "@/components/wildfire/VideoCard";
+import { useVideo } from "@/hooks/wildfire/useVideo";
 
 const Video: NextPage = () => {
+  const { user } = useContext(AuthContext);
+
   const { video_id } = useParams();
-  const { loading: loadingFeed, feed, fetchMore } = useVideo(video_id);
+  const { loading: loadingFeed, feed, fetchMore } = useVideo(user, video_id);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -45,7 +49,6 @@ const Video: NextPage = () => {
       observer.observe(card);
     });
   }, [feed]); // Ensure to run effect whenever feed changes
-
 
   return (
     <>

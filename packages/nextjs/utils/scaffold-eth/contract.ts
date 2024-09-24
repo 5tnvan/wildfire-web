@@ -1,9 +1,12 @@
+import deployedContractsData from "@/contracts/deployedContracts";
+import externalContractsData from "@/contracts/externalContracts";
+import scaffoldConfig from "@/scaffold.config";
 import { MutateOptions } from "@tanstack/react-query";
 import {
   Abi,
   AbiParameter,
-  AbiParameterToPrimitiveType,
   AbiParametersToPrimitiveTypes,
+  AbiParameterToPrimitiveType,
   ExtractAbiEvent,
   ExtractAbiEventNames,
   ExtractAbiFunction,
@@ -24,9 +27,6 @@ import {
 import { Config, UseReadContractParameters, UseWatchContractEventParameters } from "wagmi";
 import { WriteContractParameters, WriteContractReturnType } from "wagmi/actions";
 import { WriteContractVariables } from "wagmi/query";
-import deployedContractsData from "~~/contracts/deployedContracts";
-import externalContractsData from "~~/contracts/externalContracts";
-import scaffoldConfig from "~~/scaffold.config";
 
 type AddExternalFlag<T> = {
   [ChainId in keyof T]: {

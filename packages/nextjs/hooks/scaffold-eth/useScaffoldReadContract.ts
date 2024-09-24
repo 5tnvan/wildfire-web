@@ -1,16 +1,14 @@
 import { useEffect } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
+
+import { AbiFunctionReturnType, ContractAbi, ContractName, UseScaffoldReadConfig } from "@/utils/scaffold-eth/contract";
 import { QueryObserverResult, RefetchOptions, useQueryClient } from "@tanstack/react-query";
 import type { ExtractAbiFunctionNames } from "abitype";
 import { ReadContractErrorType } from "viem";
 import { useBlockNumber, useReadContract } from "wagmi";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import {
-  AbiFunctionReturnType,
-  ContractAbi,
-  ContractName,
-  UseScaffoldReadConfig,
-} from "~~/utils/scaffold-eth/contract";
+
+import { useDeployedContractInfo } from "@/hooks/scaffold-eth";
+
+import { useTargetNetwork } from "./useTargetNetwork";
 
 /**
  * Wrapper around wagmi's useContractRead hook which automatically loads (by name) the contract ABI and address from

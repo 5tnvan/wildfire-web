@@ -3,17 +3,18 @@
 import React, { useContext, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Avatar } from "../Avatar";
+
 import { ChevronDownIcon, ChevronRightIcon, Cog6ToothIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { logout } from "~~/utils/logout";
+
+import { AuthContext, AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { logout } from "@/utils/logout";
+
+import { Avatar } from "../Avatar";
 
 export const UserMenu = ({ launchApp, wildpay }: any) => {
   const { refetchAuth } = useContext(AuthContext);
-  const { loadingAuthUser, profile, refetchAuthUser } = useContext(AuthUserContext);
-  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
-  const { refetchAuthUserAccount } = useContext(AuthUserAccountContext);
+  const { loadingAuthUser, profile } = useContext(AuthUserContext);
 
   //DROPDOWN
   const dropdownRef = useRef<HTMLDetailsElement>(null);
@@ -26,10 +27,7 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
   const handleLogout = async () => {
     try {
       await logout();
-      await refetchAuth();
-      await refetchAuthUser();
-      await refetchAuthUserFollows();
-      await refetchAuthUserAccount();
+      refetchAuth();
     } catch (error) {
       console.error("Logout error:", error);
       //router.push("error");

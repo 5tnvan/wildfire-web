@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+
+import { ChevronLeftIcon } from "@heroicons/react/24/solid";
+import { recoverMessageAddress } from "viem";
+import { useAccount, useSignMessage } from "wagmi";
+
+import { AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { checkWalletExist, updateProfileWallet } from "@/utils/wildfire/crud/profile";
+
 import { Address } from "../scaffold-eth/Address";
 import { RainbowKitCustomConnectButton } from "../scaffold-eth/RainbowKitCustomConnectButton";
 import { TimeAgo } from "./TimeAgo";
-import { recoverMessageAddress } from "viem";
-import { useAccount, useSignMessage } from "wagmi";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { checkWalletExist, updateProfileWallet } from "~~/utils/wildfire/crud/profile";
 
 const VerifyWalletModal = ({ onClose }: any) => {
   //CONSUME CONTEXT
@@ -34,7 +37,7 @@ const VerifyWalletModal = ({ onClose }: any) => {
       }
       if (signMessageData) {
         setIsProcessing(false);
-        updateProfileWallet(address, signMessageData, new Date().toISOString());
+        updateProfileWallet(profile.id, address, signMessageData, new Date().toISOString());
         refetchAuthUser();
       }
     })();

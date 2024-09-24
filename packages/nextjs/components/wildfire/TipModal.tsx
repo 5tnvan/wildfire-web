@@ -1,24 +1,27 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { useGlobalState } from "@/services/store/store";
+import { convertUsdToEth } from "@/utils/wildfire/convertUsdToEth";
+import { insertTip } from "@/utils/wildfire/crud/3sec_tips";
+import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { parseEther } from "viem";
+import { useAccount } from "wagmi";
+
+import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "@/hooks/scaffold-eth";
+import { AuthUserContext } from "@/app/context";
+
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";
 import { RainbowKitCustomConnectButton } from "../scaffold-eth/RainbowKitCustomConnectButton";
 import { RainbowKitCustomSwitchNetworkButton } from "../scaffold-eth/RainbowKitCustomConnectButton/switchnetwork";
-import { parseEther } from "viem";
-import { useAccount } from "wagmi";
-import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext } from "~~/app/context";
-import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "~~/hooks/scaffold-eth";
-import { useGlobalState } from "~~/services/store/store";
-import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
-import { insertTip } from "~~/utils/wildfire/crud/3sec_tips";
-import { useRouter } from "next/navigation";
 
 const TipModal = ({ data, video_id, onClose }: any) => {
   console.log("video_id", video_id);
   const router = useRouter();
   const price = useGlobalState(state => state.nativeCurrency.price);
-  
+
   //CONSUME CONTEXT
   const { profile } = useContext(AuthUserContext);
 
@@ -84,7 +87,16 @@ const TipModal = ({ data, video_id, onClose }: any) => {
    * ACTION: Save transaction
    **/
   const saveTransaction = (hash: any) => {
-    console.log("saveTransaction", video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
+    console.log(
+      "saveTransaction",
+      video_id,
+      targetNetwork.id,
+      hash,
+      ethAmountWithFee,
+      "ETH",
+      message,
+      connectedAddress,
+    );
     insertTip(video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
     setSuccessHash(hash);
   };
@@ -125,7 +137,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
   });
 
   const handleClose = () => {
-    if(successHash) {
+    if (successHash) {
       router.push("/v/" + video_id);
     } else {
       onClose();

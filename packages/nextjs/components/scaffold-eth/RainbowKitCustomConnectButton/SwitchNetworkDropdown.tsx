@@ -1,10 +1,13 @@
 import { useRef, useState } from "react";
-import { NetworkOptions } from "./NetworkOptions";
+
+import { getTargetNetworks } from "@/utils/scaffold-eth";
 import { ArrowsRightLeftIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { BaseIcon } from "~~/components/assets/BaseIcon";
-import { EthIcon } from "~~/components/assets/EthIcon";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { getTargetNetworks } from "~~/utils/scaffold-eth";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { BaseIcon } from "@/components/assets/BaseIcon";
+import { EthIcon } from "@/components/assets/EthIcon";
+
+import { NetworkOptions } from "./NetworkOptions";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -37,7 +40,9 @@ export const SwitchNetworkDropdown = ({ chainName, btn }: SwitchNetworkDropdownP
             {(chainName == "Ethereum" || chainName == "Sepolia") && <EthIcon width={18} height={18} fill="#3C3C3C" />}
             <span className="ml-1 text-base">{chainName}</span>
           </div>
-          <div><ChevronDownIcon className="h-6 w-4 ml-1" /></div>
+          <div>
+            <ChevronDownIcon className="h-6 w-4 ml-1" />
+          </div>
         </summary>
         <ul
           tabIndex={0}

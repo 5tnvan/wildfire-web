@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Abi, AbiEvent, ExtractAbiEventNames } from "abitype";
-import { useInterval } from "usehooks-ts";
-import { Hash } from "viem";
-import * as chains from "viem/chains";
-import { usePublicClient } from "wagmi";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { replacer } from "~~/utils/scaffold-eth/common";
+
+import scaffoldConfig from "@/scaffold.config";
+import { replacer } from "@/utils/scaffold-eth/common";
 import {
   ContractAbi,
   ContractName,
   UseScaffoldEventHistoryConfig,
   UseScaffoldEventHistoryData,
-} from "~~/utils/scaffold-eth/contract";
+} from "@/utils/scaffold-eth/contract";
+import { Abi, AbiEvent, ExtractAbiEventNames } from "abitype";
+import { useInterval } from "usehooks-ts";
+import { Hash } from "viem";
+import * as chains from "viem/chains";
+import { usePublicClient } from "wagmi";
+
+import { useDeployedContractInfo } from "@/hooks/scaffold-eth";
+
+import { useTargetNetwork } from "./useTargetNetwork";
 
 /**
  * Reads events from a deployed contract

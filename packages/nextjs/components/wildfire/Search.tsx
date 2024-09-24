@@ -2,11 +2,14 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Avatar } from "../Avatar";
+
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { useDebounce } from "~~/hooks/wildfire/useDebounce";
-import { fetchProfileMatching } from "~~/utils/wildfire/fetch/fetchProfile";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { useDebounce } from "@/hooks/wildfire/useDebounce";
+import { fetchProfileMatching } from "@/utils/wildfire/fetch/fetchProfile";
+
+import { Avatar } from "../Avatar";
 
 export const Search = () => {
   const [searchValue, setSearchValue] = useState("");

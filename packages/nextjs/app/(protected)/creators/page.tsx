@@ -2,18 +2,21 @@
 
 import { useContext } from "react";
 import { NextPage } from "next";
+import Link from "next/link";
+
+import { useGlobalState } from "@/services/store/store";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { AuthContext } from "~~/app/context";
-import { Avatar } from "~~/components/Avatar";
-import { useCreators } from "~~/hooks/wildfire/useCreators";
-import { useGlobalState } from "~~/services/store/store";
-import { calculateSum } from "~~/utils/wildfire/calculateSum";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { insertFollow } from "~~/utils/wildfire/crud/followers";
+
+import { AuthContext } from "@/app/context";
+import { Avatar } from "@/components/Avatar";
+import { useCreators } from "@/hooks/wildfire/useCreators";
+import { calculateSum } from "@/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { insertFollow } from "@/utils/wildfire/crud/followers";
 
 const Creators: NextPage = () => {
   const { user } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, refetch } = useCreators();
+  const { loading: loadingFeed, feed, refetch } = useCreators(user);
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   const handleFollow = async (profile_id: any, event: any) => {
@@ -21,7 +24,7 @@ const Creators: NextPage = () => {
     button.innerHTML = "Following";
     button.classList.remove("btn-outline");
     button.classList.add("btn-primary");
-    const error = await insertFollow(user.id, profile_id);
+    const error = await insertFollow(user?.id, profile_id);
     if (error) {
       console.log("error", error);
     }
@@ -36,7 +39,7 @@ const Creators: NextPage = () => {
   }
 
   return (
-    <div id="creator-page" className="h-screen-custom overflow-scroll p-2">
+    <div id="creator-page" className="h-full overflow-scroll p-2">
       <div className="grid grid-cols-12 gap-2">
         {feed.map((profile: any) => {
           // Calculate ETH sum and convert to USD if data is available
@@ -56,15 +59,15 @@ const Creators: NextPage = () => {
                 </div>
               </div>
               <div className="mt-6 p-2">
-                <a href={`/${profile.username}`} className="block font-bold mb-2">
+                <Link href={`/${profile.username}`} className="block font-bold mb-2">
                   @{profile.username}
-                </a>
+                </Link>
                 <div className="">
                   {profile.isFollowed ? (
-                    <a href={`/${profile.username}`} className="btn btn-primary relative w-1/2">
+                    <Link href={`/${profile.username}`} className="btn btn-primary relative w-1/2">
                       <span>Following</span>
                       {/* <CheckCircleIcon width={18} className="absolute right-3" /> */}
-                    </a>
+                    </Link>
                   ) : (
                     <div className="btn btn-outline w-1/2" onClick={event => handleFollow(profile.id, event)}>
                       Follow
@@ -80,7 +83,7 @@ const Creators: NextPage = () => {
           );
         })}
       </div>
-      <div onClick={refetch} className="btn mt-2 bg-base-300 flex flex-row w-full">
+      <div onClick={() => refetch()} className="btn mt-2 bg-base-300 flex flex-row w-full">
         <ArrowPathIcon width={18} />
       </div>
     </div>

@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { VideoCameraIcon } from "@heroicons/react/20/solid";
 import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
+
+import { SwitchTheme } from "@/components/wildfire/SwitchTheme";
 
 export const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

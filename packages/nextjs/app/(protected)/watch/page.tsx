@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
-import VideoCard from "~~/components/wildfire/VideoCard";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
+
+import { AuthContext } from "@/app/context";
+import VideoCard from "@/components/wildfire/VideoCard";
+import { useFeed } from "@/hooks/wildfire/useFeed";
 
 const Watch: NextPage = () => {
-  const { loading: loadingFeed, feed, fetchMore } = useFeed();
+  const { user } = useContext(AuthContext);
+
+  const { loading: loadingFeed, feed, fetchMore } = useFeed(user);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -49,7 +53,7 @@ const Watch: NextPage = () => {
   return (
     <>
       {loadingFeed && feed && feed.length == 0 && (
-        <div className="flex flex-row justify-center items-center w-full h-screen-custom">
+        <div className="flex flex-row justify-center items-center w-full h-full">
           <span className="loading loading-ring loading-lg"></span>
         </div>
       )}

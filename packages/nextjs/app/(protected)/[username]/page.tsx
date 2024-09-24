@@ -1,26 +1,27 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { NextPage } from "next";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { NextPage } from "next";
+
+import { useGlobalState } from "@/services/store/store";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
-import FollowersModal from "~~/components/wildfire/FollowersModal";
-import FormatNumber from "~~/components/wildfire/FormatNumber";
-import ThumbCard from "~~/components/wildfire/ThumCard";
-import TipModal from "~~/components/wildfire/TipModal";
-import TransactionsModal from "~~/components/wildfire/TransactionsModal";
-import VideoModal from "~~/components/wildfire/VideoModal";
-import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useUserFeedByUsername } from "~~/hooks/wildfire/useUserFeedByUsername";
-import { useUserFollowsByUsername } from "~~/hooks/wildfire/useUserFollowsByUsername";
-import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUsername";
-import { useGlobalState } from "~~/services/store/store";
-import { calculateSum } from "~~/utils/wildfire/calculateSum";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
+
+import { AuthContext, AuthUserFollowsContext } from "@/app/context";
+import FollowersModal from "@/components/wildfire/FollowersModal";
+import FormatNumber from "@/components/wildfire/FormatNumber";
+import ThumbCard from "@/components/wildfire/ThumbCard";
+import TipModal from "@/components/wildfire/TipModal";
+import TransactionsModal from "@/components/wildfire/TransactionsModal";
+import VideoModal from "@/components/wildfire/VideoModal";
+import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
+import { useUserFeedByUsername } from "@/hooks/wildfire/useUserFeedByUsername";
+import { useUserFollowsByUsername } from "@/hooks/wildfire/useUserFollowsByUsername";
+import { useUserProfileByUsername } from "@/hooks/wildfire/useUserProfileByUsername";
+import { calculateSum } from "@/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { deleteFollow, insertFollow } from "@/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
@@ -38,7 +39,7 @@ const Profile: NextPage = () => {
     followers,
     followed,
     refetch: refetchProfileFollows,
-  } = useUserFollowsByUsername(username);
+  } = useUserFollowsByUsername(user, username);
   const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
@@ -52,21 +53,6 @@ const Profile: NextPage = () => {
   const carousellRef = useRef<HTMLDivElement>(null);
   const lastItemIndex = feed.length - 1;
 
-  // Callback function for Intersection Observer
-  const callback = (entries: any) => {
-    entries.forEach((entry: any) => {
-      if (entry.isIntersecting) {
-        const index = entry.target.getAttribute("data-index");
-        console.log("lastItemId", lastItemIndex);
-        console.log("index", index);
-        if (index == lastItemIndex) {
-          console.log("i am hereee");
-          fetchMore();
-        }
-      }
-    });
-  };
-
   useEffect(() => {
     if (!carousellRef.current) return;
 
@@ -76,18 +62,31 @@ const Profile: NextPage = () => {
       threshold: 0.3, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver(callback, options);
+    const observer = new IntersectionObserver((entries: any) => {
+      // Callback function for Intersection Observer
+      entries.forEach((entry: any) => {
+        if (entry.isIntersecting) {
+          const index = entry.target.getAttribute("data-index");
+          console.log("lastItemId", lastItemIndex);
+          console.log("index", index);
+          if (index == lastItemIndex) {
+            console.log("i am hereee");
+            fetchMore();
+          }
+        }
+      });
+    }, options);
 
     const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feed]); // Ensure to run effect whenever feed changes
+  }, [feed, fetchMore, lastItemIndex]); // Ensure to run effect whenever feed changes
 
   const handleFollow = async () => {
     if (followed == false) {
-      const error = await insertFollow(user.id, profile.id);
+      const error = await insertFollow(user?.id, profile.id);
       if (!error) {
         refetchProfileFollows();
         refetchAuthUserFollows();
@@ -101,7 +100,7 @@ const Profile: NextPage = () => {
 
   const handleUnfollow = async () => {
     if (followed == true) {
-      const error = await deleteFollow(user.id, profile.id);
+      const error = await deleteFollow(user?.id, profile.id);
       if (!error) {
         refetchProfileFollows();
         refetchAuthUserFollows();
@@ -199,7 +198,8 @@ const Profile: NextPage = () => {
               {profile?.avatar_url && (
                 <div className="avatar">
                   <div className="w-12 rounded-full">
-                    <img src={profile?.avatar_url} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={profile?.avatar_url} alt="avatar" />
                   </div>
                 </div>
               )}

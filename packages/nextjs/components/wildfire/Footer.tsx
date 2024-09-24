@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
+
+import { SwitchTheme } from "@/components/wildfire/SwitchTheme";
 
 /**
  * Site footer

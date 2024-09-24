@@ -1,13 +1,15 @@
 "use client";
 
 import { useContext, useState } from "react";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { NextPage } from "next";
+
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
-import { login, signInWithGoogle } from "~~/utils/login";
+
+import { AuthContext } from "@/app/context";
+import { login, signInWithGoogle } from "@/utils/login";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -15,19 +17,13 @@ const Login: NextPage = () => {
   const [error, setError] = useState<any>();
 
   const { refetchAuth } = useContext(AuthContext);
-  const { refetchAuthUser } = useContext(AuthUserContext);
-  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
-  const { refetchAuthUserAccount } = useContext(AuthUserAccountContext);
 
   const handleLogin = async (event: any) => {
     try {
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
       await login(formData); // Wait for login process to finish
-      await refetchAuth();
-      await refetchAuthUser();
-      await refetchAuthUserFollows();
-      await refetchAuthUserAccount();
+      refetchAuth();
       router.push("/feed");
     } catch (error) {
       setError("Login failed. Please try again.");

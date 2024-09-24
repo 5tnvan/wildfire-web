@@ -19,7 +19,7 @@
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1,
@@ -131,10 +131,3 @@ img {
     height: auto !important;
   } 
 }
-
-@media (min-width: 768px) { 
-  .thumbcard {
-    width: auto!important;
-    height: calc(100dvh - 63px);
-  }
- }

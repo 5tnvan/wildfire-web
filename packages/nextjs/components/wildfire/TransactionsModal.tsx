@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TimeAgoUnix } from "./TimeAgo";
-import { formatEther } from "viem";
+
+import { useGlobalState } from "@/services/store/store";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { fetchProfileFromWalletId } from "@/utils/wildfire/fetch/fetchProfile";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useGlobalState } from "~~/services/store/store";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { fetchProfileFromWalletId } from "~~/utils/wildfire/fetch/fetchProfile";
+import { formatEther } from "viem";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
+
+import { TimeAgoUnix } from "./TimeAgo";
 
 const TransactionsModal = ({ data, onClose }: any) => {
   const incomingRes = useIncomingTransactions(data.wallet_id);

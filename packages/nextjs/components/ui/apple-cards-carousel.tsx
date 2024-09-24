@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Image, { ImageProps } from "next/image";
-import { motion } from "framer-motion";
+
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from "@heroicons/react/24/outline";
-import { cn } from "~~/utils/cn";
+import { motion } from "framer-motion";
+
+import { cn } from "@/utils/cn";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -15,6 +17,7 @@ type Card = {
   src: string;
   title: string;
   category: string;
+  priority?: boolean;
   content: React.ReactNode;
 };
 
@@ -132,7 +135,14 @@ export const Card = ({ card, layout = false }: { card: Card; index: number; layo
             {card.title}
           </motion.p>
         </div>
-        <BlurImage src={card.src} alt={card.title} fill className="object-cover absolute z-10 inset-0" />
+        <BlurImage
+          src={card.src}
+          alt={card.title}
+          priority={card.priority}
+          className="object-cover absolute z-10 inset-0"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       </motion.button>
     </>
   );
@@ -147,7 +157,6 @@ export const BlurImage = ({ height, width, src, className, alt, ...rest }: Image
       src={src}
       width={width}
       height={height}
-      loading="lazy"
       decoding="async"
       blurDataURL={typeof src === "string" ? src : undefined}
       alt={alt ? alt : "Background of a beautiful view"}

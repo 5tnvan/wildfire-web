@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "~~/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function insertFollow(follower_id: any, following_id: any) {
   const supabase = createClient();

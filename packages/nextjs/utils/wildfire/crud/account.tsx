@@ -1,17 +1,14 @@
 "use server";
 
-import { createClient } from "~~/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
-export async function requestDeleteAccount() {
+export async function requestDeleteAccount(user_id: any) {
   const supabase = createClient();
-
-  //get user from supabase db
-  const { data: user } = await supabase.auth.getUser();
 
   const { error } = await supabase
     .from("user_request_delete")
     .insert({
-      user_id: user.user?.id,
+      user_id,
       delete_account: true,
       delete_data: true,
     })
@@ -23,16 +20,13 @@ export async function requestDeleteAccount() {
   }
 }
 
-export async function requestDeleteData() {
+export async function requestDeleteData(user_id: any) {
   const supabase = createClient();
-
-  //get user from supabase db
-  const { data: user } = await supabase.auth.getUser();
 
   const { error } = await supabase
     .from("user_request_delete")
     .insert({
-      user_id: user.user?.id,
+      user_id,
       delete_account: false,
       delete_data: true,
     })

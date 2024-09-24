@@ -6,7 +6,7 @@
 }
 
 .infinite-scroll-item {
-  height: calc(100vh - 115px);
+  height: calc(100dvh - 115px);
   scroll-snap-align: start;
   margin-bottom: 6px;
 }
