@@ -33,16 +33,16 @@ const Create: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { countries } = useCountries();
 
-  const handleStartLivepeer = async () => {
-    // TODO: Start Streaming
-    if (limit === true) {
-      alert("You've reached your 24hrs posting limit. Try again later.");
-      return;
-    }
-    if (limit === false && videoUrl.length > 0 && uploadedVideo) {
-      uploadToLivepeer(uploadedVideo);
-    }
-  };
+  // const handleStartLivepeer = async () => {
+  //   // TODO: Start Streaming
+  //   if (limit === true) {
+  //     alert("You've reached your 24hrs posting limit. Try again later.");
+  //     return;
+  //   }
+  //   if (limit === false && videoUrl.length > 0 && uploadedVideo) {
+  //     uploadToLivepeer(uploadedVideo);
+  //   }
+  // };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -224,9 +224,9 @@ const Create: NextPage = () => {
     <div className="flex flex-col md:flex-row h-full">
       <div className="flex flex-col">
         {/* LIVEPEER STREAM */}
-        <button className="btn btn-base-300 mb-2" onClick={handleStartLivepeer}>
+        {/* <button className="btn btn-base-300 mb-2" onClick={handleStartLivepeer}>
           Start Livepeer
-        </button>
+        </button> */}
         {/* DRAG N DROP */}
         <div
           onDrop={handleDrop}

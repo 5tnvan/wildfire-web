@@ -34,7 +34,9 @@ export const useFeed = (user: User | null) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
+
       const data = await fetchRandomFeed(range);
+      console.log(data);
 
       if (data) {
         // Check if each post is liked by the user
@@ -47,6 +49,7 @@ export const useFeed = (user: User | null) => {
 
         setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
+
       setLoading(false);
     })();
   }, [page, triggerRefetch, user]);

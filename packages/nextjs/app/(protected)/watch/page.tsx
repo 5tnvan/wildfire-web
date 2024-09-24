@@ -11,15 +11,14 @@ const Watch: NextPage = () => {
   const { user } = useContext(AuthContext);
 
   const { loading: loadingFeed, feed, fetchMore } = useFeed(user);
+
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  console.log("feed", feed);
-
   // Toggle mute state
-  const handleOnCtaMute = (mute: any) => {
-    setIsMuted(mute);
+  const handleOnCtaMute = () => {
+    setIsMuted(isMuted => !isMuted);
   };
 
   // Callback function for Intersection Observer
@@ -43,7 +42,7 @@ const Watch: NextPage = () => {
 
     const observer = new IntersectionObserver(callback, options);
 
-    const videoCards = sliderRef.current.querySelectorAll(".infinite-scroll-item");
+    const videoCards = sliderRef.current.querySelectorAll(".carousel-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
@@ -58,7 +57,7 @@ const Watch: NextPage = () => {
         </div>
       )}
       {feed && feed.length > 0 && (
-        <div ref={sliderRef} className="infinite-scroll">
+        <div ref={sliderRef} className="carousel carousel-vertical h-full space-y-2">
           {feed.map((video, index) => (
             <VideoCard
               key={index}

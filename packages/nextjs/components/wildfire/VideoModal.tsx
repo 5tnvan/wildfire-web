@@ -1,15 +1,23 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
+import {
+  ChatBubbleOvalLeftEllipsisIcon,
+  EyeIcon,
+  FireIcon,
+  PauseIcon,
+  PlayIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { Src } from "@livepeer/react/*";
 import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
+import { useOnClickOutside } from "usehooks-ts";
 
 import { AuthUserContext } from "@/app/context";
-import { useOutsideClick } from "@/hooks/scaffold-eth";
 import { getLivepeerClient } from "@/utils/livepeer/getLivepeerClient";
 import { insertComment } from "@/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "@/utils/wildfire/crud/3sec_fires";
@@ -26,7 +34,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
   //STATES
-  const insideRef = useRef<any>(null);
+  const insideRef = useRef(null);
   const [videoSource, setVideoSource] = useState<Src[] | null>(null);
   const [videoStats, setVideoStats] = useState<any>(null);
 
@@ -42,6 +50,8 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
 
+  useOnClickOutside(insideRef, () => onClose());
+
   const closeTipModal = () => {
     setTipModalOpen(false);
   };
@@ -52,10 +62,6 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const closeShareModal = () => {
     setShareModalOpen(false);
   };
-
-  useOutsideClick(insideRef, () => {
-    handleClose();
-  });
 
   useEffect(() => {
     (async () => {
@@ -114,20 +120,17 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     }
   };
 
-  const handleClose = () => {
-    onClose();
-  };
-
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col md:flex-row justify-center z-20">
         <div
-          onClick={handleClose}
+          onClick={() => onClose()}
           className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2 z-10"
         >
           <ChevronLeftIcon width={20} color="black" />
           Back
         </div>
+
         <div ref={insideRef} className="md:flex">
           {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
           {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
@@ -143,23 +146,36 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
           <div style={{ width: "56.3dvh" }}>
             {videoSource && (
               <Player.Root src={videoSource} autoPlay>
-                <Player.Container className="h-dvh">
+                <Player.Container>
                   <Player.Video className="rounded-lg" />
 
                   <Player.LoadingIndicator className="bg-base-100 h-full w-full flex items-center justify-center">
                     Loading...
                   </Player.LoadingIndicator>
 
-                  <Player.Controls className="flex justify-center">Click to pause/play</Player.Controls>
+                  <Player.Controls />
 
-                  <Player.PlayPauseTrigger className="absolute left-5 top-5 h-6 w-6">
-                    <Player.PlayingIndicator asChild matcher={false}>
-                      <PlayIcon />
-                    </Player.PlayingIndicator>
-                    <Player.PlayingIndicator asChild>
-                      <PauseIcon />
-                    </Player.PlayingIndicator>
-                  </Player.PlayPauseTrigger>
+                  <div className="absolute top-5 left-5 right-5 flex flex-row items-center">
+                    <Player.PlayPauseTrigger className="flex-none h-6 w-6">
+                      <Player.PlayingIndicator asChild matcher={false}>
+                        <PlayIcon />
+                      </Player.PlayingIndicator>
+                      <Player.PlayingIndicator asChild>
+                        <PauseIcon />
+                      </Player.PlayingIndicator>
+                    </Player.PlayPauseTrigger>
+
+                    <span className="grow text-center">Click to pause/play</span>
+
+                    <Player.MuteTrigger className="flex-none h-6 w-6">
+                      <Player.VolumeIndicator asChild matcher={true}>
+                        <SpeakerXMarkIcon />
+                      </Player.VolumeIndicator>
+                      <Player.VolumeIndicator asChild matcher={false}>
+                        <SpeakerWaveIcon />
+                      </Player.VolumeIndicator>
+                    </Player.MuteTrigger>
+                  </div>
                 </Player.Container>
               </Player.Root>
             )}
