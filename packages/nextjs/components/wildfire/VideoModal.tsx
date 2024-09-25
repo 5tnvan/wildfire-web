@@ -5,13 +5,11 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   EyeIcon,
   FireIcon,
-  PauseIcon,
-  PlayIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
 } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { ChevronLeftIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { ChevronLeftIcon, PaperAirplaneIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { Src } from "@livepeer/react/*";
 import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
@@ -171,29 +169,28 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     Loading...
                   </Player.LoadingIndicator>
 
-                  <Player.Controls />
+                  <Player.Controls>
+                    {loopCount < 3 && (
+                      <div className="absolute inset-0 flex justify-center items-center">
+                        <Player.PlayPauseTrigger className="h-12 w-12">
+                          <Player.PlayingIndicator asChild matcher={false}>
+                            <PlayIcon />
+                          </Player.PlayingIndicator>
+                        </Player.PlayPauseTrigger>
+                      </div>
+                    )}
 
-                  <div className="absolute top-5 left-5 right-5 flex flex-row items-center">
-                    <Player.PlayPauseTrigger className="flex-none h-6 w-6">
-                      <Player.PlayingIndicator asChild matcher={false}>
-                        <PlayIcon />
-                      </Player.PlayingIndicator>
-                      <Player.PlayingIndicator asChild>
-                        <PauseIcon />
-                      </Player.PlayingIndicator>
-                    </Player.PlayPauseTrigger>
-
-                    <span className="grow text-center">Click to pause/play</span>
-
-                    <Player.MuteTrigger className="flex-none h-6 w-6">
-                      <Player.VolumeIndicator asChild matcher={true}>
-                        <SpeakerXMarkIcon />
-                      </Player.VolumeIndicator>
-                      <Player.VolumeIndicator asChild matcher={false}>
-                        <SpeakerWaveIcon />
-                      </Player.VolumeIndicator>
-                    </Player.MuteTrigger>
-                  </div>
+                    <div className="absolute top-5 right-5">
+                      <Player.MuteTrigger className="h-6 w-6">
+                        <Player.VolumeIndicator asChild matcher={true}>
+                          <SpeakerXMarkIcon />
+                        </Player.VolumeIndicator>
+                        <Player.VolumeIndicator asChild matcher={false}>
+                          <SpeakerWaveIcon />
+                        </Player.VolumeIndicator>
+                      </Player.MuteTrigger>
+                    </div>
+                  </Player.Controls>
 
                   {loopCount > 2 && (
                     <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
