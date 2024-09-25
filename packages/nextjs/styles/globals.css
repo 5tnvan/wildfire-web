@@ -131,3 +131,9 @@ img {
     height: auto !important;
   } 
 }
+
+/* Livepeer React component outer div fix */
+div[data-radix-aspect-ratio-wrapper] {
+  height: 100% !important;
+  padding-bottom: 0 !important;
+}

@@ -40,7 +40,7 @@ const Profile: NextPage = () => {
     followed,
     refetch: refetchProfileFollows,
   } = useUserFollowsByUsername(user, username);
-  const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
+  const { loading: loadingFeed, feeds, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -51,28 +51,30 @@ const Profile: NextPage = () => {
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
-  const lastItemIndex = feed.length - 1;
+  const [carouselObserver, setCarouselObserver] = useState<IntersectionObserver>();
 
   useEffect(() => {
     if (!carousellRef.current) return;
 
+    carouselObserver?.disconnect();
+
     const options = {
       root: carousellRef.current,
       rootMargin: "0px",
-      threshold: 0.3, // Multiple thresholds for more accurate detection
+      threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver((entries: any) => {
+    const observer = new IntersectionObserver(entries => {
+      const lastItemIndex = feeds.length - 1;
+
       // Callback function for Intersection Observer
-      entries.forEach((entry: any) => {
+
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const index = entry.target.getAttribute("data-index");
-          console.log("lastItemId", lastItemIndex);
-          console.log("index", index);
-          if (index == lastItemIndex) {
-            console.log("i am hereee");
-            fetchMore();
-          }
+          const index = parseInt(entry.target.getAttribute("data-index") || "0");
+
+          console.log("[lastItemIndex]", lastItemIndex);
+          if (index === lastItemIndex) fetchMore();
         }
       });
     }, options);
@@ -82,7 +84,9 @@ const Profile: NextPage = () => {
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feed, fetchMore, lastItemIndex]); // Ensure to run effect whenever feed changes
+
+    setCarouselObserver(observer);
+  }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleFollow = async () => {
     if (followed == false) {
@@ -118,7 +122,7 @@ const Profile: NextPage = () => {
       router.push("/login");
     } else {
       console.log("id", id);
-      const res = feed.find((item: any) => item.id === id);
+      const res = feeds.find((item: any) => item.id === id);
       setSelectedVideo(res);
       setIsVideoModalOpen(true);
     }
@@ -152,7 +156,7 @@ const Profile: NextPage = () => {
 
   if (profile) {
     return (
-      <div className="flex flex-col-reverse md:flex-row items-start ">
+      <div className="flex flex-col-reverse md:flex-row items-start h-full">
         {/* MODALS */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
@@ -161,8 +165,8 @@ const Profile: NextPage = () => {
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
         {/* NO FEED TO SHOW */}
-        {!loadingFeed && feed && feed.length == 0 && (
-          <div className="flex flex-row justify-center items-center w-full md:h-screen-custom grow">
+        {!loadingFeed && feeds && feeds.length == 0 && (
+          <div className="flex flex-row justify-center items-center w-full grow">
             <Link className="mt-5 md:mt-0 btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
             </Link>
@@ -170,21 +174,19 @@ const Profile: NextPage = () => {
         )}
 
         {/* LOADING INITIAL FEED */}
-        {loadingFeed && feed && feed.length == 0 && (
-          <div className="flex flex-row justify-center items-center h-screen-custom w-full grow">
+        {loadingFeed && feeds && feeds.length == 0 && (
+          <div className="flex flex-row justify-center items-center w-full grow">
             <span className="loading loading-ring loading-lg"></span>
           </div>
         )}
 
         {/* RENDER FEED */}
-        {feed && feed.length > 0 && (
-          <>
-            <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
-              {feed.map((thumb: any, index: any) => (
-                <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
-              ))}
-            </div>
-          </>
+        {feeds && feeds.length > 0 && (
+          <div className="carousel carousel-center gap-2 rounded-box w-full h-full" ref={carousellRef}>
+            {feeds.map((feed: any, index: any) => (
+              <ThumbCard key={index} index={index} data={feed} onCta={handleThumbClick} />
+            ))}
+          </div>
         )}
         {/* FETCH MORE */}
         {/* {loadingFeed && (
@@ -192,13 +194,12 @@ const Profile: NextPage = () => {
             <span className="loading loading-dots loading-sm"></span>
           </div>
         )} */}
-        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
+        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5">
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
-            <div className="stat-figure text-secondary">
+            {/* <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
                 <div className="avatar">
                   <div className="w-12 rounded-full">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={profile?.avatar_url} alt="avatar" />
                   </div>
                 </div>
@@ -210,9 +211,10 @@ const Profile: NextPage = () => {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="stat-title">{levelName}</div>
-            <div className="stat-value text-3xl">{profile.username}</div>
+            </div> */}
+            <div className="stat-value text-lg pb-2">{username}</div>
+            <div className="stat-title">Level</div>
+            <div className="stat-value text-3xl">{levelName}</div>
             {/* <div className="stat-desc">Level up</div> */}
           </Link>
           <div className="stat cursor-pointer hover:opacity-85" onClick={() => setFollowsModalOpen(true)}>

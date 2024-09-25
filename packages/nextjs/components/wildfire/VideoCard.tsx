@@ -7,6 +7,8 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   EyeIcon,
   FireIcon,
+  PauseIcon,
+  PlayIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
 } from "@heroicons/react/20/solid";
@@ -187,22 +189,35 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 Loading...
               </Player.LoadingIndicator>
 
-              <div className="absolute top-5 left-5 right-5 flex flex-row justify-between items-center">
-                <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
-                  <Avatar profile={data.profile} width={10} height={10} />
-                  <div className="font-semibold text-white">{data.profile.username}</div>
-                </Link>
+              <Player.Controls />
 
-                <button className="order-last text-white" onClick={handleToggleMute}>
+              <div className="absolute top-5 left-5 right-5 flex flex-row items-center">
+                <Player.PlayPauseTrigger className="flex-none h-6 w-6">
+                  <Player.PlayingIndicator asChild matcher={false}>
+                    <PlayIcon />
+                  </Player.PlayingIndicator>
+                  <Player.PlayingIndicator asChild>
+                    <PauseIcon />
+                  </Player.PlayingIndicator>
+                </Player.PlayPauseTrigger>
+
+                <span className="grow text-center">Click to pause/play</span>
+
+                <button className="flex-none text-white" onClick={handleToggleMute}>
                   {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
                 </button>
               </div>
 
+              <Link
+                href={"/" + data.profile.username}
+                className="absolute top-14 left-3 flex flex-row items-center gap-2"
+              >
+                <Avatar profile={data.profile} width={10} height={10} />
+                <div className="font-semibold text-white">{data.profile.username}</div>
+              </Link>
+
               {loopCount > 2 && (
-                <div
-                  className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50"
-                  style={{ height: "88dvh" }}
-                >
+                <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
                   <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
                     <EyeIcon width={16} />
                     <span className="font-medium">Watch again</span>

@@ -44,10 +44,12 @@ const Profile: NextPage = () => {
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
-  const lastItemIndex = feeds.length - 1;
+  const [carouselObserver, setCarouselObserver] = useState<IntersectionObserver>();
 
   useEffect(() => {
     if (!carousellRef.current) return;
+
+    carouselObserver?.disconnect();
 
     const options = {
       root: carousellRef.current,
@@ -55,18 +57,17 @@ const Profile: NextPage = () => {
       threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver((entries: any) => {
+    const observer = new IntersectionObserver(entries => {
+      const lastItemIndex = feeds.length - 1;
+
       // Callback function for Intersection Observer
 
-      entries.forEach((entry: any) => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const index = entry.target.getAttribute("data-index");
-          console.log("lastItemId", lastItemIndex);
-          console.log("index", index);
-          if (index == lastItemIndex) {
-            console.log("i am hereee");
-            fetchMore();
-          }
+          const index = parseInt(entry.target.getAttribute("data-index") || "0");
+
+          console.log("[lastItemIndex]", lastItemIndex);
+          if (index === lastItemIndex) fetchMore();
         }
       });
     }, options);
@@ -76,7 +77,9 @@ const Profile: NextPage = () => {
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feeds, fetchMore, lastItemIndex]); // Ensure to run effect whenever feed changes
+
+    setCarouselObserver(observer);
+  }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleUnfollow = async () => {
     if (followed == true) {

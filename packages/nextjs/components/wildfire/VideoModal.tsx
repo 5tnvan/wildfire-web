@@ -35,9 +35,11 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const { profile } = useContext(AuthUserContext);
   //STATES
   const insideRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [videoSource, setVideoSource] = useState<Src[] | null>(null);
   const [videoStats, setVideoStats] = useState<any>(null);
 
+  const [loopCount, setLoopCount] = useState(0);
   const [likeCount, setLikeCount] = useState<any>();
   const [temporaryLiked, setTemporaryLiked] = useState(false);
 
@@ -83,6 +85,22 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
 
   const handleIncrementViews = async () => {
     incrementViews(data.id);
+  };
+
+  //pause video after 3 plays
+  const handleVideoEnd = () => {
+    if (loopCount < 2) {
+      setLoopCount(prevCount => prevCount + 1);
+      videoRef.current?.play();
+    } else {
+      setLoopCount(3);
+    }
+  };
+
+  const handleWatchAgain = () => {
+    setLoopCount(0);
+    videoRef.current?.play();
+    handleIncrementViews();
   };
 
   const handleLike = async () => {
@@ -147,7 +165,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             {videoSource && (
               <Player.Root src={videoSource} autoPlay>
                 <Player.Container>
-                  <Player.Video className="rounded-lg" />
+                  <Player.Video className="rounded-lg" ref={videoRef} onEnded={handleVideoEnd} />
 
                   <Player.LoadingIndicator className="bg-base-100 h-full w-full flex items-center justify-center">
                     Loading...
@@ -176,6 +194,15 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                       </Player.VolumeIndicator>
                     </Player.MuteTrigger>
                   </div>
+
+                  {loopCount > 2 && (
+                    <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                      <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
+                        <EyeIcon width={16} />
+                        <span className="font-medium">Watch again</span>
+                      </div>
+                    </div>
+                  )}
                 </Player.Container>
               </Player.Root>
             )}
