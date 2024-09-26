@@ -1,10 +1,16 @@
 "use client";
 
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 
 import { useGlobalState } from "@/services/store/store";
+
+import { AuthContext } from "@/app/context";
+import { Avatar } from "@/components/Avatar";
+import { TimeAgo } from "@/components/wildfire/TimeAgo";
+import { useOutsideClick } from "@/hooks/scaffold-eth/useOutsideClick";
+import { useNotifications } from "@/hooks/wildfire/useNotifications";
 import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
 import {
   updateCommentRead,
@@ -13,14 +19,11 @@ import {
   updateTipRead,
 } from "@/utils/wildfire/crud/notifications";
 
-import { useOutsideClick } from "@/hooks/scaffold-eth/useOutsideClick";
-import { useNotifications } from "@/hooks/wildfire/useNotifications";
-import { Avatar } from "@/components/Avatar";
-import { TimeAgo } from "@/components/wildfire/TimeAgo";
-
 const Notifications: NextPage = () => {
+  const { user } = useContext(AuthContext);
+
   const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } =
-    useNotifications();
+    useNotifications(user);
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   console.log("notif", firesNotifications);
