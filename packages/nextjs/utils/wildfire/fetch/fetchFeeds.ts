@@ -40,8 +40,8 @@ export const fetchWithin48Hrs = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
-      { count: 'exact' }
+      "id, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
     .gte("created_at", past48Hrs) // Fetch posts created within the last 48 hours
@@ -54,7 +54,6 @@ export const fetchWithin48Hrs = async (limit: any) => {
 
   return data;
 };
-
 
 /**
  * FETCH: fetchLatestTipped()
@@ -73,8 +72,8 @@ export const fetchLatestTipped = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view") // Ensure the table name is correct
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
-      { count: 'exact' }
+      "id, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
     .not("3sec_tips", "is", null) // Ensure tips are present
@@ -89,7 +88,6 @@ export const fetchLatestTipped = async (limit: any) => {
   return data;
 };
 
-
 /**
  * FETCH: fetchMostViewed()
  * DB: supabase
@@ -102,8 +100,8 @@ export const fetchMostViewed = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view") // Use the correct table name here
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
-      { count: 'exact' }
+      "id, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
     .gte("3sec_views.view_count", 1000) // Fetch posts with views >= 1,000

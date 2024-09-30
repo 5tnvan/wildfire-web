@@ -79,9 +79,9 @@ export const useDailyPostLimit = (user: User | null) => {
         }
       }
 
-      // FIXME: THis is for temprary uses
-      setLimit(false);
-      setPostLeft(999999);
+      // // FIXME: THis is for temprary uses
+      // setLimit(false);
+      // setPostLeft(999999);
 
       setIsLoading(false);
     })();

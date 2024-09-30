@@ -1,11 +1,14 @@
 import React, { useContext, useRef, useState } from "react";
-import { Avatar } from "../Avatar";
-import { ChevronLeftIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { isUsernameTaken, isUsernameUpdated, updateUsername } from "~~/utils/wildfire/changeUsername";
 
-const UsernameModal = ({ onClose } : any) => {
+import { ChevronLeftIcon, XCircleIcon } from "@heroicons/react/24/solid";
+
+import { AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { isUsernameTaken, isUsernameUpdated, updateUsername } from "@/utils/wildfire/changeUsername";
+
+import { Avatar } from "../Avatar";
+
+const UsernameModal = ({ onClose }: any) => {
   const { profile, refetchAuthUser } = useContext(AuthUserContext);
 
   const [errorClient, setErrorClient] = useState<string | null>(null);
@@ -19,7 +22,9 @@ const UsernameModal = ({ onClose } : any) => {
     // Validate username pattern
     const usernamePattern = /^[a-z][a-z0-9_]{2,15}$/;
     if (!usernamePattern.test(newUsername)) {
-      setErrorClient("Username must be 3-15 characters long and include only lowercase letters, numbers, and underscores.");
+      setErrorClient(
+        "Username must be 3-15 characters long and include only lowercase letters, numbers, and underscores.",
+      );
       setIsProcessing(false);
       return;
     }
@@ -28,9 +33,11 @@ const UsernameModal = ({ onClose } : any) => {
       // Check if username exists and if it was updated recently
       const usernameTaken = await isUsernameTaken(newUsername);
       const lastUpdated = await isUsernameUpdated(profile.username);
-      
+
       const now = new Date();
-      const daysDifference = lastUpdated ? Math.floor((now.getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+      const daysDifference = lastUpdated
+        ? Math.floor((now.getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24))
+        : 0;
 
       if (usernameTaken) {
         setErrorClient("Username is taken");
@@ -38,7 +45,7 @@ const UsernameModal = ({ onClose } : any) => {
         setErrorClient("Username was updated recently. Ensure 29 days have passed.");
       } else {
         const res = await updateUsername(newUsername);
-        if(res) {
+        if (res) {
           setErrorClient("Something went wrong. Please try again.");
         } else {
           onClose();
@@ -82,14 +89,10 @@ const UsernameModal = ({ onClose } : any) => {
             pattern="^[a-z][a-z0-9_]{2,15}$"
             title="3-15 characters & only lowercase letters, numbers, and underscores."
             value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
+            onChange={e => setNewUsername(e.target.value)}
           />
           {errorClient && (
-            <div
-              role="alert"
-              className="alert alert-error mt-3"
-              onClick={() => setErrorClient(null)}
-            >
+            <div role="alert" className="alert alert-error mt-3" onClick={() => setErrorClient(null)}>
               <XCircleIcon width={20} />
               <span>{errorClient}</span>
             </div>

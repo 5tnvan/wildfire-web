@@ -20,27 +20,66 @@ export const useFeed = (user: User | null, filter: "default" | "within48hrs" | "
   const range = 3;
 
   const [loading, setLoading] = useState(false);
-  const [feed, setFeed] = useState<any[]>([]);
-  const [page, setPage] = useState(0);
+  const [feeds, setFeeds] = useState<any[]>([]);
+  const [nextFeeds, setNextFeeds] = useState<any[]>([]);
   //const [hasMore, setHasMore] = useState(true);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  const refetch = () => {
-    setPage(0); // Reset page
-    setFeed([]); // Reset feed
-    //setHasMore(true); // Reset hasMore to true
-    setTriggerRefetch(prev => !prev); // Trigger refetch
-  };
-
-  const fetchMore = () => {
-    setPage(prevPage => prevPage + 1); // Increase page by 1 to triggter fetchFeed
-  };
-
   useEffect(() => {
-    (async () => {
-      try {
+    if (user && !loading) {
+      (async () => {
         setLoading(true);
 
+        try {
+          let data;
+
+          // Use switch for better readability
+          switch (filter) {
+            case "within48hrs":
+              data = await fetchWithin48Hrs(2 * range);
+              break;
+            case "latestTipped":
+              data = await fetchLatestTipped(2 * range);
+              break;
+            case "mostViewed":
+              data = await fetchMostViewed(2 * range);
+              break;
+            default:
+              data = await fetchRandomFeed(2 * range);
+          }
+          console.log("[data]", data);
+
+          if (data) {
+            // Check if each post is liked by the user
+            const likedPostsPromises = data.map(async (post: any) => {
+              return fetchLikes(post, user?.id);
+            });
+
+            // Wait for all promises to resolve
+            const masterData = await Promise.all(likedPostsPromises);
+
+            // Update the feed state with the new data
+            setFeeds(masterData.slice(0, range));
+            setNextFeeds(masterData.slice(range, range + range));
+          }
+        } catch (error) {
+          console.error("Error fetching feed:", error);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  }, [triggerRefetch, user, filter]);
+
+  const fetchMore = async () => {
+    if (user && nextFeeds.length > 0 && !loading) {
+      console.log("fetching more");
+
+      setLoading(true);
+
+      setFeeds(oldFeeds => [...oldFeeds, ...nextFeeds]);
+
+      try {
         let data;
 
         // Use switch for better readability
@@ -56,28 +95,28 @@ export const useFeed = (user: User | null, filter: "default" | "within48hrs" | "
             break;
           default:
             data = await fetchRandomFeed(range);
-            console.log(data);
         }
+        console.log("[data]", data);
 
-        if (data && user) {
+        if (data) {
           // Check if each post is liked by the user
           const likedPostsPromises = data.map(async (post: any) => {
-            return fetchLikes(post, user?.id);
+            return fetchLikes(post, user.id);
           });
 
-          // Wait for all promises to resolve
-          const masterData = await Promise.all(likedPostsPromises);
+          const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
 
-          // Update the feed state with the new data
-          setFeed(existingFeed => [...existingFeed, ...masterData]);
+          setNextFeeds(masterData);
         }
       } catch (error) {
         console.error("Error fetching feed:", error);
       } finally {
         setLoading(false);
       }
-    })();
-  }, [page, triggerRefetch, user]);
+    } else setNextFeeds([]);
+  };
 
-  return { loading, feed, fetchMore, refetch };
+  const refetch = () => setTriggerRefetch(prev => !prev);
+
+  return { loading, feeds, fetchMore, refetch };
 };
