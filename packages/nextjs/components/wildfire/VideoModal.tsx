@@ -283,7 +283,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
               </div>
               {/* BOTTOM INFO */}
               <div className="flex flex-row gap-2 justify-between mt-2">
-                <div className="rounded-full flex flex-row justify-center items-center bg-zinc-200 dark:bg-zinc-900 gap-1 grow">
+                <div className="btn rounded-full flex flex-row justify-center items-center bg-zinc-200 dark:bg-zinc-900 gap-1 grow">
                   <EyeIcon width={20} />
                   <span className="text-base font-normal">
                     <FormatNumber number={videoStats?.["3sec_views"][0]?.view_count} />

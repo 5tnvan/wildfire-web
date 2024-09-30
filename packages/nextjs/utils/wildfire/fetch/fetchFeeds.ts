@@ -23,7 +23,102 @@ export const fetchRandomFeed = async (limit: any) => {
 };
 
 /**
- * FETCH: fetchFeedWithRange()
+ * FETCH: fetchWithin48Hrs()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ **/
+
+export const fetchWithin48Hrs = async (limit: any) => {
+  const supabase = createClient();
+
+  // Get the current date and subtract 48 hours
+  const now = new Date();
+  const past48Hrs = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString(); // Convert to ISO string for SQL query
+
+  console.log("past48Hrs", past48Hrs);
+
+  const { data, error } = await supabase
+    .from("3sec_random_view")
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: 'exact' }
+    )
+    .neq("suppressed", true) // Exclude suppressed posts
+    .gte("created_at", past48Hrs) // Fetch posts created within the last 48 hours
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching posts from the last 48 hours:", error);
+    return null;
+  }
+
+  return data;
+};
+
+
+/**
+ * FETCH: fetchLatestTipped()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ * Fetch those posts that have been tipped
+ **/
+
+export const fetchLatestTipped = async (limit: any) => {
+  const supabase = createClient();
+
+  // Get the current date and subtract 7 days (1 week)
+  // const now = new Date();
+  // const pastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(); // Convert to ISO string for SQL query
+
+  const { data, error } = await supabase
+    .from("3sec_random_view") // Ensure the table name is correct
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: 'exact' }
+    )
+    .neq("suppressed", true) // Exclude suppressed posts
+    .not("3sec_tips", "is", null) // Ensure tips are present
+    //.gte("3sec_tips.created_at", pastWeek) // Filter tips created within the last 7 days
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching latest tipped posts:", error);
+    return null;
+  }
+
+  return data;
+};
+
+
+/**
+ * FETCH: fetchMostViewed()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ * Fetch those posts that have views from 1k up
+ **/
+export const fetchMostViewed = async (limit: any) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("3sec_random_view") // Use the correct table name here
+    .select(
+      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      { count: 'exact' }
+    )
+    .neq("suppressed", true) // Exclude suppressed posts
+    .gte("3sec_views.view_count", 1000) // Fetch posts with views >= 1,000
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching most viewed posts:", error);
+    return null;
+  }
+
+  return data;
+};
+
+/**
+ * FETCH: fetchVideoAndRandomFeed()
  * DB: supabase
  * TABLE: "3sec_desc_view"
  **/

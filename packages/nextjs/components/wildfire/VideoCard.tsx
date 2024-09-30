@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ import {
   SpeakerXMarkIcon,
 } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { PaperAirplaneIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { HeartIcon, PaperAirplaneIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { Src } from "@livepeer/react/*";
 import { getSrc } from "@livepeer/react/external";
 import * as Player from "@livepeer/react/player";
@@ -40,7 +40,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   //STATES
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoSource, setVideoSource] = useState<Src[] | null>(null);
-  const [loadNewVidsAt, setloadNewVidsAt] = useState(feedLength - 1);
+  const [loadNewVidsAt, setloadNewVidsAt] = useState(feedLength - 2);
   const [loopCount, setLoopCount] = useState(0);
   const [likeCount, setLikeCount] = useState<any>(data["3sec_fires"][0]?.count);
   const [temporaryLiked, setTemporaryLiked] = useState(false);
@@ -48,6 +48,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+  const [loadingComment, setLoadingComment] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   //TIP MODAL
@@ -76,6 +77,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
     } else {
       console.log("You already liked this post");
+
       setToast("You already liked this post");
 
       // Set the toast back to null after 4 seconds
@@ -93,13 +95,14 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     if (!commentInput.trim()) {
       return; // Do not submit empty comments
     }
-
+    setLoadingComment(true);
     const error = await insertComment(user?.id, data.id, commentInput);
     if (!error) {
       setTempComment(commentInput); // Store the new comment temporarily
       setCommentCount((prevCount: any) => prevCount + 1); // Increment count
       setCommentInput(""); // Clear the input field
       setShowCommentInput(false);
+      setLoadingComment(false);
     }
   };
 
@@ -121,6 +124,8 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   //auto play when video is in view (based on isPlaying)
   useEffect(() => {
     if (videoRef.current) {
+      console.log("loadNewVidsAt", loadNewVidsAt);
+
       if (isPlaying) {
         setLoopCount(0);
         videoRef.current.play();
@@ -243,7 +248,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
           </div>
         </div>
         {/* THE REST */}
-        <div className="w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
+        <div className="w-[350px] h-[350px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
           {/* TIP NOW */}
           {data["3sec_tips"]?.length > 0 ? (
             <div className="flex flex-row items-top">
@@ -253,7 +258,9 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
               >
                 Tip Now
               </div>
-              <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
+              <div className="btn bg-base-300 w-1/2 text-sm">
+                <HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}
+              </div>
             </div>
           ) : (
             <div
@@ -348,7 +355,36 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
               </div>
             )}
           </div>
-          {/* BOTTOM INFO */}
+          {/* Comment input */}
+          {isAuthenticated && (
+            <div className="w-full max-w-sm min-w-[200px] mt-2">
+              <div className="relative w-full pl-3 pr-10 py-2 bg-transparent border border-slate-200 rounded-full transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow">
+                <div className="absolute top-2.5 left-2.5">
+                  <Avatar profile={profile} width={5} height={5} />
+                </div>
+                <input
+                  type="text"
+                  className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
+                  style={{ width: "87%" }}
+                  placeholder="Type your comment..."
+                  value={commentInput}
+                  onChange={e => setCommentInput(e.target.value)}
+                  maxLength={100}
+                />
+                {commentInput.length > 0 && (
+                  <div
+                    className="text-sm absolute w-fit h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer flex flex-row items-center"
+                    onClick={() => handleCommentSubmit()}
+                  >
+                    <span>Post</span>
+                    {loadingComment && <span className="loading loading-ring loading-xs ml-1"></span>}
+                  </div>
+                )}
+                {/* <FaceSmileIcon width={30} color="black" className="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600" /> */}
+              </div>
+            </div>
+          )}
+          {/* BOTTOM: VIEWS & LIKES & COMMENTS COUNT */}
           <div className="flex flex-row gap-2 justify-between mt-2">
             <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
               <EyeIcon width={20} />

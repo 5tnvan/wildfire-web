@@ -24,6 +24,7 @@ const Create: NextPage = () => {
 
   //FETCH DIRECTLY
   const { isLoading: isLoadingLimit, limit, posts, postLeft } = useDailyPostLimit(user);
+  const [loading, setLoading] = useState(false);
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [countryId, setCountryId] = useState<string | null>(null);
@@ -93,11 +94,16 @@ const Create: NextPage = () => {
     }
     if (limit === false && videoUrl.length > 0 && uploadedVideo) {
       try {
+        setLoading(true);
+
         console.log("videoBlob", uploadedVideo);
 
         // Upload video
         await uploadToLivepeer(uploadedVideo);
+
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.error("Upload failed:", error);
         alert("Failed to upload video. Please try again.");
       }
@@ -316,8 +322,9 @@ const Create: NextPage = () => {
                   <MapPinIcon width={14} />
                   {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
                 </div>
-                <div className="btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
+                <div className="relative btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
                   Post Now
+                  {loading && <span className="absolute loading loading-ring loading-md ml-1 right-4"></span>}
                 </div>
                 <div className="text-sm text-gray-400 m-auto px-14 md:w-auto">{uploadingText}</div>
               </div>

@@ -9,6 +9,8 @@ import "@/styles/globals.css";
 import "@/styles/video-feed.css";
 import "@/styles/width-height.css";
 
+import React from "react";
+
 import { getMetadata } from "@/utils/scaffold-eth/getMetadata";
 
 import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "./context";

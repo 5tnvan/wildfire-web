@@ -14,9 +14,11 @@ export const useCountries = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      console.log("im hererere useCountries");
+
       const res = await fetchCountries();
+
       if (res) setCountries(res);
+
       setLoading(false);
     })();
   }, [triggerRefetch]);

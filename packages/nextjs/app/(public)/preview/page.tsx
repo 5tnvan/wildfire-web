@@ -1,16 +1,16 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 
-import { useFeed } from "@/hooks/wildfire/useFeed";
-import VideoCard from "@/components/wildfire/VideoCard";
 import { AuthContext } from "@/app/context";
+import VideoCard from "@/components/wildfire/VideoCard";
+import { useFeed } from "@/hooks/wildfire/useFeed";
 
 const Preview: NextPage = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, fetchMore } = useFeed(user);
+  const { loading: loadingFeed, feed, fetchMore } = useFeed(user, "default");
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true); // New state for mute toggle
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -69,7 +69,7 @@ const Preview: NextPage = () => {
           </div>
         )}
         {feed && feed.length > 0 && (
-          <div ref={sliderRef} className="infinite-scroll">
+          <div ref={sliderRef} className="infinite-scroll flex flex-col items-center">
             {feed.map((video, index) => (
               <VideoCard
                 key={index}

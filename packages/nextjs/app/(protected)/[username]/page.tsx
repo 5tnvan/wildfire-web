@@ -198,7 +198,7 @@ const Profile: NextPage = () => {
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             {/* <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
-                <div className="avatar">
+                <div className="avatar placeholder">
                   <div className="w-12 rounded-full">
                     <img src={profile?.avatar_url} alt="avatar" />
                   </div>
@@ -207,7 +207,7 @@ const Profile: NextPage = () => {
               {!profile?.avatar_url && (
                 <div className="avatar placeholder">
                   <div className="bg-neutral text-neutral-content rounded-full w-12">
-                    <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
+                    <span className="text-xl">{profile?.username.charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
               )}

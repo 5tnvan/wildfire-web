@@ -9,10 +9,11 @@ import { fetchLastVideoPosts, fetchLevel } from "@/utils/wildfire/fetch/fetch3Se
  * Use this to check daily posting limit
  **/
 export const useDailyPostLimit = (user: User | null) => {
+  // State variables to manage loading state, post limit, remaining posts, and fetched posts
   const [isLoading, setIsLoading] = useState(true);
   const [limit, setLimit] = useState<boolean | null>(null);
   const [postLeft, setPostLeft] = useState<number | null>(null);
-  const [posts, setPosts] = useState<any>([null]);
+  const [posts, setPosts] = useState<any>([]);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
   useEffect(() => {
@@ -86,7 +87,9 @@ export const useDailyPostLimit = (user: User | null) => {
     })();
   }, [triggerRefetch, user]);
 
+  // Function to toggle triggerRefetch, causing a refetch of data
   const refetch = () => setTriggerRefetch(prev => !prev);
 
+  // Return the loading state, post limit, posts, remaining posts, and refetch function
   return { isLoading, limit, posts, postLeft, refetch };
 };

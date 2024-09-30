@@ -2,6 +2,7 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { useGlobalState } from "@/services/store/store";
@@ -15,6 +16,7 @@ import FormatNumber from "@/components/wildfire/FormatNumber";
 import ThumbCard from "@/components/wildfire/ThumbCard";
 import TipModal from "@/components/wildfire/TipModal";
 import TransactionsModal from "@/components/wildfire/TransactionsModal";
+import UsernameModal from "@/components/wildfire/UsernameModal";
 import VideoModal from "@/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
 import { useProfileFeeds } from "@/hooks/wildfire/useProfileFeeds";
@@ -134,6 +136,13 @@ const Profile: NextPage = () => {
     setAvatarModalOpen(false);
   };
 
+  //AVATAR MODAL
+  const [isUsernameModalOpen, setUsernameModalOpen] = useState(false);
+
+  const closeUsernameModal = () => {
+    setUsernameModalOpen(false);
+  };
+
   //TRANSACTIONS MODAL
   const [isTransactionsModalOpen, setTransactionsModalOpen] = useState(false);
 
@@ -152,6 +161,7 @@ const Profile: NextPage = () => {
       )}
       {isFollowingModalOpen && <FollowingModal data={{ profile, following, followed }} onClose={closeFollowingModal} />}
       {isAvatarModalOpen && <AvatarModal onClose={closeAvatarModal} />}
+      {isUsernameModalOpen && <UsernameModal onClose={closeUsernameModal} />}
 
       {/* NO FEED TO SHOW */}
       {!loadingFeed && feeds && feeds.length == 0 && (
@@ -181,12 +191,25 @@ const Profile: NextPage = () => {
       {/* STAT */}
       <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5">
         <div className="stat">
+          <div className="stat-title">Level</div>
+          <div className="stat-value text-xl">{levelName}</div>
+          <a href="https://www.wildpay.app/levels" className="stat-desc">
+            Level up
+          </a>
+        </div>
+        <div className="stat">
           <div className="stat-figure text-secondary">
             {profile?.avatar_url && (
               <div className="avatar online">
                 <div className="w-12 rounded-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={profile?.avatar_url} alt="avatar" />
+                  <Image
+                    src={profile?.avatar_url}
+                    width={60}
+                    height={60}
+                    alt="linear demo image"
+                    className=""
+                    style={{ width: "auto", height: "auto" }}
+                  />
                 </div>
                 <div
                   className="absolute bottom-0 rounded-full bg-white p-1 right-0"
@@ -199,7 +222,7 @@ const Profile: NextPage = () => {
             {!profile?.avatar_url && (
               <div className="avatar placeholder online">
                 <div className="bg-neutral text-neutral-content rounded-full w-12">
-                  <span className="text-3xl">{profile?.username.charAt(0).toUpperCase()}</span>
+                  <span className="text-xl">{profile?.username.charAt(0).toUpperCase()}</span>
                 </div>
                 <div
                   className="absolute bottom-0 rounded-full bg-white p-1 right-0"
@@ -210,9 +233,11 @@ const Profile: NextPage = () => {
               </div>
             )}
           </div>
-          <div className="stat-title">Level</div>
-          <div className="stat-value text-3xl">{levelName}</div>
-          {/* <div className="stat-desc">Level up</div> */}
+          {/* <div className="stat-title">Username</div> */}
+          <div className="stat-value text-xl">{profile?.username}</div>
+          <div className="stat-desc cursor-pointer" onClick={() => setUsernameModalOpen(true)}>
+            Change
+          </div>
         </div>
         <div className="stat cursor-pointer" onClick={() => setFollowersModalOpen(true)}>
           <div className="stat-figure text-primary">
@@ -242,7 +267,7 @@ const Profile: NextPage = () => {
           <div className="stat-figure text-primary">
             <CircleStackIcon width={60} />
           </div>
-          <div className="stat-title">Received</div>
+          <div className="stat-title">Incoming</div>
           <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
           <div className="stat-desc">{balance} ETH</div>
         </div>
