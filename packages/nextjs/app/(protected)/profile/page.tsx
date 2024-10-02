@@ -1,44 +1,41 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { AuthUserContext, AuthUserFollowsContext } from "../../context";
-import { NextPage } from "next";
+
+import { useGlobalState } from "@/services/store/store";
 import { CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { PencilIcon } from "@heroicons/react/24/solid";
-import AvatarModal from "~~/components/wildfire/AvatarModal";
-import FollowersModal from "~~/components/wildfire/FollowersModal";
-import FollowingModal from "~~/components/wildfire/FollowingModal";
-import FormatNumber from "~~/components/wildfire/FormatNumber";
-import ThumbCard from "~~/components/wildfire/ThumCard";
-import TipModal from "~~/components/wildfire/TipModal";
-import TransactionsModal from "~~/components/wildfire/TransactionsModal";
-import UsernameModal from "~~/components/wildfire/UsernameModal";
-import VideoModal from "~~/components/wildfire/VideoModal";
-import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useProfileFeed } from "~~/hooks/wildfire/useProfileFeed";
-import { useGlobalState } from "~~/services/store/store";
-import { calculateSum } from "~~/utils/wildfire/calculateSum";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { deleteFollow } from "~~/utils/wildfire/crud/followers";
+
+import AvatarModal from "@/components/wildfire/AvatarModal";
+import FollowersModal from "@/components/wildfire/FollowersModal";
+import FollowingModal from "@/components/wildfire/FollowingModal";
+import FormatNumber from "@/components/wildfire/FormatNumber";
+import ThumbCard from "@/components/wildfire/ThumbCard";
+import TipModal from "@/components/wildfire/TipModal";
+import TransactionsModal from "@/components/wildfire/TransactionsModal";
+import UsernameModal from "@/components/wildfire/UsernameModal";
+import VideoModal from "@/components/wildfire/VideoModal";
+import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
+import { useProfileFeeds } from "@/hooks/wildfire/useProfileFeeds";
+import { calculateSum } from "@/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { deleteFollow } from "@/utils/wildfire/crud/followers";
+
+import { AuthContext, AuthUserContext, AuthUserFollowsContext } from "../../context";
 
 const Profile: NextPage = () => {
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   //CONSUME PROVIDERS
+  const { user } = useContext(AuthContext);
   const { profile } = useContext(AuthUserContext);
-  const {
-    loading: loadingFollows,
-    followers,
-    following,
-    followed,
-    refetchAuthUserFollows,
-  } = useContext(AuthUserFollowsContext);
+  const { loadingFollows, followers, following, followed, refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { loading: loadingFeed, feed, fetchMore } = useProfileFeed();
+  const { loading: loadingFeed, feeds, fetchMore } = useProfileFeeds(user);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -49,25 +46,12 @@ const Profile: NextPage = () => {
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
-  const lastItemIndex = feed.length - 1;
-
-  // Callback function for Intersection Observer
-  const callback = (entries: any) => {
-    entries.forEach((entry: any) => {
-      if (entry.isIntersecting) {
-        const index = entry.target.getAttribute("data-index");
-        console.log("lastItemId", lastItemIndex);
-        console.log("index", index);
-        if (index == lastItemIndex) {
-          console.log("i am hereee");
-          fetchMore();
-        }
-      }
-    });
-  };
+  const [carouselObserver, setCarouselObserver] = useState<IntersectionObserver>();
 
   useEffect(() => {
     if (!carousellRef.current) return;
+
+    carouselObserver?.disconnect();
 
     const options = {
       root: carousellRef.current,
@@ -75,14 +59,30 @@ const Profile: NextPage = () => {
       threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver(callback, options);
+    const observer = new IntersectionObserver(entries => {
+      const lastItemIndex = feeds.length - 1;
+
+      // Callback function for Intersection Observer
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.getAttribute("data-index") || "0");
+
+          console.log("[lastItemIndex]", lastItemIndex);
+          if (index === lastItemIndex) fetchMore();
+        }
+      });
+    }, options);
 
     const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feed]); // Ensure to run effect whenever feed changes
+
+    setCarouselObserver(observer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleUnfollow = async () => {
     if (followed == true) {
@@ -98,10 +98,9 @@ const Profile: NextPage = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-  const handleThumbClick = (id: any) => {
-    console.log("id", id);
-    const res = feed.find((item: any) => item.id === id);
-    setSelectedVideo(res);
+  const handleThumbClick = (data: any) => {
+    console.log("[Playback ID]", data.playback_id);
+    setSelectedVideo(data);
     setIsVideoModalOpen(true);
   };
 
@@ -153,7 +152,7 @@ const Profile: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row items-start ">
+    <div className="flex flex-col-reverse md:flex-row items-start h-full">
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
@@ -166,8 +165,8 @@ const Profile: NextPage = () => {
       {isUsernameModalOpen && <UsernameModal onClose={closeUsernameModal} />}
 
       {/* NO FEED TO SHOW */}
-      {!loadingFeed && feed && feed.length == 0 && (
-        <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
+      {!loadingFeed && feeds && feeds.length == 0 && (
+        <div className="flex flex-row justify-center items-center w-full grow">
           <Link className="btn btn-base-100" href={"/create"}>
             🤫 You haven't posted, yet.
           </Link>
@@ -175,23 +174,23 @@ const Profile: NextPage = () => {
       )}
 
       {/* LOADING FEED */}
-      {loadingFeed && feed && feed.length == 0 && (
-        <div className="flex flex-row justify-center items-center h-screen-custom w-full grow">
+      {loadingFeed && feeds && feeds.length == 0 && (
+        <div className="flex flex-row justify-center items-center w-full grow">
           <span className="loading loading-ring loading-lg"></span>
         </div>
       )}
 
       {/* RENDER FEED */}
-      {feed && feed.length > 0 && (
-        <div className="carousel carousel-center rounded-box w-full md:ml-2" ref={carousellRef}>
-          {feed.map((thumb: any, index: any) => (
-            <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
+      {feeds && feeds.length > 0 && (
+        <div className="carousel carousel-center gap-2 rounded-box w-full h-full" ref={carousellRef}>
+          {feeds.map((feed: any, index: any) => (
+            <ThumbCard key={index} index={index} data={feed} onCta={handleThumbClick} />
           ))}
         </div>
       )}
 
       {/* STAT */}
-      <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
+      <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5">
         <div className="stat">
           <div className="stat-title">Level</div>
           <div className="stat-value text-xl">{levelName}</div>

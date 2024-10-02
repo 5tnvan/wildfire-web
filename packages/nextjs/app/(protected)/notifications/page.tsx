@@ -1,18 +1,29 @@
 "use client";
 
+import { useContext, useRef } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
-import { useRef } from "react";
-import { Avatar } from "~~/components/Avatar";
-import { TimeAgo } from "~~/components/wildfire/TimeAgo";
-import { useOutsideClick } from "~~/hooks/scaffold-eth/useOutsideClick";
-import { useNotifications } from "~~/hooks/wildfire/useNotifications";
-import { useGlobalState } from "~~/services/store/store";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { updateCommentRead, updateFireRead, updateFollowerRead, updateTipRead } from "~~/utils/wildfire/crud/notifications";
+
+import { useGlobalState } from "@/services/store/store";
+
+import { AuthContext } from "@/app/context";
+import { Avatar } from "@/components/Avatar";
+import { TimeAgo } from "@/components/wildfire/TimeAgo";
+import { useOutsideClick } from "@/hooks/scaffold-eth/useOutsideClick";
+import { useNotifications } from "@/hooks/wildfire/useNotifications";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import {
+  updateCommentRead,
+  updateFireRead,
+  updateFollowerRead,
+  updateTipRead,
+} from "@/utils/wildfire/crud/notifications";
 
 const Notifications: NextPage = () => {
-  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } = useNotifications();
+  const { user } = useContext(AuthContext);
+
+  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } =
+    useNotifications(user);
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   console.log("notif", firesNotifications);
@@ -29,7 +40,7 @@ const Notifications: NextPage = () => {
     ...(followersNotifications ?? []).map((notif: any) => ({
       ...notif,
       type: "follow",
-      created_at: notif.follower_created_at,  // Use follower_created_at for sorting
+      created_at: notif.follower_created_at, // Use follower_created_at for sorting
       isUnread: !notif.follower_read,
     })),
     ...(firesNotifications ?? []).map((notif: any) => ({
@@ -72,7 +83,7 @@ const Notifications: NextPage = () => {
       }
 
       // Refetch notifications after updating read status
-    refetch();
+      refetch();
     }
   };
 
@@ -92,7 +103,7 @@ const Notifications: NextPage = () => {
           </details>
         </>
       )} */}
-      {allNotifications.map((notif) => {
+      {allNotifications.map(notif => {
         let message: React.ReactNode = "";
 
         if (notif.type === "follow") {

@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
+
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { useOutsideClick } from "~~/hooks/scaffold-eth/useOutsideClick";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth/useOutsideClick";
 
 const FollowersModal = ({ onClose }: any) => {
   const insideRef = useRef<any>(null);

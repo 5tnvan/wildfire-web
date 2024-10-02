@@ -1,42 +1,65 @@
 "use client";
 
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
+import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AuthContext, AuthUserFollowsContext } from "./context";
-import type { NextPage } from "next";
-import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
-import { WobbleCard } from "~~/components/ui/wooble-card";
-import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
-import { Footer } from "~~/components/wildfire/Footer";
-import { Header } from "~~/components/wildfire/Header";
+
+import { Card, Carousel } from "@/components/ui/apple-cards-carousel";
+import { WobbleCard } from "@/components/ui/wooble-card";
+import AndroidTestModal from "@/components/wildfire/AndroidTestModal";
+import { Footer } from "@/components/wildfire/Footer";
+import { Header } from "@/components/wildfire/Header";
+
+import { AuthContext } from "./context";
 
 const Landing: NextPage = () => {
-  const router = useRouter();
   const { isAuthenticated } = useContext(AuthContext);
-
-  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //TIP MODAL
   const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);
 
-  const closeAndroidTestModal = () => {
-    setAndroidTestModalOpen(false);
-  };
+  const data = [
+    {
+      category: "Content",
+      title: "3 seconds a day.",
+      src: "https://images.unsplash.com/photo-1719937206930-84afb0daf141?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      priority: true,
+      content: <DummyContent />,
+    },
+    {
+      category: "Storytelling",
+      title: "Stitched into a story.",
+      src: "/ezgif-4-e1d7762367.gif",
+      content: <DummyContent />,
+    },
+    {
+      category: "Audience",
+      title: "Grow with Gen Z and Alpha.",
+      src: "/premium_photo-1687989651281-d9dfee04ec74.png",
+      content: <DummyContent />,
+    },
+    {
+      category: "E-commerce",
+      title: "Your store accepts crypto.",
+      src: "https://images.unsplash.com/photo-1599202875854-23b7cd490ff4?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      content: <DummyContent />,
+    },
+    {
+      category: "Community",
+      title: "Go beyond virtual.",
+      src: "/ezgif-3-489a4dc383.gif",
+      content: <DummyContent />,
+    },
+  ];
 
   const cards = data.map((card, index) => <Card key={card.src} card={card} index={index} />);
-
-  if (isAuthenticated) {
-    router.push("/feed");
-    refetchAuthUserFollows();
-  }
 
   return (
     <>
       <Header />
       <div className="">
-        {isAndroidTestModalOpen && <AndroidTestModal onClose={closeAndroidTestModal} />}
+        {isAndroidTestModalOpen && <AndroidTestModal onClose={() => setAndroidTestModalOpen(false)} />}
         {/* GOT 3 SECONDS? */}
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center pb-0 pt-8 lg:pt-16">
@@ -184,6 +207,7 @@ const Landing: NextPage = () => {
           target="_blank"
           className="flex flex-col items-center mt-20 mb-10"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element*/}
           <img
             src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=481265&theme=neutral"
             alt="Wildfire: Got 3 Seconds? - A 3-second super dApp that pays off | Product Hunt"
@@ -224,38 +248,5 @@ const DummyContent = () => {
     </>
   );
 };
-
-const data = [
-  {
-    category: "Content",
-    title: "3 seconds a day.",
-    src: "https://images.unsplash.com/photo-1719937206930-84afb0daf141?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
-  },
-  {
-    category: "Storytelling",
-    title: "Stitched into a story.",
-    src: "/ezgif-4-e1d7762367.gif",
-    content: <DummyContent />,
-  },
-  {
-    category: "Audience",
-    title: "Grow with Gen Z and Alpha.",
-    src: "/premium_photo-1687989651281-d9dfee04ec74.png",
-    content: <DummyContent />,
-  },
-  {
-    category: "E-commerce",
-    title: "Your store accepts crypto.",
-    src: "https://images.unsplash.com/photo-1599202875854-23b7cd490ff4?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
-  },
-  {
-    category: "Community",
-    title: "Go beyond virtual.",
-    src: "/ezgif-3-489a4dc383.gif",
-    content: <DummyContent />,
-  },
-];
 
 export default Landing;

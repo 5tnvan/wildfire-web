@@ -1,7 +1,8 @@
 "use server";
 
+import { createClient } from "@/utils/supabase/server";
+
 import { fetchLiked } from "./fetchLikes";
-import { createClient } from "~~/utils/supabase/server";
 
 /**
  * FETCH: fetch3Sec()

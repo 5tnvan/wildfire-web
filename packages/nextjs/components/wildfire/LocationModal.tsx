@@ -1,4 +1,5 @@
 import React from "react";
+
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 const LocationModal = ({ data, onClose, onCta }: any) => {

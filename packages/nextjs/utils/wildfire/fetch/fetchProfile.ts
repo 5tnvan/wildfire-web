@@ -1,7 +1,8 @@
 "use server";
 
-import { fetchUser } from "./fetchUser";
-import { createClient } from "~~/utils/supabase/server";
+import { User } from "@supabase/supabase-js";
+
+import { createClient } from "@/utils/supabase/server";
 
 /**
  * FETCH: fetchProfile()
@@ -9,19 +10,14 @@ import { createClient } from "~~/utils/supabase/server";
  * TABLE: "profiles"
  **/
 
-export const fetchSuperProfile = async () => {
+export const fetchSuperProfile = async (user: User) => {
   const supabase = createClient();
-  const user = await fetchUser();
 
-  if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*, levels(id, level, created_at)")
-      .eq("id", user.user?.id);
-    return profile?.[0] ?? null;
-  } else {
-    return null;
-  }
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*, levels(id, level, created_at)")
+    .eq("id", user.id);
+  return profile?.[0] ?? null;
 };
 
 /**

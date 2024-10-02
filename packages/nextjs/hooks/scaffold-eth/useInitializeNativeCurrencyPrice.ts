@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
+
+import scaffoldConfig from "@/scaffold.config";
+import { useGlobalState } from "@/services/store/store";
+import { fetchPriceFromUniswap } from "@/utils/scaffold-eth";
 import { useInterval } from "usehooks-ts";
-import scaffoldConfig from "~~/scaffold.config";
-import { useGlobalState } from "~~/services/store/store";
-import { fetchPriceFromUniswap } from "~~/utils/scaffold-eth";
+
+import { useTargetNetwork } from "./useTargetNetwork";
 
 const enablePolling = false;
 

@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-import { fetchFollowed } from "~~/utils/wildfire/fetch/fetchFollows";
-import { fetchProfilesWithRange, fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
+
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
+import { User } from "@supabase/supabase-js";
+
+import { fetchFollowed } from "@/utils/wildfire/fetch/fetchFollows";
+import { fetchProfilesWithRange } from "@/utils/wildfire/fetch/fetchUser";
 
 // Define Apollo Client instances for each endpoint
 const apolloClientEthereum = new ApolloClient({
@@ -18,11 +21,7 @@ const apolloClientBase = new ApolloClient({
 
 const PAYMENTS_GRAPHQL = gql`
   query GetPaymentChanges($receiverAddress: Bytes!) {
-    paymentChanges(
-      where: { receiver: $receiverAddress }
-      orderBy: blockTimestamp
-      orderDirection: desc
-    ) {
+    paymentChanges(where: { receiver: $receiverAddress }, orderBy: blockTimestamp, orderDirection: desc) {
       id
       sender
       receiver
@@ -59,7 +58,7 @@ const fetchTransactionData = async (address: string, client: ApolloClient<any>) 
   }
 };
 
-export const useCreators = () => {
+export const useCreators = (user: User | null) => {
   const range = 20;
 
   const [loading, setLoading] = useState(false);
@@ -82,46 +81,43 @@ export const useCreators = () => {
     }
   };
 
-  const fetchCreators = async () => {
-    setLoading(true);
-    const { from, to } = getRange(page, range);
-    const user = await fetchUser();
-
-    if (user.user) {
-      const profiles = await fetchProfilesWithRange(from, to);
-
-      if (profiles) {
-        const masterData = await Promise.all(
-          profiles.map(async (profile: any) => {
-            const isFollowed = await fetchFollowed(user.user.id, profile.id);
-
-            // Fetch transaction data for the profile
-            const ethereumDataPromise = fetchTransactionData(profile.wallet_id, apolloClientEthereum);
-            const baseDataPromise = fetchTransactionData(profile.wallet_id, apolloClientBase);
-
-            const [ethereumData, baseData] = await Promise.all([ethereumDataPromise, baseDataPromise]);
-
-            return {
-              ...profile,
-              isFollowed,
-              ethereumData,
-              baseData,
-            };
-          }),
-        );
-
-        if (profiles.length < range) setHasMore(false); // No more data to fetch
-
-        // Update feed with combined data
-        setFeed(existingFeed => [...existingFeed, ...masterData]);
-      }
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCreators();
-  }, [page, triggerRefetch]);
+    (async () => {
+      setLoading(true);
+      const { from, to } = getRange(page, range);
+
+      if (user) {
+        const profiles = await fetchProfilesWithRange(from, to);
+
+        if (profiles) {
+          const masterData = await Promise.all(
+            profiles.map(async (profile: any) => {
+              const isFollowed = await fetchFollowed(user.id, profile.id);
+
+              // Fetch transaction data for the profile
+              const ethereumDataPromise = fetchTransactionData(profile.wallet_id, apolloClientEthereum);
+              const baseDataPromise = fetchTransactionData(profile.wallet_id, apolloClientBase);
+
+              const [ethereumData, baseData] = await Promise.all([ethereumDataPromise, baseDataPromise]);
+
+              return {
+                ...profile,
+                isFollowed,
+                ethereumData,
+                baseData,
+              };
+            }),
+          );
+
+          if (profiles.length < range) setHasMore(false); // No more data to fetch
+
+          // Update feed with combined data
+          setFeed(existingFeed => [...existingFeed, ...masterData]);
+        }
+        setLoading(false);
+      }
+    })();
+  }, [page, triggerRefetch, user]);
 
   return { loading, feed, fetchMore, refetch };
 };

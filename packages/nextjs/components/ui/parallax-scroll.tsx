@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ParallaxScrollItem } from "../wildfire/ParallaxScrollItem";
+
 // import { useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
-import { cn } from "~~/utils/cn";
+
+import { cn } from "@/utils/cn";
+
+import { ParallaxScrollItem } from "../wildfire/ParallaxScrollItem";
 
 export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -52,6 +55,7 @@ export const ParallaxScroll = ({ data, onCta, fetchMore, loading }: any) => {
     videoCards.forEach(card => {
       observer.observe(card);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]); // Ensure to run effect whenever feed changes
 
   return (

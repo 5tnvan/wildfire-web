@@ -1,21 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchRandomFeed, fetchVideoAndRandomFeed } from "~~/utils/wildfire/fetch/fetchFeeds";
-import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
-import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
-const getRange = (page: number, range: number) => {
-  const from = page * range;
-  const to = from + range - 1;
-  return { from, to };
-};
+import { User } from "@supabase/supabase-js";
+
+import { fetchRandomFeed, fetchVideoAndRandomFeed } from "@/utils/wildfire/fetch/fetchFeeds";
+import { fetchLikes } from "@/utils/wildfire/fetch/fetchLikes";
 
 /**
  * useFeed HOOK
  * Use this to a video, plus feed
  **/
-export const useVideo = (video_id:any) => {
+export const useVideo = (user: User | null, video_id: any) => {
   const range = 3;
 
   const [loading, setLoading] = useState(false);
@@ -34,35 +30,32 @@ export const useVideo = (video_id:any) => {
     setPage(prevPage => prevPage + 1); // Increase page by 1 to trigger fetchFeed
   };
 
-  const fetchFeed = async () => {
-    setLoading(true);
-
-    // Get auth user and feed
-    const user = await fetchUser();
-    let data: any[] | null = null;
-    if (page == 0) {
-      data = await fetchVideoAndRandomFeed(video_id, range);
-    } else if (page > 0) {
-      data = await fetchRandomFeed(range);
-    }
-    if (data) {
-      // Check if each post is liked by the user
-      const likedPostsPromises = data.map(async (post: any) => {
-        return fetchLikes(post, user.user?.id);
-      });
-
-      // Wait for all promises to resolve
-      const masterData = await Promise.all(likedPostsPromises);
-
-      //setFeed
-      setFeed(existingFeed => [...existingFeed, ...masterData]);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchFeed();
-  }, [page, triggerRefetch]);
+    (async () => {
+      setLoading(true);
+
+      // Get auth user and feed
+      let data: any[] | null = null;
+      if (page == 0) {
+        data = await fetchVideoAndRandomFeed(video_id, range);
+      } else if (page > 0) {
+        data = await fetchRandomFeed(range);
+      }
+      if (data) {
+        // Check if each post is liked by the user
+        const likedPostsPromises = data.map(async (post: any) => {
+          return fetchLikes(post, user?.id);
+        });
+
+        // Wait for all promises to resolve
+        const masterData = await Promise.all(likedPostsPromises);
+
+        //setFeed
+        setFeed(existingFeed => [...existingFeed, ...masterData]);
+      }
+      setLoading(false);
+    })();
+  }, [page, triggerRefetch, user, video_id]);
 
   return { loading, feed, fetchMore, refetch };
 };

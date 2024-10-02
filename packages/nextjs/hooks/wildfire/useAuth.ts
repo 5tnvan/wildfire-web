@@ -1,7 +1,8 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
+
+import { User } from "@supabase/supabase-js";
+
+import { fetchUser } from "@/utils/wildfire/fetch/fetchUser";
 
 /**
  * USEAUTH HOOK
@@ -10,28 +11,28 @@ import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 export const useAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  const refetch = () => {
-    setTriggerRefetch(prev => !prev);
-  };
-
-  const init = async () => {
-    setLoading(true);
-    const res = await fetchUser();
-    if (res && res?.user) {
-      setIsAuthenticated(true);
-      setUser(res.user);
-    } else {
-      setIsAuthenticated(false);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    init();
+    (async () => {
+      setLoading(true);
+
+      console.log("asdfsadfsadf");
+      const userResp = await fetchUser();
+
+      if (userResp && userResp?.user) {
+        setIsAuthenticated(true);
+        setUser(userResp.user);
+      } else {
+        setIsAuthenticated(false);
+      }
+
+      setLoading(false);
+    })();
   }, [triggerRefetch]);
+
+  const refetch = () => setTriggerRefetch(prev => !prev);
 
   return { loading, isAuthenticated, user, refetch };
 };

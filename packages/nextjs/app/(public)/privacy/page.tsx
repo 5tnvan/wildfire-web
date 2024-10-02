@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import type { NextPage } from "next";
 
 const PrivacyPage: NextPage = () => {
@@ -108,7 +109,8 @@ const PrivacyPage: NextPage = () => {
 
           <h3 className="text-lg mt-5">5.3. Opt-Out of Communications</h3>
           <p>
-            You can opt-out of receiving notifications or promotional messages from us by following the instructions in those messages.
+            You can opt-out of receiving notifications or promotional messages from us by following the instructions in
+            those messages.
           </p>
 
           <h2 className="text-xl mt-8">6. Security</h2>

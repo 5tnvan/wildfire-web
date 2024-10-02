@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "~~/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 /**
  * FETCH: fetchUser()
@@ -13,6 +13,7 @@ export const fetchUser = async () => {
   const supabase = createClient();
   //fetch user from supabase db
   const { data: userData } = await supabase.auth.getUser();
+  console.log("here here");
   return userData;
 };
 
@@ -42,10 +43,7 @@ export const fetchProfile = async () => {
 
 export const fetchProfilesWithRange = async (from: any, to: any) => {
   const supabase = createClient();
-  const { data: profileData } = await supabase
-    .from("profiles_random_view")
-    .select(`*`)
-    .range(from, to);
+  const { data: profileData } = await supabase.from("profiles_random_view").select(`*`).range(from, to);
   return profileData;
 };
 

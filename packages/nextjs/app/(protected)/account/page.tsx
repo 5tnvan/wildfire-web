@@ -1,15 +1,18 @@
 "use client";
 
 import { useContext, useState } from "react";
+import type { NextPage } from "next";
 import Link from "next/link";
+
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Address } from "@/components/scaffold-eth/Address";
+import VerifyWalletModal from "@/components/wildfire/VerifyWalletModal";
+
 import { Avatar } from "../../../components/Avatar";
 import { TimeAgo } from "../../../components/wildfire/TimeAgo";
 import { AuthContext, AuthUserAccountContext, AuthUserContext } from "../../context";
-import type { NextPage } from "next";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { Address } from "~~/components/scaffold-eth/Address";
-import { BentoGrid, BentoGridItem } from "~~/components/ui/bento-grid";
-import VerifyWalletModal from "~~/components/wildfire/VerifyWalletModal";
 
 const Account: NextPage = () => {
   //CONSUME PROVIDERS
@@ -146,7 +149,7 @@ const Account: NextPage = () => {
   };
 
   return (
-    <div className="grow h-screen-custom overflow-scroll flex justify-center items-center">
+    <div className="grow h-full overflow-scroll flex justify-center items-center">
       {isVerifyWalletModalOpen && <VerifyWalletModal data={profile} onClose={closeVerifyWalletModal} />}
       <BentoGrid className="max-w-4xl mx-auto">
         {items.map((item, i) => (

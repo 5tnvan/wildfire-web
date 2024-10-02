@@ -2,10 +2,12 @@
 
 import { useContext } from "react";
 import Link from "next/link";
+
+import { AuthContext } from "@/app/context";
+
 import { Search } from "./Search";
 import { UserMenu } from "./UserMenu";
 import { Notification } from "./UserNotification";
-import { AuthContext } from "~~/app/context";
 
 export const Topbar = () => {
   /* CONSUME CONTEXT */
@@ -13,7 +15,7 @@ export const Topbar = () => {
 
   return (
     <>
-      <div id="auth-ui-topbar" className="flex flex-row gap-1 m-2">
+      <div id="auth-ui-topbar" className="flex flex-row gap-1 m-2 mb-0">
         <Search />
         {isAuthenticated && <Notification />}
         {isAuthenticated && <UserMenu launchApp={false} wildpay={true} />}

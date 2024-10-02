@@ -1,20 +1,21 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
-import { AuthContext } from "~~/app/context";
-import VideoCard from "~~/components/wildfire/VideoCard";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
+import Link from "next/link";
+
+import { AuthContext } from "@/app/context";
+import VideoCard from "@/components/wildfire/VideoCard";
+import { useFeed } from "@/hooks/wildfire/useFeed";
 
 const Preview: NextPage = () => {
-  const { isAuthenticated } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, fetchMore } = useFeed("default");
+  const { isAuthenticated, user } = useContext(AuthContext);
+  const { loading: loadingFeed, feeds, fetchMore } = useFeed(user, "default");
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true); // New state for mute toggle
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  console.log(feed);
+  console.log(feeds);
 
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
@@ -42,7 +43,7 @@ const Preview: NextPage = () => {
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feed]); // Ensure to run effect whenever feed changes
+  }, [feeds]); // Ensure to run effect whenever feed changes
 
   // Toggle mute state
   const handleOnCtaMute = (mute: any) => {
@@ -62,19 +63,19 @@ const Preview: NextPage = () => {
   } else {
     return (
       <>
-        {loadingFeed && feed && feed.length == 0 && (
+        {loadingFeed && feeds && feeds.length == 0 && (
           <div className="flex flex-row justify-center items-center w-full h-screen-custom">
             <span className="loading loading-ring loading-lg"></span>
           </div>
         )}
-        {feed && feed.length > 0 && (
+        {feeds && feeds.length > 0 && (
           <div ref={sliderRef} className="infinite-scroll flex flex-col items-center">
-            {feed.map((video, index) => (
+            {feeds.map((feed, index) => (
               <VideoCard
                 key={index}
                 index={index}
-                data={video}
-                feedLength={feed.length}
+                data={feed}
+                feedLength={feeds.length}
                 getVideos={fetchMore}
                 isPlaying={index === playingIndex}
                 isMuted={isMuted}

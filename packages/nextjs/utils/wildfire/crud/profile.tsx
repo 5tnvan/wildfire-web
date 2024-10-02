@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "~~/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 /* UPDATE USER SOCIAL LINKS */
 export async function updateProfileSocial(social: any, inputVal: any) {
@@ -50,16 +50,14 @@ export async function checkFileExists(profile_id: any) {
 }
 
 /* UPLOAD PROFILE PIC */
-export async function uploadProfileAvatar(file: any) {
+export async function uploadProfileAvatar(user_id: any, file: any) {
   const supabase = createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user.user) {
-    const { data: paths, error } = await supabase.storage
-      .from("avatars")
-      .upload(`${user.user.id}/${Date.now()}`, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+
+  if (user_id) {
+    const { data: paths, error } = await supabase.storage.from("avatars").upload(`${user_id}/${Date.now()}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
     if (error) {
       throw new Error(error.message);
     }
@@ -68,24 +66,22 @@ export async function uploadProfileAvatar(file: any) {
 }
 
 /* DELETE PROFILE PIC */
-export async function deleteProfileAvatars(files: any) {
+export async function deleteProfileAvatars(user_id: any, files: any) {
   const supabase = createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user.user) {
-    const filesToDelete = files.map((item: any) => `${user?.user?.id}/${item.name}`) || [];
+
+  if (user_id) {
+    const filesToDelete = files.map((item: any) => `${user_id}/${item.name}`) || [];
     const { error } = await supabase.storage.from("avatars").remove(filesToDelete);
     if (error) console.log("delete", error);
   }
 }
 
 /* UPDATE AVATAR LINK */
-export async function updateProfileAvatar(url: any) {
+export async function updateProfileAvatar(user_id: any, url: any) {
   const supabase = createClient();
 
-  const { data: user } = await supabase.auth.getUser();
-
-  if (user?.user) {
-    const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.user.id);
+  if (user_id) {
+    const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user_id);
 
     if (error) {
       return error;
@@ -94,16 +90,16 @@ export async function updateProfileAvatar(url: any) {
 }
 
 /* UPDATE PROFILE */
-export async function updateProfileWallet(wallet_id: any, wallet_sign_hash: string, wallet_sign_timestamp: string) {
+export async function updateProfileWallet(
+  user_id: any,
+  wallet_id: any,
+  wallet_sign_hash: string,
+  wallet_sign_timestamp: string,
+) {
   const supabase = createClient();
 
-  //get user from supabase db
-  const { data, error } = await supabase.auth.getUser();
-
   //if user not found
-  if (error || !data?.user) {
-    return { user: data, error: error };
-  } else {
+  if (user_id) {
     //otherwise update user profile using user ID
     const { error } = await supabase
       .from("profiles")
@@ -112,7 +108,7 @@ export async function updateProfileWallet(wallet_id: any, wallet_sign_hash: stri
         wallet_sign_hash: wallet_sign_hash,
         wallet_sign_timestamp: wallet_sign_timestamp,
       })
-      .eq("id", data.user.id);
+      .eq("id", user_id);
 
     if (error) {
       console.log(error);

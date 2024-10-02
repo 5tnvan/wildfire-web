@@ -1,35 +1,47 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { useGlobalState } from "@/services/store/store";
+import {
+  ChatBubbleOvalLeftEllipsisIcon,
+  EyeIcon,
+  FireIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from "@heroicons/react/20/solid";
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import { HeartIcon, PaperAirplaneIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { Src } from "@livepeer/react/*";
+import { getSrc } from "@livepeer/react/external";
+import * as Player from "@livepeer/react/player";
+
+import { AuthContext, AuthUserContext } from "@/app/context";
+import { getLivepeerClient } from "@/utils/livepeer/getLivepeerClient";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { insertComment } from "@/utils/wildfire/crud/3sec_comments";
+import { insertLike } from "@/utils/wildfire/crud/3sec_fires";
+import { incrementViews } from "@/utils/wildfire/incrementViews";
+
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
 import ShareModal from "./ShareModal";
 import { TimeAgo } from "./TimeAgo";
 import TipModal from "./TipModal";
-import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
-import { MapPinIcon } from "@heroicons/react/24/outline";
-import { HeartIcon, PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
-import { AuthContext, AuthUserContext } from "~~/app/context";
-import { useGlobalState } from "~~/services/store/store";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
-import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
-import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   //CONSUME PROVIDERS
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const { profile } = useContext(AuthUserContext);
 
   //STATES
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoSource, setVideoSource] = useState<Src[] | null>(null);
   const [loadNewVidsAt, setloadNewVidsAt] = useState(feedLength - 2);
   const [loopCount, setLoopCount] = useState(0);
-  const [showWatchAgain, setShowWatchAgain] = useState(false);
-  const [showPaused, setShowPaused] = useState(true);
   const [likeCount, setLikeCount] = useState<any>(data["3sec_fires"][0]?.count);
   const [temporaryLiked, setTemporaryLiked] = useState(false);
   const [commentCount, setCommentCount] = useState<any>(data["3sec_comments"]?.length);
@@ -37,7 +49,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
-  const [toast, setToast] = useState<any>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
@@ -53,55 +65,19 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     setShareModalOpen(false);
   };
 
-  // Toggle mute state globally
-  const handleToggleMute = () => {
-    onCtaMute(!isMuted);
-  };
-
-  //manually pause video
-  const handleTogglePlay = () => {
-    console.log("clicked");
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setShowPaused(false);
-      } else {
-        videoRef.current.pause();
-        setShowPaused(true);
-      }
-    }
-  };
-
-  //pause video after 3 plays
-  const handleVideoEnd = () => {
-    if (loopCount < 2) {
-      setLoopCount(prevCount => prevCount + 1);
-      videoRef.current?.play();
-    } else {
-      setShowWatchAgain(true);
-      videoRef.current?.pause();
-    }
-  };
-
-  const handleWatchAgain = () => {
-    setLoopCount(0);
-    setShowWatchAgain(false);
-    videoRef.current?.play();
-    handleIncrementViews();
-  };
-
   const handleIncrementViews = async () => {
-    incrementViews(data.id);
+    await incrementViews(data.id);
   };
 
   const handleLike = async () => {
     //incr like
-    const error = await insertLike(data.id);
+    const error = await insertLike(user?.id, data.id);
     if (!error) {
       setTemporaryLiked(true); // Set temporary like state
       setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
     } else {
       console.log("You already liked this post");
+
       setToast("You already liked this post");
 
       // Set the toast back to null after 4 seconds
@@ -120,7 +96,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       return; // Do not submit empty comments
     }
     setLoadingComment(true);
-    const error = await insertComment(data.id, commentInput);
+    const error = await insertComment(user?.id, data.id, commentInput);
     if (!error) {
       setTempComment(commentInput); // Store the new comment temporarily
       setCommentCount((prevCount: any) => prevCount + 1); // Increment count
@@ -136,32 +112,63 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       return acc + convertEthToUsd(tip.amount, price);
     }, 0) || 0;
 
-  //fetch more at last video
-  console.log("loadNewVidsAt", loadNewVidsAt);
-  if (isPlaying) {
-    if (loadNewVidsAt === index) {
-      setloadNewVidsAt((prev: any) => prev + 2);
-      getVideos();
-    }
-  }
+  useEffect(() => {
+    (async () => {
+      const livepeer = getLivepeerClient();
+
+      const playbackResp = await livepeer.playback.get(data.playback_id);
+      setVideoSource(getSrc(playbackResp.playbackInfo));
+    })();
+  }, [data]);
 
   //auto play when video is in view (based on isPlaying)
   useEffect(() => {
     if (videoRef.current) {
+      console.log("loadNewVidsAt", loadNewVidsAt);
+
       if (isPlaying) {
         setLoopCount(0);
-        setShowWatchAgain(false);
         videoRef.current.play();
-        setShowPaused(false);
         handleIncrementViews();
+
+        if (loadNewVidsAt === index) {
+          setloadNewVidsAt((prev: any) => prev + 2);
+          getVideos();
+        }
       } else {
+        setLoopCount(0);
         videoRef.current.pause();
       }
     }
-  }, [isPlaying]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, videoRef.current]);
+
+  const handleToggleMute = () => {
+    onCtaMute();
+  };
+
+  //pause video after 3 plays
+  const handleVideoEnd = () => {
+    if (loopCount < 2) {
+      setLoopCount(prevCount => prevCount + 1);
+      videoRef.current?.play();
+    } else {
+      setLoopCount(3);
+    }
+  };
+
+  const handleWatchAgain = () => {
+    setLoopCount(0);
+    videoRef.current?.play();
+    handleIncrementViews();
+  };
 
   return (
-    <div className="infinite-scroll-item flex flex-col md:flex-row" data-index={index}>
+    <div
+      className="carousel-item flex flex-col md:flex-row justify-center"
+      data-index={index}
+      style={{ height: "88dvh" }}
+    >
       {/* MODAL */}
       {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
       {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
@@ -176,93 +183,52 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       )}
 
       {/* VIDEO WRAPPER */}
-      <div className="video-wrapper relative">
-        <video
-          id={index}
-          ref={videoRef}
-          src={data.video_url}
-          className="video rounded-lg"
-          onEnded={handleVideoEnd}
-          muted={isMuted}
-        ></video>
-        <div className="absolute inset-0 flex m-auto justify-center items-center z-10 h-2/3" onClick={handleTogglePlay}>
-          {showPaused && <PlayIcon className="h-16 w-16 text-white" />}
-        </div>
-        {showWatchAgain && (
-          <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
-            <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
-              <EyeIcon width={16} />
-              <span className="font-medium">Watch again</span>
-            </div>
-          </div>
+      <div style={{ width: "49.4dvh" }}>
+        {videoSource && (
+          <Player.Root src={videoSource}>
+            <Player.Container>
+              <Player.Video className="rounded-lg" muted={isMuted} ref={videoRef} onEnded={handleVideoEnd} />
+
+              <Player.LoadingIndicator className="bg-base-100 h-full w-full flex items-center justify-center">
+                Loading...
+              </Player.LoadingIndicator>
+
+              <Player.Controls>
+                {loopCount < 3 && (
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <Player.PlayPauseTrigger className="h-12 w-12">
+                      <Player.PlayingIndicator asChild matcher={false}>
+                        <PlayIcon />
+                      </Player.PlayingIndicator>
+                    </Player.PlayPauseTrigger>
+                  </div>
+                )}
+              </Player.Controls>
+
+              <div className="absolute top-5 left-5 right-5 flex flex-row justify-between items-center">
+                <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
+                  <Avatar profile={data.profile} width={10} height={10} />
+                  <div className="font-semibold text-white">{data.profile.username}</div>
+                </Link>
+
+                <button className="order-last text-white" onClick={handleToggleMute}>
+                  {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
+                </button>
+              </div>
+
+              {loopCount > 2 && (
+                <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                  <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
+                    <EyeIcon width={16} />
+                    <span className="font-medium">Watch again</span>
+                  </div>
+                </div>
+              )}
+            </Player.Container>
+          </Player.Root>
         )}
-        <div className="absolute inset-0 items-start p-2">
-          <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
-            <Avatar profile={data.profile} width={10} height={10} />
-            <div className="font-semibold text-white">{data.profile.username}</div>
-          </Link>
-        </div>
-        <div className="absolute top-2 right-2">
-          <div className=" p-2 text-white" onClick={handleToggleMute}>
-            {isMuted ? <SpeakerXMarkIcon width={24} /> : <SpeakerWaveIcon width={24} />}
-          </div>
-        </div>
-        {/* BOTTOM INFO MOBILE */}
-        <div className="flex flex-col md:hidden absolute bottom-0 items-end p-2 w-full z-10">
-          <div className="flex flex-row gap-2 justify-between w-full">
-            {data["3sec_tips"]?.length > 0 ? (
-              <div className="flex flex-row items-top w-full">
-                <div
-                  className="btn btn-primary w-1/2 mb-2"
-                  onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
-                >
-                  Tip Now
-                </div>
-                <div className="btn bg-base-300 w-1/2 text-sm">
-                  <HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}
-                </div>
-              </div>
-            ) : (
-              <div
-                className="btn btn-primary w-full mb-2"
-                onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
-              >
-                Tip Now
-              </div>
-            )}
-          </div>
-          <div className="flex flex-row gap-2 justify-between w-full">
-            <div className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow">
-              <EyeIcon width={20} />
-              <span className="text-base font-normal">
-                <FormatNumber number={data["3sec_views"][0]?.view_count} />
-              </span>
-            </div>
-            <div
-              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
-              onClick={isAuthenticated ? handleLike : () => router.push("/login")}
-            >
-              {(data.liked || temporaryLiked) && <FireIcon width={20} color="red" />}
-              {!data.liked && !temporaryLiked && <FireIcon width={20} />}
-              <span className="text-base font-normal">
-                <FormatNumber number={likeCount} />
-              </span>
-            </div>
-            <div
-              className="btn bg-zinc-200 dark:bg-zinc-900 flex flex-row gap-1 grow"
-              onClick={isAuthenticated ? () => console.log() : () => router.push("/login")}
-            >
-              <ChatBubbleOvalLeftEllipsisIcon width={20} />
-              <span className="text-base font-normal">
-                <FormatNumber number={commentCount} />
-              </span>
-            </div>
-            <div className="btn bg-zinc-200 dark:bg-zinc-900" onClick={() => setShareModalOpen(true)}>
-              <PaperAirplaneIcon width={18} />
-            </div>
-          </div>
-        </div>
       </div>
+
       {/* INFO BLOCK ON THE RIGHT */}
       <div className="video-info hidden md:block ml-2 self-end">
         {/* USER INFO */}
@@ -373,7 +339,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   <div className="text-sm opacity-75">{comment.comment}</div>
                 </div>
               ))}
-            {/* {showCommentInput && (
+            {showCommentInput && (
               <div className="">
                 <textarea
                   className="textarea textarea-primary absolute w-full h-full top-0 rounded-lg"
@@ -388,7 +354,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   onClick={() => handleCommentSubmit()}
                 />
               </div>
-            )} */}
+            )}
           </div>
           {/* Comment input */}
           {isAuthenticated && (

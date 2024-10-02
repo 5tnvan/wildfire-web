@@ -19,7 +19,7 @@
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1,
@@ -136,9 +136,8 @@ input:focus {
   } 
 }
 
-@media (min-width: 768px) { 
-  .thumbcard {
-    width: auto!important;
-    height: calc(100dvh - 63px);
-  }
- }
+/* Livepeer React component outer div fix */
+div[data-radix-aspect-ratio-wrapper] {
+  height: 100% !important;
+  padding-bottom: 0 !important;
+}

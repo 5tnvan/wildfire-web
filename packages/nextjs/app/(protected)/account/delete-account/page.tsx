@@ -1,12 +1,14 @@
 "use client";
 
 import { useContext, useState } from "react";
+import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { Avatar } from "@/components/Avatar";
+import { requestDeleteAccount } from "@/utils/wildfire/crud/account";
+
 import { AuthContext, AuthUserAccountContext, AuthUserContext } from "../../../context";
-import type { NextPage } from "next";
-import { Avatar } from "~~/components/Avatar";
-import { requestDeleteAccount } from "~~/utils/wildfire/crud/account";
 
 const DeleteAccount: NextPage = () => {
   const router = useRouter();
@@ -30,8 +32,8 @@ const DeleteAccount: NextPage = () => {
   };
 
   const handleDelete = async () => {
-    await requestDeleteAccount();
-    await refetchAuthUser();
+    await requestDeleteAccount(user?.id);
+    refetchAuthUser();
     router.push("/account");
   };
 

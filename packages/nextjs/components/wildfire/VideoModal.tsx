@@ -1,31 +1,43 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+
+import {
+  ChatBubbleOvalLeftEllipsisIcon,
+  EyeIcon,
+  FireIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from "@heroicons/react/20/solid";
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, PaperAirplaneIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { Src } from "@livepeer/react/*";
+import { getSrc } from "@livepeer/react/external";
+import * as Player from "@livepeer/react/player";
+import { useOnClickOutside } from "usehooks-ts";
+
+import { AuthUserContext } from "@/app/context";
+import { getLivepeerClient } from "@/utils/livepeer/getLivepeerClient";
+import { insertComment } from "@/utils/wildfire/crud/3sec_comments";
+import { insertLike } from "@/utils/wildfire/crud/3sec_fires";
+import { fetch3Sec } from "@/utils/wildfire/fetch/fetch3Sec";
+import { incrementViews } from "@/utils/wildfire/incrementViews";
+
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
+import ShareModal from "./ShareModal";
 import { TimeAgo } from "./TimeAgo";
 import TipModal from "./TipModal";
-import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
-import { MapPinIcon } from "@heroicons/react/24/outline";
-import { ChevronLeftIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
-import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
-import { fetch3Sec } from "~~/utils/wildfire/fetch/fetch3Sec";
-import { incrementViews } from "~~/utils/wildfire/incrementViews";
-import ShareModal from "./ShareModal";
 
 const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
   //STATES
-  const insideRef = useRef<any>(null);
+  const insideRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoSource, setVideoSource] = useState<Src[] | null>(null);
   const [videoStats, setVideoStats] = useState<any>(null);
-  const [loopCount, setLoopCount] = useState(0);
-  const [showWatchAgain, setShowWatchAgain] = useState(false);
-  const [showPaused, setShowPaused] = useState(false);
 
+  const [loopCount, setLoopCount] = useState(0);
   const [likeCount, setLikeCount] = useState<any>();
   const [temporaryLiked, setTemporaryLiked] = useState(false);
 
@@ -38,6 +50,8 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
 
+  useOnClickOutside(insideRef, () => onClose());
+
   const closeTipModal = () => {
     setTipModalOpen(false);
   };
@@ -49,41 +63,27 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     setShareModalOpen(false);
   };
 
-  useOutsideClick(insideRef, () => {
-    handleClose();
-  });
-
   useEffect(() => {
-    async function fetchData() {
+    (async () => {
       const res = await fetch3Sec(data.id, profile.id);
+
       if (res) {
         setVideoStats(res);
         setLikeCount(res?.["3sec_fires"]?.[0].count);
         setCommentCount(res?.["3sec_comments"]?.length);
       }
-    }
-    fetchData();
+
+      const livepeer = getLivepeerClient();
+
+      const playbackResp = await livepeer.playback.get(data.playback_id);
+      setVideoSource(getSrc(playbackResp.playbackInfo));
+    })();
     handleIncrementViews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.id]);
 
-  const handleWatchAgain = () => {
-    setLoopCount(0);
-    setShowWatchAgain(false);
-    videoRef.current?.play();
-    handleIncrementViews();
-  };
-
-  //manually pause video
-  const handleTogglePlay = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setShowPaused(false);
-      } else {
-        videoRef.current.pause();
-        setShowPaused(true);
-      }
-    }
+  const handleIncrementViews = async () => {
+    incrementViews(data.id);
   };
 
   //pause video after 3 plays
@@ -92,29 +92,30 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
       setLoopCount(prevCount => prevCount + 1);
       videoRef.current?.play();
     } else {
-      setShowWatchAgain(true);
-      videoRef.current?.pause();
+      setLoopCount(3);
     }
   };
 
-  const handleIncrementViews = async () => {
-    incrementViews(data.id);
+  const handleWatchAgain = () => {
+    setLoopCount(0);
+    videoRef.current?.play();
+    handleIncrementViews();
   };
 
   const handleLike = async () => {
     //incr like
-    const error = await insertLike(data.id);
+    const error = await insertLike(profile.id, data.id);
     if (!error) {
       setTemporaryLiked(true); // Set temporary like state
       setLikeCount((prevCount: any) => prevCount + 1); // Increment like count
     } else {
       console.log("You already liked this post");
-    setToast("You already liked this post");
+      setToast("You already liked this post");
 
-    // Set the toast back to null after 4 seconds
-    setTimeout(() => {
-      setToast(null);
-    }, 3000);
+      // Set the toast back to null after 4 seconds
+      setTimeout(() => {
+        setToast(null);
+      }, 3000);
     }
   };
 
@@ -127,7 +128,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
       return; // Do not submit empty comments
     }
 
-    const error = await insertComment(data.id, commentInput); // Assuming insertLike handles comments
+    const error = await insertComment(profile.id, data.id, commentInput); // Assuming insertLike handles comments
     if (!error) {
       setTempComment(commentInput); // Store the new comment temporarily
       setCommentCount((prevCount: any) => prevCount + 1); // Increment count
@@ -136,56 +137,76 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     }
   };
 
-  const handleClose = () => {
-    onClose();
-  };
-
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col md:flex-row items-center justify-center z-50">
-        <div onClick={handleClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2 z-10">
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col md:flex-row justify-center z-20">
+        <div
+          onClick={() => onClose()}
+          className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2 z-10"
+        >
           <ChevronLeftIcon width={20} color="black" />
           Back
         </div>
+
         <div ref={insideRef} className="md:flex">
           {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
           {isShareModalOpen && <ShareModal data={data.id} onClose={closeShareModal} />}
           {/* TOASTS */}
-          {toast && <div className="toast z-20">
-            <div className="alert alert-info">
-              <span>{toast}</span>
+          {toast && (
+            <div className="toast z-20">
+              <div className="alert alert-info">
+                <span>{toast}</span>
+              </div>
             </div>
-          </div>}
+          )}
           {/* VIDEO PLAYER */}
-          <div className="relative">
-            <video
-              src={data.video_url}
-              ref={videoRef}
-              autoPlay
-              className="w-auto h-screen rounded-lg"
-              onClick={handleTogglePlay}
-              onEnded={handleVideoEnd}
-              controls={false}
-            />
-            {showWatchAgain && (
-              <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
-                  <EyeIcon width={16} />
-                  <span className="font-medium">Watch again</span>
-                </div>
-              </div>
-            )}
-            {showPaused && (
-              <div
-                className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-30"
-                onClick={handleTogglePlay}
-              >
-                <PlayIcon className="h-16 w-16 text-white" />
-              </div>
+          <div style={{ width: "56.3dvh" }}>
+            {videoSource && (
+              <Player.Root src={videoSource} autoPlay>
+                <Player.Container>
+                  <Player.Video className="rounded-lg" ref={videoRef} onEnded={handleVideoEnd} />
+
+                  <Player.LoadingIndicator className="bg-base-100 h-full w-full flex items-center justify-center">
+                    Loading...
+                  </Player.LoadingIndicator>
+
+                  <Player.Controls>
+                    {loopCount < 3 && (
+                      <div className="absolute inset-0 flex justify-center items-center">
+                        <Player.PlayPauseTrigger className="h-12 w-12">
+                          <Player.PlayingIndicator asChild matcher={false}>
+                            <PlayIcon />
+                          </Player.PlayingIndicator>
+                        </Player.PlayPauseTrigger>
+                      </div>
+                    )}
+
+                    <div className="absolute top-5 right-5">
+                      <Player.MuteTrigger className="h-6 w-6">
+                        <Player.VolumeIndicator asChild matcher={true}>
+                          <SpeakerXMarkIcon />
+                        </Player.VolumeIndicator>
+                        <Player.VolumeIndicator asChild matcher={false}>
+                          <SpeakerWaveIcon />
+                        </Player.VolumeIndicator>
+                      </Player.MuteTrigger>
+                    </div>
+                  </Player.Controls>
+
+                  {loopCount > 2 && (
+                    <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                      <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
+                        <EyeIcon width={16} />
+                        <span className="font-medium">Watch again</span>
+                      </div>
+                    </div>
+                  )}
+                </Player.Container>
+              </Player.Root>
             )}
           </div>
           {/* RIGHT PANEL */}
-          <div className="hidden md:block video-info ml-2 self-end">
+          <div className="hidden md:block video-info self-end">
             {/* USER LOCATION TIME */}
             <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
               <Link href={`/${data.profile.username}`} className="flex flex-row items-center gap-2">
@@ -232,17 +253,17 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                   ?.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Sort in descending order
                   .map((comment: any, id: number) => (
                     <div key={comment.id || id} className="flex flex-col gap-2 p-3 rounded-full">
-                    <div className="flex flex-row gap-2 justify-between items-center">
-                      <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
-                        <Avatar profile={comment.profile} width={6} height={6} />
-                        <span className="text-sm">{comment.profile.username}</span>
-                      </Link>
-                      <div className="text-xs opacity-55">
-                        <TimeAgo timestamp={comment.created_at} />
+                      <div className="flex flex-row gap-2 justify-between items-center">
+                        <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
+                          <Avatar profile={comment.profile} width={6} height={6} />
+                          <span className="text-sm">{comment.profile.username}</span>
+                        </Link>
+                        <div className="text-xs opacity-55">
+                          <TimeAgo timestamp={comment.created_at} />
+                        </div>
                       </div>
+                      <div className="text-sm opacity-75">{comment.comment}</div>
                     </div>
-                    <div className="text-sm opacity-75">{comment.comment}</div>
-                  </div>
                   ))}
                 {showCommentInput && (
                   <div className="">
@@ -288,11 +309,9 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <FormatNumber number={commentCount} />
                   </span>
                 </div>
-                <div
-              className="btn bg-zinc-200 dark:bg-zinc-900"
-              onClick={() => setShareModalOpen(true)}>
-              <PaperAirplaneIcon width={18} />
-            </div>
+                <div className="btn bg-zinc-200 dark:bg-zinc-900" onClick={() => setShareModalOpen(true)}>
+                  <PaperAirplaneIcon width={18} />
+                </div>
               </div>
             </div>
           </div>

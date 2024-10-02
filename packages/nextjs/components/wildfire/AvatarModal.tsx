@@ -1,19 +1,21 @@
 import React, { useContext, useRef, useState } from "react";
-import { Avatar } from "../Avatar";
+
 import { ChevronLeftIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
+
+import { AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
 import {
   checkFileExists,
   deleteProfileAvatars,
   getPublicURL,
   updateProfileAvatar,
   uploadProfileAvatar,
-} from "~~/utils/wildfire/crud/profile";
+} from "@/utils/wildfire/crud/profile";
+
+import { Avatar } from "../Avatar";
 
 const AvatarModal = ({ onClose }: any) => {
   const { profile, refetchAuthUser } = useContext(AuthUserContext);
-  const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   const [screen, setScreen] = useState("init");
   const [fileImg, setFileImg] = useState("");
@@ -43,21 +45,20 @@ const AvatarModal = ({ onClose }: any) => {
 
       // delete old file from storage
       if (fileExists?.bool) {
-        deleteProfileAvatars(fileExists?.data);
+        deleteProfileAvatars(profile.id, fileExists?.data);
       }
 
       // upload new avatar
-      const data1 = await uploadProfileAvatar(fileData);
+      const data1 = await uploadProfileAvatar(profile.id, fileData);
 
       // update profile table
       const data2 = await getPublicURL(data1?.path);
-      updateProfileAvatar(data2.publicUrl);
+      updateProfileAvatar(profile.id, data2.publicUrl);
 
       //close and refetch
       setIsProcessing(false);
       onClose();
       refetchAuthUser();
-      refetchAuthUserFollows();
     }
   };
 
@@ -70,10 +71,9 @@ const AvatarModal = ({ onClose }: any) => {
   };
 
   const handleRemoveAvatar = async () => {
-    updateProfileAvatar(null);
+    updateProfileAvatar(profile.id, null);
     onClose();
     refetchAuthUser();
-    refetchAuthUserFollows();
   };
 
   const insideRef = useRef<any>(null);

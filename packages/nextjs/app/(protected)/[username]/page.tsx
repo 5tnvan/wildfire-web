@@ -1,26 +1,27 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { NextPage } from "next";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { NextPage } from "next";
+
+import { useGlobalState } from "@/services/store/store";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
-import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
-import FollowersModal from "~~/components/wildfire/FollowersModal";
-import FormatNumber from "~~/components/wildfire/FormatNumber";
-import ThumbCard from "~~/components/wildfire/ThumCard";
-import TipModal from "~~/components/wildfire/TipModal";
-import TransactionsModal from "~~/components/wildfire/TransactionsModal";
-import VideoModal from "~~/components/wildfire/VideoModal";
-import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
-import { useUserFeedByUsername } from "~~/hooks/wildfire/useUserFeedByUsername";
-import { useUserFollowsByUsername } from "~~/hooks/wildfire/useUserFollowsByUsername";
-import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUsername";
-import { useGlobalState } from "~~/services/store/store";
-import { calculateSum } from "~~/utils/wildfire/calculateSum";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
+
+import { AuthContext, AuthUserFollowsContext } from "@/app/context";
+import FollowersModal from "@/components/wildfire/FollowersModal";
+import FormatNumber from "@/components/wildfire/FormatNumber";
+import ThumbCard from "@/components/wildfire/ThumbCard";
+import TipModal from "@/components/wildfire/TipModal";
+import TransactionsModal from "@/components/wildfire/TransactionsModal";
+import VideoModal from "@/components/wildfire/VideoModal";
+import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
+import { useUserFeedByUsername } from "@/hooks/wildfire/useUserFeedByUsername";
+import { useUserFollowsByUsername } from "@/hooks/wildfire/useUserFollowsByUsername";
+import { useUserProfileByUsername } from "@/hooks/wildfire/useUserProfileByUsername";
+import { calculateSum } from "@/utils/wildfire/calculateSum";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { deleteFollow, insertFollow } from "@/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
@@ -38,8 +39,8 @@ const Profile: NextPage = () => {
     followers,
     followed,
     refetch: refetchProfileFollows,
-  } = useUserFollowsByUsername(username);
-  const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
+  } = useUserFollowsByUsername(user, username);
+  const { loading: loadingFeed, feeds, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -50,44 +51,47 @@ const Profile: NextPage = () => {
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
-  const lastItemIndex = feed.length - 1;
-
-  // Callback function for Intersection Observer
-  const callback = (entries: any) => {
-    entries.forEach((entry: any) => {
-      if (entry.isIntersecting) {
-        const index = entry.target.getAttribute("data-index");
-        console.log("lastItemId", lastItemIndex);
-        console.log("index", index);
-        if (index == lastItemIndex) {
-          console.log("i am hereee");
-          fetchMore();
-        }
-      }
-    });
-  };
+  const [carouselObserver, setCarouselObserver] = useState<IntersectionObserver>();
 
   useEffect(() => {
     if (!carousellRef.current) return;
 
+    carouselObserver?.disconnect();
+
     const options = {
       root: carousellRef.current,
       rootMargin: "0px",
-      threshold: 0.3, // Multiple thresholds for more accurate detection
+      threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver(callback, options);
+    const observer = new IntersectionObserver(entries => {
+      const lastItemIndex = feeds.length - 1;
+
+      // Callback function for Intersection Observer
+
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.getAttribute("data-index") || "0");
+
+          console.log("[lastItemIndex]", lastItemIndex);
+          if (index === lastItemIndex) fetchMore();
+        }
+      });
+    }, options);
 
     const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
     });
-  }, [feed]); // Ensure to run effect whenever feed changes
+
+    setCarouselObserver(observer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleFollow = async () => {
     if (followed == false) {
-      const error = await insertFollow(user.id, profile.id);
+      const error = await insertFollow(user?.id, profile.id);
       if (!error) {
         refetchProfileFollows();
         refetchAuthUserFollows();
@@ -101,7 +105,7 @@ const Profile: NextPage = () => {
 
   const handleUnfollow = async () => {
     if (followed == true) {
-      const error = await deleteFollow(user.id, profile.id);
+      const error = await deleteFollow(user?.id, profile.id);
       if (!error) {
         refetchProfileFollows();
         refetchAuthUserFollows();
@@ -119,7 +123,7 @@ const Profile: NextPage = () => {
       router.push("/login");
     } else {
       console.log("id", id);
-      const res = feed.find((item: any) => item.id === id);
+      const res = feeds.find((item: any) => item.id === id);
       setSelectedVideo(res);
       setIsVideoModalOpen(true);
     }
@@ -153,7 +157,7 @@ const Profile: NextPage = () => {
 
   if (profile) {
     return (
-      <div className="flex flex-col-reverse md:flex-row items-start ">
+      <div className="flex flex-col-reverse md:flex-row items-start h-full">
         {/* MODALS */}
         {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}
@@ -162,8 +166,8 @@ const Profile: NextPage = () => {
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
         {/* NO FEED TO SHOW */}
-        {!loadingFeed && feed && feed.length == 0 && (
-          <div className="flex flex-row justify-center items-center w-full md:h-screen-custom grow">
+        {!loadingFeed && feeds && feeds.length == 0 && (
+          <div className="flex flex-row justify-center items-center w-full grow">
             <Link className="mt-5 md:mt-0 btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
             </Link>
@@ -171,21 +175,19 @@ const Profile: NextPage = () => {
         )}
 
         {/* LOADING INITIAL FEED */}
-        {loadingFeed && feed && feed.length == 0 && (
-          <div className="flex flex-row justify-center items-center h-screen-custom w-full grow">
+        {loadingFeed && feeds && feeds.length == 0 && (
+          <div className="flex flex-row justify-center items-center w-full grow">
             <span className="loading loading-ring loading-lg"></span>
           </div>
         )}
 
         {/* RENDER FEED */}
-        {feed && feed.length > 0 && (
-          <>
-            <div className="carousel carousel-center rounded-box w-full ml-2" ref={carousellRef}>
-              {feed.map((thumb: any, index: any) => (
-                <ThumbCard key={index} index={index} data={thumb} onCta={handleThumbClick} />
-              ))}
-            </div>
-          </>
+        {feeds && feeds.length > 0 && (
+          <div className="carousel carousel-center gap-2 rounded-box w-full h-full" ref={carousellRef}>
+            {feeds.map((feed: any, index: any) => (
+              <ThumbCard key={index} index={index} data={feed} onCta={handleThumbClick} />
+            ))}
+          </div>
         )}
         {/* FETCH MORE */}
         {/* {loadingFeed && (
@@ -193,13 +195,13 @@ const Profile: NextPage = () => {
             <span className="loading loading-dots loading-sm"></span>
           </div>
         )} */}
-        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
+        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5">
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
-            <div className="stat-figure text-secondary">
+            {/* <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
                 <div className="avatar placeholder">
                   <div className="w-12 rounded-full">
-                    <img src={profile?.avatar_url} />
+                    <img src={profile?.avatar_url} alt="avatar" />
                   </div>
                 </div>
               )}
@@ -210,9 +212,10 @@ const Profile: NextPage = () => {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="stat-title">{levelName}</div>
-            <div className="stat-value text-xl">{profile.username}</div>
+            </div> */}
+            <div className="stat-value text-lg pb-2">{username}</div>
+            <div className="stat-title">Level</div>
+            <div className="stat-value text-3xl">{levelName}</div>
             {/* <div className="stat-desc">Level up</div> */}
           </Link>
           <div className="stat cursor-pointer hover:opacity-85" onClick={() => setFollowsModalOpen(true)}>

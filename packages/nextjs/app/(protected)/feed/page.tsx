@@ -1,20 +1,22 @@
 "use client";
 
 import { useContext, useState } from "react";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { NextPage } from "next";
-import { AuthUserFollowsContext } from "~~/app/context";
-import { ParallaxScroll } from "~~/components/ui/parallax-scroll";
-import VideoModal from "~~/components/wildfire/VideoModal";
-import { useUserFollowedFeed } from "~~/hooks/wildfire/useUserFollowingFeed";
+
+import { AuthContext, AuthUserFollowsContext } from "@/app/context";
+import { ParallaxScroll } from "@/components/ui/parallax-scroll";
+import VideoModal from "@/components/wildfire/VideoModal";
+import { useUserFollowedFeed } from "@/hooks/wildfire/useUserFollowingFeed";
 
 const Feed: NextPage = () => {
   //CONSUME PROVIDERS
+  const { user } = useContext(AuthContext);
   const { loadingFollows, following } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
-  const { loading: loadingUserFeed, feed: userFeed, fetchMore } = useUserFollowedFeed();
+  const { loading: loadingUserFeed, feed: userFeed, fetchMore } = useUserFollowedFeed(user, following);
 
   //STATES
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -40,9 +42,9 @@ const Feed: NextPage = () => {
 
   return (
     <>
-      <div id="feed-page" className="flex flex-col md:flex-row-reverse">
+      <div id="feed-page" className="flex flex-col md:flex-row-reverse h-full">
         {/* FOLLOWING */}
-        <div className="flex flex-row md:flex-col gap-2 md:gap-3 h-screen-custom overflow-scroll pl-2 md:pl-0 pr-2">
+        <div className="flex flex-row md:flex-col gap-2 md:gap-3 h-full overflow-scroll pl-2 md:pl-0 pr-2">
           {following?.map((following: any, index: number) => (
             <Link key={index} href={"/" + following.following.username} className="">
               <div className="">

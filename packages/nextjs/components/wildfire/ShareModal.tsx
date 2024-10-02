@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
+
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth";
 
 const ShareModal = ({ data, onClose }: any) => {
   const insideRef = useRef<any>(null);
@@ -24,10 +26,7 @@ const ShareModal = ({ data, onClose }: any) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div
-        onClick={handleClose}
-        className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2"
-      >
+      <div onClick={handleClose} className="btn bg-white hover:bg-white text-black self-start absolute left-2 top-2">
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
@@ -39,10 +38,7 @@ const ShareModal = ({ data, onClose }: any) => {
             readOnly
             value={"https://www.3seconds.me/v/" + data}
           />
-          <button
-            className="btn join-item rounded-r-full"
-            onClick={handleCopyToClipboard}
-          >
+          <button className="btn join-item rounded-r-full" onClick={handleCopyToClipboard}>
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>

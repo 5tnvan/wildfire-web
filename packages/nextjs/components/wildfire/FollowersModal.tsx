@@ -1,9 +1,12 @@
 import React, { useRef } from "react";
 import Link from "next/link";
-import { Avatar } from "../Avatar";
+
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { useOutsideClick } from "~~/hooks/scaffold-eth/useOutsideClick";
+
+import { useOutsideClick } from "@/hooks/scaffold-eth/useOutsideClick";
+
+import { Avatar } from "../Avatar";
 
 const FollowersModal = ({ data, onClose, onCta }: any) => {
   const insideRef = useRef<any>(null);
@@ -22,7 +25,10 @@ const FollowersModal = ({ data, onClose, onCta }: any) => {
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
-      <div ref={insideRef} className="content p-5 rounded-lg bg-base-200 w-full md:w-1/2 h-2/3 overflow-scroll relative">
+      <div
+        ref={insideRef}
+        className="content p-5 rounded-lg bg-base-200 w-full md:w-1/2 h-2/3 overflow-scroll relative"
+      >
         <div className="flex flex-col items-center mb-2">
           <div className="font-semibold items-center">@{data.profile.username}</div>
           <div className="items-center">{data.followers.length} followers</div>

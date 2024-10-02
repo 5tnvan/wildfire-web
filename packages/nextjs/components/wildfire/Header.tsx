@@ -3,9 +3,11 @@
 import React, { useContext, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+import { AuthContext, AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+
 import { UserMenu } from "./UserMenu";
-import { AuthContext, AuthUserContext } from "~~/app/context";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 /**
  * Site header

@@ -1,21 +1,23 @@
-import { useRef, useState } from "react";
-import { NetworkOptions } from "./NetworkOptions";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { getAddress } from "viem";
-import { Address } from "viem";
-import { useDisconnect } from "wagmi";
+import React, { useRef, useState } from "react";
+
 import {
-  ArrowLeftOnRectangleIcon,
-  ArrowTopRightOnSquareIcon,
+  ArrowLeftStartOnRectangleIcon,
   ArrowsRightLeftIcon,
+  ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
   ChevronDownIcon,
   DocumentDuplicateIcon,
   QrCodeIcon,
 } from "@heroicons/react/24/outline";
-import { BlockieAvatar, isENS } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
-import { getTargetNetworks } from "~~/utils/scaffold-eth";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { Address, getAddress } from "viem";
+import { useDisconnect } from "wagmi";
+
+import { BlockieAvatar, isENS } from "@/components/scaffold-eth";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { getTargetNetworks } from "@/utils/scaffold-eth";
+
+import { NetworkOptions } from "./NetworkOptions";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -127,7 +129,7 @@ export const AddressInfoDropdown = ({
               type="button"
               onClick={() => disconnect()}
             >
-              <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
+              <ArrowLeftStartOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
             </button>
           </li>
         </ul>
