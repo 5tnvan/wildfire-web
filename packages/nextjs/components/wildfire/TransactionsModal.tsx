@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useGlobalState } from "@/services/store/store";
-import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
-import { fetchProfileFromWalletId } from "@/utils/wildfire/fetch/fetchProfile";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import { formatEther } from "viem";
 
 import { useOutsideClick } from "@/hooks/scaffold-eth";
 import { useIncomingTransactions } from "@/hooks/wildfire/useIncomingTransactions";
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { fetchProfileFromWalletId } from "@/utils/wildfire/fetch/fetchProfile";
 
 import { TimeAgoUnix } from "./TimeAgo";
 
@@ -43,6 +43,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
     allTransactions.forEach(tx => {
       fetchProfile(tx.sender);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomingRes]);
 
   const renderTransactions = (transactions: any) => {

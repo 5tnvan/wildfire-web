@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import React from "react";
 import type { NextPage } from "next";
+import Link from "next/link";
 
 const Help: NextPage = () => {
   return (

@@ -4,8 +4,8 @@ import React, { useContext, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { useOutsideClick } from "@/hooks/scaffold-eth";
 import { AuthContext, AuthUserContext } from "@/app/context";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
 
 import { UserMenu } from "./UserMenu";
 

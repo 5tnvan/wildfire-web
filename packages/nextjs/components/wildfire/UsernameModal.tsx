@@ -53,6 +53,7 @@ const UsernameModal = ({ onClose }: any) => {
         }
       }
     } catch (error) {
+      console.error(error);
       setErrorClient("An error occurred while checking the username. Please try again.");
     }
 

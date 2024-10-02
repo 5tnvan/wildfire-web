@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +26,7 @@ const Login: NextPage = () => {
       refetchAuth();
       router.push("/feed");
     } catch (error) {
+      console.error(error);
       setError("Login failed. Please try again.");
       setIsProcessing(false);
     }

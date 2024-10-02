@@ -140,6 +140,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
         videoRef.current.pause();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, videoRef.current]);
 
   const handleToggleMute = () => {

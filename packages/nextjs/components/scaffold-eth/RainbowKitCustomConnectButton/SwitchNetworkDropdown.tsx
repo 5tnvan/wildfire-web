@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-import { getTargetNetworks } from "@/utils/scaffold-eth";
 import { ArrowsRightLeftIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
-import { useOutsideClick } from "@/hooks/scaffold-eth";
 import { BaseIcon } from "@/components/assets/BaseIcon";
 import { EthIcon } from "@/components/assets/EthIcon";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { getTargetNetworks } from "@/utils/scaffold-eth";
 
 import { NetworkOptions } from "./NetworkOptions";
 

@@ -1,8 +1,7 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-import { getTargetNetworks } from "@/utils/scaffold-eth";
 import {
-  ArrowLeftOnRectangleIcon,
+  ArrowLeftStartOnRectangleIcon,
   ArrowsRightLeftIcon,
   ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
@@ -14,8 +13,9 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { Address, getAddress } from "viem";
 import { useDisconnect } from "wagmi";
 
-import { useOutsideClick } from "@/hooks/scaffold-eth";
 import { BlockieAvatar, isENS } from "@/components/scaffold-eth";
+import { useOutsideClick } from "@/hooks/scaffold-eth";
+import { getTargetNetworks } from "@/utils/scaffold-eth";
 
 import { NetworkOptions } from "./NetworkOptions";
 
@@ -129,7 +129,7 @@ export const AddressInfoDropdown = ({
               type="button"
               onClick={() => disconnect()}
             >
-              <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
+              <ArrowLeftStartOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
             </button>
           </li>
         </ul>

@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 import { useGlobalState } from "@/services/store/store";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 
-import { useDisplayUsdMode } from "@/hooks/scaffold-eth/useDisplayUsdMode";
 import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from "@/components/scaffold-eth";
+import { useDisplayUsdMode } from "@/hooks/scaffold-eth/useDisplayUsdMode";
 
 const MAX_DECIMALS_USD = 2;
 

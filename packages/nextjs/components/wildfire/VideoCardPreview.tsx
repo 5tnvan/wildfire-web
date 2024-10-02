@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useGlobalState } from "@/services/store/store";
-import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
-import { incrementViews } from "@/utils/wildfire/incrementViews";
 import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
+
+import { convertEthToUsd } from "@/utils/wildfire/convertEthToUsd";
+import { incrementViews } from "@/utils/wildfire/incrementViews";
 
 import { Avatar } from "../Avatar";
 import FormatNumber from "./FormatNumber";
@@ -100,6 +101,7 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
         videoRef.current.pause();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   return (

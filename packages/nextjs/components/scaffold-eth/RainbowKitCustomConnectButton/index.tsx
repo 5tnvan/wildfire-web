@@ -1,12 +1,14 @@
 "use client";
 
 // @refresh reset
-import { getBlockExplorerAddressLink } from "@/utils/scaffold-eth";
+import React from "react";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
 
 import { useNetworkColor } from "@/hooks/scaffold-eth";
 import { useTargetNetwork } from "@/hooks/scaffold-eth/useTargetNetwork";
+import { getBlockExplorerAddressLink } from "@/utils/scaffold-eth";
 
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";

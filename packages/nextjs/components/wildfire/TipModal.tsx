@@ -3,14 +3,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useGlobalState } from "@/services/store/store";
-import { convertUsdToEth } from "@/utils/wildfire/convertUsdToEth";
-import { insertTip } from "@/utils/wildfire/crud/3sec_tips";
 import { CheckCircleIcon, ChevronLeftIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 
-import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "@/hooks/scaffold-eth";
 import { AuthUserContext } from "@/app/context";
+import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "@/hooks/scaffold-eth";
+import { convertUsdToEth } from "@/utils/wildfire/convertUsdToEth";
+import { insertTip } from "@/utils/wildfire/crud/3sec_tips";
 
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";

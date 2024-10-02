@@ -79,6 +79,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
       setVideoSource(getSrc(playbackResp.playbackInfo));
     })();
     handleIncrementViews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.id]);
 
   const handleIncrementViews = async () => {

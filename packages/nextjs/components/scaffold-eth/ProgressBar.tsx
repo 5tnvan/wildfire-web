@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import NProgress from "nprogress";
 
 type PushStateInput = [data: any, unused: string, url?: string | URL | null | undefined];

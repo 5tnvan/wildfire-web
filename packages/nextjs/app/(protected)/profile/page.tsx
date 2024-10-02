@@ -81,6 +81,7 @@ const Profile: NextPage = () => {
     });
 
     setCarouselObserver(observer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleUnfollow = async () => {
