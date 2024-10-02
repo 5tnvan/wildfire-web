@@ -175,7 +175,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                       <div className="absolute inset-0 flex justify-center items-center">
                         <Player.PlayPauseTrigger className="h-12 w-12">
                           <Player.PlayingIndicator asChild matcher={false}>
-                            <PlayIcon />
+                            <PlayIcon color="white"/>
                           </Player.PlayingIndicator>
                         </Player.PlayPauseTrigger>
                       </div>
@@ -184,10 +184,10 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <div className="absolute top-5 right-5">
                       <Player.MuteTrigger className="h-6 w-6">
                         <Player.VolumeIndicator asChild matcher={true}>
-                          <SpeakerXMarkIcon />
+                          <SpeakerXMarkIcon color="white" />
                         </Player.VolumeIndicator>
                         <Player.VolumeIndicator asChild matcher={false}>
-                          <SpeakerWaveIcon />
+                          <SpeakerWaveIcon color="white" />
                         </Player.VolumeIndicator>
                       </Player.MuteTrigger>
                     </div>

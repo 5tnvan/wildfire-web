@@ -26,7 +26,7 @@ export const useFeed = (user: User | null, filter: "default" | "within48hrs" | "
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
   useEffect(() => {
-    if (user && !loading) {
+    if (!loading) {
       (async () => {
         setLoading(true);
 

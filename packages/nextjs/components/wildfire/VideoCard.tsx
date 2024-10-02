@@ -198,14 +198,14 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   <div className="absolute inset-0 flex justify-center items-center">
                     <Player.PlayPauseTrigger className="h-12 w-12">
                       <Player.PlayingIndicator asChild matcher={false}>
-                        <PlayIcon />
+                        <PlayIcon color="white" />
                       </Player.PlayingIndicator>
                     </Player.PlayPauseTrigger>
                   </div>
                 )}
               </Player.Controls>
 
-              <div className="absolute top-5 left-5 right-5 flex flex-row justify-between items-center">
+              <div className="absolute top-2 left-2 right-2 flex flex-row justify-between items-center">
                 <Link href={"/" + data.profile.username} className="flex flex-row items-center gap-2">
                   <Avatar profile={data.profile} width={10} height={10} />
                   <div className="font-semibold text-white">{data.profile.username}</div>

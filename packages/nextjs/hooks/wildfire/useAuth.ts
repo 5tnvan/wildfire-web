@@ -18,7 +18,6 @@ export const useAuth = () => {
     (async () => {
       setLoading(true);
 
-      console.log("asdfsadfsadf");
       const userResp = await fetchUser();
 
       if (userResp && userResp?.user) {
