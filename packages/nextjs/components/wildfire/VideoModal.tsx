@@ -81,6 +81,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
         setVideoSource(getSrc(playbackResp.playbackInfo));
       } catch (error) {
         setIsProcessing(true);
+        console.log(error);
       }
     })();
     handleIncrementViews();
