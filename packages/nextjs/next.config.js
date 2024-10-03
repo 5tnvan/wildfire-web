@@ -46,6 +46,11 @@ const nextConfig = {
         hostname: "api.producthunt.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "vod-cdn.lp-playback.studio",
+        pathname: "**",
+      },
     ],
   },
 };

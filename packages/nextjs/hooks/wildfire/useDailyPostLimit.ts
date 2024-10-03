@@ -27,61 +27,31 @@ export const useDailyPostLimit = (user: User | null) => {
       setPosts(posts);
       const levelData = await fetchLevel(user?.id);
 
-      if (!levelData) {
-        if (posts && posts.length > 0) {
-          const postDate = new Date(posts[0].created_at);
-          const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // difference in hours
-
-          if (diff < 24) {
-            setLimit(true);
-            setPostLeft(0);
-          } else {
-            setLimit(false);
-            setPostLeft(1);
-          }
-        } else {
-          setLimit(false);
-          setPostLeft(1);
-        }
-      }
-
-      if (levelData) {
-        if (posts && posts.length > 1) {
-          const postDate1 = new Date(posts[0].created_at);
-          const postDate2 = new Date(posts[1].created_at);
-          const diff1 = (now.getTime() - postDate1.getTime()) / (1000 * 60 * 60); // difference in hours
-          const diff2 = (now.getTime() - postDate2.getTime()) / (1000 * 60 * 60); // difference in hours
-
-          if (diff1 < 24 && diff2 < 24) {
-            setLimit(true);
-            setPostLeft(0);
-          } else if (diff1 < 24) {
-            setLimit(false);
-            setPostLeft(1);
-          } else {
-            setLimit(false);
-            setPostLeft(2);
-          }
-        } else if (posts && posts?.length === 1) {
-          const postDate = new Date(posts[0].created_at);
-          const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // difference in hours
-
-          if (diff < 24) {
-            setLimit(false);
-            setPostLeft(1);
-          } else {
-            setLimit(false);
-            setPostLeft(2);
-          }
-        } else {
-          setLimit(false);
-          setPostLeft(2);
-        }
-      }
-
-      // // FIXME: THis is for temprary uses
-      // setLimit(false);
-      // setPostLeft(999999);
+      fetchLevel(user?.id).then(levelData => {
+        console.log(levelData);
+      
+        // Determine the allowed number of posts based on user classification
+        const maxPosts = levelData?.level === 1 ? 6 : 3; // 'Creator' (level 1) allows 6 posts, 'Noob' allows 3 posts
+      
+        // Filter posts made within the last 24 hours, default to empty array if posts is undefined
+        const postsInLast24Hours = (posts || []).filter(post => {
+          const postDate = new Date(post.created_at);
+          const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // Difference in hours
+          return diff < 24;
+        });
+    
+        // Calculate the number of posts left
+        const postsLeft = Math.max(0, maxPosts - postsInLast24Hours.length);
+        setPostLeft(postsLeft);
+    
+        // Determine if the user has reached their limit
+        setLimit(postsLeft === 0);
+    
+        // // FIXME: This is for temporary uses
+        // setLimit(false);
+        // setPostLeft(999999);
+      });
+      
 
       setIsLoading(false);
     })();

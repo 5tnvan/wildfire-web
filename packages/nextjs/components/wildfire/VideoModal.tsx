@@ -35,6 +35,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const insideRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoSource, setVideoSource] = useState<Src[] | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [videoStats, setVideoStats] = useState<any>(null);
 
   const [loopCount, setLoopCount] = useState(0);
@@ -75,8 +76,12 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
 
       const livepeer = getLivepeerClient();
 
-      const playbackResp = await livepeer.playback.get(data.playback_id);
-      setVideoSource(getSrc(playbackResp.playbackInfo));
+      try {
+        const playbackResp = await livepeer.playback.get(data.playback_id);
+        setVideoSource(getSrc(playbackResp.playbackInfo));
+      } catch (error) {
+        setIsProcessing(true);
+      }
     })();
     handleIncrementViews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,9 +209,16 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                 </Player.Container>
               </Player.Root>
             )}
+
+          {isProcessing && (
+            <div className="flex justify-center items-center h-full bg-black rounded-md">
+              <p className="text-md text-white">Video is still processing. Please check back later.</p>
+            </div>
+          )}
+            
           </div>
           {/* RIGHT PANEL */}
-          <div className="hidden md:block video-info self-end">
+          <div className="hidden md:block video-info self-end ml-2">
             {/* USER LOCATION TIME */}
             <div className="flex flex-row justify-between items-center gap-2 mb-2 mx-2">
               <Link href={`/${data.profile.username}`} className="flex flex-row items-center gap-2">

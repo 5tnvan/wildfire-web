@@ -14,7 +14,8 @@ import { TimeAgo } from "@/components/wildfire/TimeAgo";
 import { useCountries } from "@/hooks/wildfire/useCountries";
 import { useDailyPostLimit } from "@/hooks/wildfire/useDailyPostLimit";
 import { getLivepeerClient } from "@/utils/livepeer/getLivepeerClient";
-import { insertVideo } from "@/utils/wildfire/crud/3sec";
+import { insertVideo, upsertVideo } from "@/utils/wildfire/crud/3sec";
+import { ACCESS_KEY, HOSTNAME, STORAGE_ZONE_NAME } from "@/constants/BunnyAPI";
 
 const Create: NextPage = () => {
   const router = useRouter();
@@ -27,6 +28,8 @@ const Create: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const [countryId, setCountryId] = useState<string | null>(null);
   const [countryName, setCountryName] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -51,11 +54,13 @@ const Create: NextPage = () => {
       const videoFile = files[0];
       const validationResult = await validateVideoFile(videoFile);
       // FIXEME: The next line is only for temporary tests.
-      validationResult.valid = true;
+      // validationResult.valid = true;
       if (validationResult.valid) {
         const url = URL.createObjectURL(videoFile);
+        setFile(videoFile);
         setUploadedVideo(videoFile);
         setVideoUrl(url);
+        createThumbnail(url);
       } else {
         event.target.files = null;
         handleValidationFailure(validationResult.errors);
@@ -73,8 +78,10 @@ const Create: NextPage = () => {
       const validationResult = await validateVideoFile(videoFile);
       if (validationResult.valid) {
         const url = URL.createObjectURL(videoFile);
+        setFile(videoFile);
         setUploadedVideo(videoFile);
         setVideoUrl(url);
+        createThumbnail(url);
       } else {
         handleValidationFailure(validationResult.errors);
       }
@@ -92,16 +99,34 @@ const Create: NextPage = () => {
       alert("You've reached your 24hrs posting limit. Try again later.");
       return;
     }
-    if (limit === false && videoUrl.length > 0 && uploadedVideo) {
+    if (limit === false && videoUrl.length > 0 && uploadedVideo && file) {
       try {
         setLoading(true);
 
         console.log("videoBlob", uploadedVideo);
 
-        // Upload video
-        await uploadToLivepeer(uploadedVideo);
+        // Fetch the thumbnail blob
+        const thumbnailBlob = await fetch(thumbnailUrl).then(res => res.blob());
+        console.log("thumbnailBlob", thumbnailBlob);
+        console.log("videoBlob", file);
 
-        setLoading(false);
+        // Upload video
+        const videoPath = await uploadToBunny(file, "video");
+        console.log("videoPath", videoPath);
+
+        // Upload thumbnail
+        const thumbnailPath = await uploadToBunny(thumbnailBlob, "thumbnail");
+        console.log("thumbnailPath", thumbnailPath);
+
+        if (videoPath && thumbnailPath) {
+          // Insert record into '3sec' table
+          const res = await insertVideo(videoPath, thumbnailPath, countryId);
+          console.log("res", res);
+          if (Array.isArray(res) && res.length > 0) {
+            const videoId = res[0].id; 
+            await uploadToLivepeer(uploadedVideo, videoId);
+          }
+        }
       } catch (error) {
         setLoading(false);
         console.error("Upload failed:", error);
@@ -151,9 +176,42 @@ const Create: NextPage = () => {
     });
   };
 
-  const uploadToLivepeer = async (videoFile: File) => {
+  const createThumbnail = (videoSrc: string) => {
+    const video = document.createElement("video");
+    video.src = videoSrc;
+
+    video.addEventListener("loadeddata", () => {
+      // Seek to the middle of the video to ensure the frame has enough data
+      video.currentTime = video.duration / 2;
+    });
+
+    video.addEventListener("seeked", () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          if (blob) {
+            const thumbnailUrl = URL.createObjectURL(blob);
+            setThumbnailUrl(thumbnailUrl);
+          }
+        }, "image/jpeg");
+      }
+      // Clean up
+      URL.revokeObjectURL(videoSrc);
+    });
+
+    video.addEventListener("error", () => {
+      console.error("Error loading video for thumbnail generation");
+    });
+  };
+
+  const uploadToLivepeer = async (videoFile: File, video_id: any) => {
     const livepeer = getLivepeerClient();
 
+    setLoading(true);
     setUploadingText("Uploading...");
 
     // TODO: Generate UUID
@@ -178,6 +236,7 @@ const Create: NextPage = () => {
       onError: error => {
         setUploadingText("Error while upload");
         setTimeout(() => setUploadingText(""), 3000);
+        setLoading(false);
         console.error("Failed because: " + error);
       },
       onProgress: (bytesUploaded, bytesTotal) => {
@@ -194,7 +253,7 @@ const Create: NextPage = () => {
         if (upload.url != null) {
           setUploadingText("Generating thumbnail...");
           // Insert record into '3sec' table
-          const error = await insertVideo(user?.id, response.data?.asset.playbackId, countryId);
+          const error = await upsertVideo(video_id, response.data?.asset.playbackId, user?.id);
           if (!error) {
             const thumbnailInterval = setInterval(() => {
               fetch(
@@ -214,6 +273,38 @@ const Create: NextPage = () => {
     });
 
     upload.start();
+  };
+
+  const uploadToBunny = async (file: File | Blob, type: "video" | "thumbnail") => {
+    const now = new Date().getTime();
+    let bunnyUrl, pullZoneUrl, contentType;
+
+    if (type === "video") {
+      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.mp4`;
+      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.mp4`;
+      contentType = "video/mp4";
+    } else if (type === "thumbnail") {
+      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.jpg`;
+      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.jpg`;
+      contentType = "image/jpeg";
+    } else {
+      throw new Error("Unsupported file type");
+    }
+
+    const response = await fetch(bunnyUrl, {
+      method: "PUT",
+      headers: {
+        AccessKey: ACCESS_KEY ?? "",
+        "Content-Type": contentType,
+      },
+      body: file,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload ${type}`);
+    }
+
+    return pullZoneUrl;
   };
 
   const handleSetLocation = (country_id: any, country_name: any) => {
@@ -306,6 +397,7 @@ const Create: NextPage = () => {
         )}
         {videoUrl && (
           <div className="flex flex-col md:flex-row items-center justify-between rounded-lg grow w-full">
+            <div className="w-1/3"></div>
             <div className="flex flex-col justify-center items-center h-[640px] w-[360px] bg-neutral rounded-lg text-white dark:text-black">
               <video
                 ref={videoRef}
