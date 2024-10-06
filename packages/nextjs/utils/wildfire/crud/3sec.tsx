@@ -39,3 +39,13 @@ export async function upsertVideo(id: any, playback_id: any, user_id: any) {
     return error;
   }
 }
+
+export async function updateApprove(id: any) {
+  const supabase = createClient();
+  const { error } = await supabase.from("3sec").update({ suppressed: false }).eq("id", id);
+
+  if (error) {
+    console.log("upsertVideo", error);
+    return error;
+  }
+}

@@ -9,6 +9,7 @@ import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 
 import { SwitchTheme } from "@/components/wildfire/SwitchTheme";
+import { useTheme } from "next-themes";
 
 export const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,8 @@ export const Sidebar = () => {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+  const { resolvedTheme } = useTheme(); // Get the current theme
+  const isDarkMode = resolvedTheme === "dark"; // Check if dark mode is active
   return (
     <>
       <div id="auth-ui-sidebar-sm" className="md:hidden text-base-content p-3 bg-base-200">
@@ -103,10 +106,21 @@ export const Sidebar = () => {
             </Link>
           </li>
         </ul>
-        <Link href="/create" className="btn btn-neutral">
-          <span>Create</span>
-          <VideoCameraIcon width={20} />
-        </Link>
+        <div className="w-full flex flex-col">
+        <Image
+            src={isDarkMode ? `/lp_white_no_bg.png` : `/lp_black_no_bg.png`} // Change image based on theme
+            alt="hero"
+            height={462}
+            width={158}
+            className="mt-8 mb-2 self-center"
+            draggable={false}
+            style={{ width: "150px", height: "auto" }}
+          />
+          <Link href="/create" className="btn btn-neutral">
+            <span>Create</span>
+            <VideoCameraIcon width={20} />
+          </Link>
+        </div>
         <div className="pointer-events-none flex flex-row justify-center p-1">
           <SwitchTheme className={`pointer-events-auto`} />
         </div>

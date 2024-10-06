@@ -71,8 +71,8 @@ const Landing: NextPage = () => {
               </Link>
             )}
             {!isAuthenticated && (
-              <Link href="/preview" className="btn btn-outline text-base">
-                Watch Preview
+              <Link href="https://apps.apple.com/us/app/wildfire-3-seconds-app/id6503965553" className="btn btn-outline text-base">
+                Get the app
               </Link>
             )}
           </div>

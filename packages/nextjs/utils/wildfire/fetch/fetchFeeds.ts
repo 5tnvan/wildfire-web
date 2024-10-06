@@ -1,6 +1,42 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { any } from "zod";
+
+/**
+ * FETCH: fetchRandomFeed()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ **/
+
+export const fetchAll = async (limit: number, page: number = 0) => {
+  const supabase = createClient();
+  const from = page * limit;  // Calculate starting point
+  const to = from + limit - 1; // Calculate ending point
+  
+  const { data, error } = await supabase
+    .from("3sec_desc_view")
+    .select(
+      `id, playback_id, created_at,
+       video_url, thumbnail_url, 
+       country:country_id(id, name), 
+       profile:user_id(id, username, avatar_url),
+       suppressed, 
+       3sec_views(view_count), 
+       3sec_fires(count), 
+       3sec_comments(*, profile:user_id(id, username, avatar_url))`,
+      { count: "exact" }
+    )
+    .range(from, to); // Use range instead of limit and offset
+  
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+
 
 /**
  * FETCH: fetchRandomFeed()
@@ -179,7 +215,7 @@ export const fetchUserFeedWithRange = async (user_id: string, from: any, to: any
   const { data } = await supabase
     .from("3sec")
     .select(
-      "id, playback_id, created_at, country:country_id(name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, playback_id, created_at, country:country_id(name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })

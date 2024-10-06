@@ -190,10 +190,10 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                     <div className="absolute top-5 right-5">
                       <Player.MuteTrigger className="h-6 w-6">
                         <Player.VolumeIndicator asChild matcher={true}>
-                          <SpeakerXMarkIcon color="white" />
+                          <SpeakerWaveIcon color="white" />
                         </Player.VolumeIndicator>
                         <Player.VolumeIndicator asChild matcher={false}>
-                          <SpeakerWaveIcon color="white" />
+                          <SpeakerXMarkIcon color="white" />
                         </Player.VolumeIndicator>
                       </Player.MuteTrigger>
                     </div>

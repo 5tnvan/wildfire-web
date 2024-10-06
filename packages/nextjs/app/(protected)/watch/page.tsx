@@ -17,7 +17,7 @@ const Watch: NextPage = () => {
   const [filter, setFilter] = useState<"default" | "within48hrs" | "latestTipped" | "mostViewed">("default");
   const [filterUI, setFilterUI] = useState(true);
 
-  const { loading: loadingFeed, feeds, fetchMore, refetch } = useFeed(user, filter);
+  const { loading: loadingFeed, feeds, fetchMore, refetch } = useFeed(filter);
 
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -156,7 +156,7 @@ const Watch: NextPage = () => {
           ref={sliderRef}
           className={`${
             filterUI ? "" : "flex flex-col items-center "
-          }carousel carousel-vertical w-full h-full space-y-2 ml-[156px]`}
+          } carousel carousel-vertical w-full h-full space-y-2 ml-[156px]`}
         >
           {feeds.map((feed, index) => (
             <VideoCard

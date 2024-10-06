@@ -10,7 +10,7 @@ import { useFeed } from "@/hooks/wildfire/useFeed";
 
 const Preview: NextPage = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
-  const { loading: loadingFeed, feeds, fetchMore } = useFeed(user, "default");
+  const { loading: loadingFeed, feeds, fetchMore } = useFeed("default");
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true); // New state for mute toggle
   const sliderRef = useRef<HTMLDivElement>(null);

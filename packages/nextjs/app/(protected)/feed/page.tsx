@@ -40,6 +40,8 @@ const Feed: NextPage = () => {
     setIsMuted(mute);
   };
 
+  console.log("userFeed", userFeed);
+
   return (
     <>
       <div id="feed-page" className="flex flex-col md:flex-row-reverse h-full">

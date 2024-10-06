@@ -123,8 +123,8 @@ const Profile: NextPage = () => {
       router.push("/login");
     } else {
       console.log("id", id);
-      const res = feeds.find((item: any) => item.id === id);
-      setSelectedVideo(res);
+      console.log("[Playback ID]", id.playback_id);
+      setSelectedVideo(id);
       setIsVideoModalOpen(true);
     }
   };

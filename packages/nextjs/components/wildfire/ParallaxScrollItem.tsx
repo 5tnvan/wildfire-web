@@ -20,7 +20,8 @@ export const ParallaxScrollItem = ({ data }: any) => {
         </span>
       </div>
       <Image
-        src={`https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/${data.playback_id}/thumbnails/keyframes_0.png`}
+        // src={`https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/${data.playback_id}/thumbnails/keyframes_0.png`}
+        src={data.thumbnail_url}
         className="h-90 w-full object-cover object-left-top rounded-lg gap-2 !m-0 !p-0"
         height={960}
         width={540}
