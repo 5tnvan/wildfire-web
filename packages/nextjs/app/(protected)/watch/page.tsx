@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import Image from "next/image";
 
 import { XMarkIcon } from "@heroicons/react/24/solid";
 
-import { AuthContext } from "@/app/context";
+//import { AuthContext } from "@/app/context";
 import VideoCard from "@/components/wildfire/VideoCard";
 import { useFeed } from "@/hooks/wildfire/useFeed";
 
