@@ -11,7 +11,7 @@ import VideoCard from "@/components/wildfire/VideoCard";
 import { useFeed } from "@/hooks/wildfire/useFeed";
 
 const Watch: NextPage = () => {
-  const { user } = useContext(AuthContext);
+  //const { user } = useContext(AuthContext);
 
   // Track filter state
   const [filter, setFilter] = useState<"default" | "within48hrs" | "latestTipped" | "mostViewed">("default");
