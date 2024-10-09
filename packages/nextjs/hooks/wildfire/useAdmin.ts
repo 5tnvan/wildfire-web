@@ -1,33 +1,38 @@
 import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { fetchAll } from "@/utils/wildfire/fetch/fetchFeeds";
+import { fetchLikes } from "@/utils/wildfire/fetch/fetchLikes";
 
 /**
  * useAdmin HOOK
  * Use this to get feed of videos
  **/
 export const useAdmin = (user: User | null) => {
-  const range = 10;  // Number of videos to fetch per page
-  const [page, setPage] = useState(0);  // Track current page
+  const range = 5; // Number of videos to fetch per page
+  const [page, setPage] = useState(0); // Track current page
   const [loading, setLoading] = useState(false);
   const [feeds, setFeeds] = useState<any[]>([]);
-  const [hasNextPage, setHasNextPage] = useState(false);  // Tracks if there is a next page
-  const [hasPrevPage, setHasPrevPage] = useState(false);  // Tracks if there is a previous page
+  const [hasNextPage, setHasNextPage] = useState(false); // Tracks if there is a next page
 
+  // Fetch the initial feed and subsequent feeds on page change
   useEffect(() => {
     if (!loading) {
       (async () => {
         setLoading(true);
-
         try {
-          // Fetch current page of feeds
-          const data = await fetchAll(range, page);
-          console.log("[data]", data);
-
+          const data = await fetchAll(range, page * range); // Adjusted to fetch based on page * range
           if (data) {
-            setFeeds(data); // Store fetched feeds in state
-            setHasNextPage(data.length === range);  // Check if there's more data for the next page
-            setHasPrevPage(page > 0);  // Check if there's a previous page
+            // Check if each post is liked by the user
+            const likedPostsPromises = data.map(async (post: any) => fetchLikes(post, user?.id));
+
+            // Wait for all promises to resolve
+            const masterData = await Promise.all(likedPostsPromises);
+
+            // Append new data to the existing feed (do not overwrite)
+            setFeeds((existingFeed) => [...existingFeed, ...masterData]);
+
+            // If the data length equals the range, there is a next page
+            setHasNextPage(data.length === range);
           }
         } catch (error) {
           console.error("Error fetching feed:", error);
@@ -36,33 +41,18 @@ export const useAdmin = (user: User | null) => {
         }
       })();
     }
-  }, [user, page]);  // Run when user or page changes
+  }, [user, page]); // Fetch data when user or page changes
 
-  const fetchMore = async (direction: 'next' | 'prev') => {
-    if (loading) return;  // Prevent fetching if already loading
-
-    let newPage = page;
-    if (direction === 'next') newPage = page + 1;
-    if (direction === 'prev' && page > 0) newPage = page - 1;
-
-    setLoading(true);
-    try {
-      const data = await fetchAll(range, newPage);
-
-      if (data) {
-        setFeeds(data);  // Replace current data with new page data
-        setPage(newPage);  // Update page number
-        setHasNextPage(data.length === range);  // Check if more data exists for the next page
-        setHasPrevPage(newPage > 0);  // Check if there's a previous page
-      }
-    } catch (error) {
-      console.error("Error fetching more feed:", error);
-    } finally {
-      setLoading(false);
-    }
+  // Fetch more feeds (next page)
+  const fetchMore = async () => {
+    if (loading || !hasNextPage) return; // Prevent fetching if already loading or no next page
+    setPage((prevPage) => prevPage + 1); // Increment the page to fetch next set of items
   };
 
-  const refetch = () => setPage(0);  // Reset page to 0 and refetch
+  const refetch = () => {
+    setFeeds([]); // Clear feeds
+    setPage(0);   // Reset page to 0 and refetch
+  };
 
-  return { loading, feeds, fetchMore, refetch, hasNextPage, hasPrevPage };
+  return { loading, feeds, fetchMore, refetch, hasNextPage };
 };
