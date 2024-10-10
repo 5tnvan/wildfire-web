@@ -1,10 +1,12 @@
 .infinite-scroll {
+  height: calc(100dvh - 63px);
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
 }
 
 .infinite-scroll-item {
+  height: calc(100vh - 115px);
   scroll-snap-align: start;
   margin-bottom: 6px;
 }

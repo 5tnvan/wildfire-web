@@ -13,8 +13,7 @@ export const useOutsideClick = (ref: React.RefObject<HTMLElement>, callback: { (
       }
 
       if (ref.current && !ref.current.contains(event.target)) {
-        console.log(ref.current && !ref.current.contains(event.target));
-        // callback();
+        callback();
       }
     }
 

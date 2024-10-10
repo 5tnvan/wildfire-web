@@ -9,7 +9,7 @@ import { TimeAgo } from "./TimeAgo";
 const ThumbCard = ({ index, data, onCta }: any) => {
   return (
     <div
-      className="carousel-item relative bg-black cursor-pointer hover:opacity-85 rounded-xl"
+      className="carousel-item relative bg-black cursor-pointer hover:opacity-85 rounded-xl mr-2"
       data-index={index}
       onClick={() => onCta(data)}
     >
@@ -18,7 +18,7 @@ const ThumbCard = ({ index, data, onCta }: any) => {
         // src={`https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/${data.playback_id}/thumbnails/keyframes_0.png`}
         src={data.thumbnail_url}
         alt="Thumbnail is not generated yet!"
-        className="rounded-lg"
+        className="thumbcard rounded-lg w-64"
       />
       <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
         <EyeIcon width={20} />
@@ -26,7 +26,7 @@ const ThumbCard = ({ index, data, onCta }: any) => {
           <FormatNumber number={data["3sec_views"][0].view_count} />
         </span>
       </div>
-      <div className="absolute bottom-0 w-full flex flex-row py-6 px-4 bg-base-200 bg-opacity-90 justify-between items-center rounded-bl-xl">
+      <div className="absolute bottom-0 w-full flex flex-row py-6 px-4 bg-base-200 bg-opacity-90 justify-between items-center rounded-bl-l">
         <div className="flex flex-row">
           <span className="text-base mr-2">
             <TimeAgo timestamp={data.created_at} />

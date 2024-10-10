@@ -136,6 +136,13 @@ input:focus {
   } 
 }
 
+@media (min-width: 768px) { 
+  .thumbcard {
+    width: auto!important;
+    height: calc(100dvh - 63px);
+  }
+ }
+
 /* Livepeer React component outer div fix */
 div[data-radix-aspect-ratio-wrapper] {
   height: 100% !important;

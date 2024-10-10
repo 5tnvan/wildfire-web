@@ -167,7 +167,7 @@ const Profile: NextPage = () => {
         )}
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feeds && feeds.length == 0 && (
-          <div className="flex flex-row justify-center items-center w-full grow">
+          <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
             <Link className="mt-5 md:mt-0 btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
             </Link>
@@ -176,14 +176,14 @@ const Profile: NextPage = () => {
 
         {/* LOADING INITIAL FEED */}
         {loadingFeed && feeds && feeds.length == 0 && (
-          <div className="flex flex-row justify-center items-center w-full grow">
+          <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
             <span className="loading loading-ring loading-lg"></span>
           </div>
         )}
 
         {/* RENDER FEED */}
         {feeds && feeds.length > 0 && (
-          <div className="carousel carousel-center gap-2 rounded-box w-full h-full" ref={carousellRef}>
+          <div className="carousel carousel-center rounded-box w-full md:ml-2" ref={carousellRef}>
             {feeds.map((feed: any, index: any) => (
               <ThumbCard key={index} index={index} data={feed} onCta={handleThumbClick} />
             ))}
@@ -195,7 +195,7 @@ const Profile: NextPage = () => {
             <span className="loading loading-dots loading-sm"></span>
           </div>
         )} */}
-        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5">
+        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             {/* <div className="stat-figure text-secondary">
               {profile?.avatar_url && (

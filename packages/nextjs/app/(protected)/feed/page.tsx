@@ -44,9 +44,9 @@ const Feed: NextPage = () => {
 
   return (
     <>
-      <div id="feed-page" className="flex flex-col md:flex-row-reverse h-full">
+      <div id="feed-page" className="flex flex-col md:flex-row-reverse">
         {/* FOLLOWING */}
-        <div className="flex flex-row md:flex-col gap-2 md:gap-3 h-full overflow-scroll pl-2 md:pl-0 pr-2">
+        <div className="flex flex-row md:flex-col gap-2 md:gap-3 h-screen-custom overflow-scroll pl-2 md:pl-0 pr-2">
           {following?.map((following: any, index: number) => (
             <Link key={index} href={"/" + following.following.username} className="">
               <div className="">
