@@ -152,7 +152,7 @@ const Profile: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row items-start h-full">
+    <div className="flex flex-col-reverse md:flex-row items-start">
       {/* MODALS */}
       {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
       {isTipModalOpen && <TipModal data={profile} onClose={closeTipModal} />}

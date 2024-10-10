@@ -195,7 +195,7 @@ const Profile: NextPage = () => {
             <span className="loading loading-dots loading-sm"></span>
           </div>
         )} */}
-        <div className="stats shadow flex flex-col grow w-full md:w-[350px] h-full py-5 md:mx-2">
+        <div className="stats shadow flex flex-col grow w-full md:w-[350px] py-5 md:mx-2">
           <Link href={"/" + username} className="stat cursor-pointer hover:opacity-85">
             {/* <div className="stat-figure text-secondary">
               {profile?.avatar_url && (
