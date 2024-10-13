@@ -165,7 +165,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
 
   return (
     <div
-      className="infinite-scroll-item relative flex flex-col md:flex-row md:justify-center"
+      className="infinite-scroll-item relative flex flex-col md:flex-row"
       data-index={index}
     >
       {/* MODAL */}
