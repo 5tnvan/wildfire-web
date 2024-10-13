@@ -30,11 +30,11 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   }, [isAuthenticated, username, video_id, router]);
 
   return (
-    <div id="auth-ui" className="flex flex-col md:flex-row h-dvh">
+    <div id="auth-ui" className="flex flex-col md:flex-row">
       <Sidebar />
-      <div id="auth-ui-right-wrapper" className="flex flex-col w-full">
+      <div id="auth-ui-right-wrapper" className="w-full">
         <Topbar />
-        <div id="auth-ui-children-wrapper" className="m-2 h-full overflow-hidden">
+        <div id="auth-ui-children-wrapper" className="">
           {children}
         </div>
       </div>

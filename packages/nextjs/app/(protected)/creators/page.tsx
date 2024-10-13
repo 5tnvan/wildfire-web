@@ -39,7 +39,7 @@ const Creators: NextPage = () => {
   }
 
   return (
-    <div id="creator-page" className="h-full overflow-scroll p-2">
+    <div id="creator-page" className="h-screen-custom overflow-scroll p-2">
       <div className="grid grid-cols-12 gap-2">
         {feed.map((profile: any) => {
           // Calculate ETH sum and convert to USD if data is available

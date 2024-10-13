@@ -15,7 +15,7 @@ export const Topbar = () => {
 
   return (
     <>
-      <div id="auth-ui-topbar" className="flex flex-row gap-1 m-2 mb-0">
+      <div id="auth-ui-topbar" className="flex flex-row gap-1 m-2">
         <Search />
         {isAuthenticated && <Notification />}
         {isAuthenticated && <UserMenu launchApp={false} wildpay={true} />}

@@ -40,7 +40,7 @@ const Profile: NextPage = () => {
     followed,
     refetch: refetchProfileFollows,
   } = useUserFollowsByUsername(user, username);
-  const { loading: loadingFeed, feeds, fetchMore } = useUserFeedByUsername(username);
+  const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
   //DYNAMICALLY GENERATE LEVEL NAME
@@ -51,12 +51,25 @@ const Profile: NextPage = () => {
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
-  const [carouselObserver, setCarouselObserver] = useState<IntersectionObserver>();
+  const lastItemIndex = feed.length - 1;
+
+  // Callback function for Intersection Observer
+  const callback = (entries: any) => {
+    entries.forEach((entry: any) => {
+      if (entry.isIntersecting) {
+        const index = entry.target.getAttribute("data-index");
+        console.log("lastItemId", lastItemIndex);
+        console.log("index", index);
+        if (index == lastItemIndex) {
+          console.log("i am hereee");
+          fetchMore();
+        }
+      }
+    });
+  };
 
   useEffect(() => {
     if (!carousellRef.current) return;
-
-    carouselObserver?.disconnect();
 
     const options = {
       root: carousellRef.current,
@@ -64,30 +77,15 @@ const Profile: NextPage = () => {
       threshold: 0.8, // Multiple thresholds for more accurate detection
     };
 
-    const observer = new IntersectionObserver(entries => {
-      const lastItemIndex = feeds.length - 1;
-
-      // Callback function for Intersection Observer
-
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const index = parseInt(entry.target.getAttribute("data-index") || "0");
-
-          console.log("[lastItemIndex]", lastItemIndex);
-          if (index === lastItemIndex) fetchMore();
-        }
-      });
-    }, options);
+    const observer = new IntersectionObserver(callback, options);
 
     const videoCards = carousellRef.current.querySelectorAll(".carousel-item");
 
     videoCards.forEach(card => {
       observer.observe(card);
     });
+  }, [feed]); // Ensure to run effect whenever feed changes
 
-    setCarouselObserver(observer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feeds]); // Ensure to run effect whenever feed changes
 
   const handleFollow = async () => {
     if (followed == false) {
@@ -166,7 +164,7 @@ const Profile: NextPage = () => {
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
         )}
         {/* NO FEED TO SHOW */}
-        {!loadingFeed && feeds && feeds.length == 0 && (
+        {!loadingFeed && feed && feed.length == 0 && (
           <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
             <Link className="mt-5 md:mt-0 btn btn-base-100" href={"/watch"}>
               🤫 User hasn't posted, yet.
@@ -175,16 +173,16 @@ const Profile: NextPage = () => {
         )}
 
         {/* LOADING INITIAL FEED */}
-        {loadingFeed && feeds && feeds.length == 0 && (
+        {loadingFeed && feed && feed.length == 0 && (
           <div className="flex flex-row justify-center items-center w-full h-screen-custom grow">
             <span className="loading loading-ring loading-lg"></span>
           </div>
         )}
 
         {/* RENDER FEED */}
-        {feeds && feeds.length > 0 && (
+        {feed && feed.length > 0 && (
           <div className="carousel carousel-center rounded-box w-full md:ml-2" ref={carousellRef}>
-            {feeds.map((feed: any, index: any) => (
+            {feed.map((feed: any, index: any) => (
               <ThumbCard key={index} index={index} data={feed} onCta={handleThumbClick} />
             ))}
           </div>

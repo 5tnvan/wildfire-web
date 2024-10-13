@@ -165,9 +165,8 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
 
   return (
     <div
-      className="carousel-item flex flex-col md:flex-row justify-center"
+      className="infinite-scroll-item relative flex flex-col md:flex-row md:justify-center"
       data-index={index}
-      style={{ height: "88dvh" }}
     >
       {/* MODAL */}
       {isTipModalOpen && <TipModal data={data.profile} video_id={data.id} onClose={closeTipModal} />}
@@ -183,7 +182,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       )}
 
       {/* VIDEO WRAPPER */}
-      <div style={{ width: "49.4dvh" }}>
+      <div className="video-wrapper">
         {videoSource && (
           <Player.Root src={videoSource}>
             <Player.Container>
@@ -195,7 +194,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
 
               <Player.Controls>
                 {loopCount < 3 && (
-                  <div className="absolute inset-0 flex justify-center items-center">
+                  <div className="hidden absolute inset-0 md:flex justify-center items-center">
                     <Player.PlayPauseTrigger className="h-12 w-12">
                       <Player.PlayingIndicator asChild matcher={false}>
                         <PlayIcon color="white" />
@@ -217,7 +216,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
               </div>
 
               {loopCount > 2 && (
-                <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                <div className="hidden absolute inset-0 md:flex justify-center items-center bg-black bg-opacity-50 rounded-lg">
                   <div className="btn btn-primary text-black opacity-70" onClick={handleWatchAgain}>
                     <EyeIcon width={16} />
                     <span className="font-medium">Watch again</span>

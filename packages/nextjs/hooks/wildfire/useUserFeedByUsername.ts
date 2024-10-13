@@ -16,79 +16,49 @@ export const useUserFeedByUsername = (username: any) => {
   const range = 3;
 
   const [loading, setLoading] = useState(false);
-  const [feeds, setFeeds] = useState<any[]>([]);
-  const [nextFeeds, setNextFeeds] = useState<any[]>([]);
+  const [feed, setFeed] = useState<any[]>([]);
   const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  useEffect(() => {
-    if (username && !loading) {
-      setPage(0);
-
-      (async () => {
-        console.log("page", page);
-        setLoading(true);
-
-        const profile = await fetchProfileByUsername(username);
-
-        if (profile) {
-          const { from, to } = getRange(page, range);
-          const data = await fetchUserFeedWithRange(profile.id, from, to + range);
-
-          if (data) {
-            // Check if each post is liked by the user
-            const likedPostsPromises = data.map(async (post: any) => {
-              return fetchLikes(post, profile.id);
-            });
-
-            const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
-
-            setFeeds(masterData.slice(0, range));
-            setNextFeeds(masterData.slice(range, range + range));
-
-            setPage(1);
-          }
-        }
-
-        setLoading(false);
-      })();
-    }
-  }, [triggerRefetch, username]);
-
-  const fetchMore = async () => {
-    if (username && nextFeeds.length > 0 && !loading) {
-      console.log("fetching more");
-
-      console.log("page", page);
-      setLoading(true);
-
-      setFeeds(oldFeeds => [...oldFeeds, ...nextFeeds]);
-
-      const profile = await fetchProfileByUsername(username);
-
-      if (profile) {
-        const { from, to } = getRange(page + 1, range);
-        const data = await fetchUserFeedWithRange(profile.id, from, to);
-
-        if (data) {
-          // Check if each post is liked by the user
-          const likedPostsPromises = data.map(async (post: any) => {
-            return fetchLikes(post, profile.id);
-          });
-
-          const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
-
-          setNextFeeds(masterData);
-
-          setPage(prevPage => prevPage + 1);
-        }
-      }
-
-      setLoading(false);
-    } else setNextFeeds([]);
+  const refetch = () => {
+    setPage(0); // Reset page
+    setFeed([]); // Reset feed
+    setHasMore(true); // Reset hasMore to true
+    setTriggerRefetch(prev => !prev); // Trigger refetch
   };
 
-  const refetch = () => setTriggerRefetch(prev => !prev);
+  const fetchMore = () => {
+    console.log("fetching more");
+    if (hasMore) {
+      setPage(prevPage => prevPage + 1); // Increase page by 1
+    }
+  };
 
-  return { loading, feeds, fetchMore, refetch };
+  const fetchFeed = async () => {
+    setLoading(true);
+    const { from, to } = getRange(page, range);
+    const profile = await fetchProfileByUsername(username);
+    if (profile) {
+      const data = await fetchUserFeedWithRange(profile.id, from, to);
+
+      if (data) {
+        // Check if each post is liked by the user
+        const likedPostsPromises = data.map(async (post: any) => {
+          return fetchLikes(post, profile.id);
+        });
+
+        const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
+        if (data.length < range) setHasMore(false); // No more data to fetch
+        setFeed(existingFeed => [...existingFeed, ...masterData]);
+      }
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeed();
+  }, [page, triggerRefetch]);
+
+  return { loading, feed, fetchMore, refetch };
 };

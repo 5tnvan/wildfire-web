@@ -318,7 +318,7 @@ const Create: NextPage = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-full">
+    <div className="flex flex-col md:flex-row p-2 pt-0 h-screen-custom">
       <div className="flex flex-col">
         {/* LIVEPEER STREAM */}
         {/* <button className="btn btn-base-300 mb-2" onClick={handleStartLivepeer}>

@@ -149,7 +149,7 @@ const Account: NextPage = () => {
   };
 
   return (
-    <div className="grow h-full overflow-scroll flex justify-center items-center">
+    <div className="grow h-screen-custom overflow-scroll flex justify-center items-center">
       {isVerifyWalletModalOpen && <VerifyWalletModal data={profile} onClose={closeVerifyWalletModal} />}
       <BentoGrid className="max-w-4xl mx-auto">
         {items.map((item, i) => (

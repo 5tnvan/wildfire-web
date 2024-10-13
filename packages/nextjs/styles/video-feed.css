@@ -6,19 +6,33 @@
 }
 
 .infinite-scroll-item {
-  height: calc(100vh - 115px);
+  height: 78dvh;
   scroll-snap-align: start;
-  margin-bottom: 6px;
+  box-sizing: content-box;
 }
 
 .video-wrapper {
   /* width: 100%; */
-  height: 100%;
-  max-width: 100vw;
 }
 
-.video {
+/* .video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+} */
+
+@media (max-width: 640px) {
+
+}
+
+@media (min-width: 768px) { 
+  
+  .infinite-scroll-item {
+    height: 88dvh;
+  }
+  
+  .video-wrapper {
+    width: 49.4dvh;
+  }
+
 }

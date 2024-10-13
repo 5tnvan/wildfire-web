@@ -1,89 +1,68 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import { User } from "@supabase/supabase-js";
-
-import { getRange } from "@/utils/getRange";
-
 import { fetchUserFeedWithRange } from "../../utils/wildfire/fetch/fetchFeeds";
 import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
+import { fetchUser } from "@/utils/wildfire/fetch/fetchUser";
+import { User } from "@supabase/supabase-js";
+
+const getRange = (page: number, range: number) => {
+  const from = page * range;
+  const to = from + range - 1;
+  return { from, to };
+};
 
 /**
  * useFeed HOOK
  * Use this to get feed of videos from authenticated user
  **/
-export const useProfileFeeds = (user: User | null) => {
+export const useProfileFeed = (user: User | null) => {
   const range = 3;
 
   const [loading, setLoading] = useState(false);
-  const [feeds, setFeeds] = useState<any[]>([]);
-  const [nextFeeds, setNextFeeds] = useState<any[]>([]);
+  const [feed, setFeed] = useState<any[]>([]);
   const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  useEffect(() => {
-    if (user && !loading) {
-      setPage(0);
+  const refetch = () => {
+    setPage(0); // Reset page
+    setFeed([]); // Reset feed
+    setHasMore(true); // Reset hasMore to true
+    setTriggerRefetch(prev => !prev); // Trigger refetch
+  };
 
-      (async () => {
-        console.log("page", page);
-        setLoading(true);
-
-        const { from, to } = getRange(page, range);
-        const data = await fetchUserFeedWithRange(user.id, from, to + range);
-        console.log("[data]", data);
-
-        if (data) {
-          // Check if each post is liked by the user
-          const likedPostsPromises = data.map(async (post: any) => {
-            return fetchLikes(post, user.id);
-          });
-
-          const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
-
-          setFeeds(masterData.slice(0, range));
-          setNextFeeds(masterData.slice(range, range + range));
-
-          setPage(1);
-        }
-
-        setLoading(false);
-      })();
+  const fetchMore = () => {
+    console.log("fetching more");
+    if (hasMore) {
+      setPage(prevPage => prevPage + 1); // Increase page by 1
     }
-  }, [triggerRefetch, user]);
+  };
 
-  const fetchMore = async () => {
-    if (user && nextFeeds.length > 0 && !loading) {
-      console.log("fetching more");
-
-      console.log("page", page);
-      setLoading(true);
-
-      setFeeds(oldFeeds => [...oldFeeds, ...nextFeeds]);
-
-      const { from, to } = getRange(page + 1, range);
-      const data = await fetchUserFeedWithRange(user.id, from, to);
-      console.log("[data]", data);
+  const fetchFeed = async () => {
+    setLoading(true);
+    const { from, to } = getRange(page, range);
+    const user = await fetchUser();
+    if (user.user) {
+      const data = await fetchUserFeedWithRange(user.user.id, from, to);
 
       if (data) {
         // Check if each post is liked by the user
         const likedPostsPromises = data.map(async (post: any) => {
-          return fetchLikes(post, user.id);
+          return fetchLikes(post, user.user.id);
         });
 
         const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
-
-        setNextFeeds(masterData);
-
-        setPage(prevPage => prevPage + 1);
+        if (data.length < range) setHasMore(false); // No more data to fetch
+        setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
-
       setLoading(false);
-    } else setNextFeeds([]);
+    }
   };
 
-  const refetch = () => setTriggerRefetch(prev => !prev);
+  useEffect(() => {
+    fetchFeed();
+  }, [page, triggerRefetch]);
 
-  return { loading, feeds, fetchMore, refetch };
+  return { loading, feed, fetchMore, refetch };
 };
