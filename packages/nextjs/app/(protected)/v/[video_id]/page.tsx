@@ -14,7 +14,7 @@ const Video: NextPage = () => {
   const { video_id } = useParams();
   const { loading: loadingFeed, feed, fetchMore } = useVideo(user, video_id);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // Toggle mute state
