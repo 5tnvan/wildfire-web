@@ -162,7 +162,7 @@ export const fetchVideoAndRandomFeed = async (video_id: any, limit: any) => {
   const { data: data1 } = await supabase
     .from("3sec")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .eq("id", video_id)
     .single();
@@ -170,7 +170,7 @@ export const fetchVideoAndRandomFeed = async (video_id: any, limit: any) => {
   const { data: data2 } = await supabase
     .from("3sec_random_view")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
     )
     .neq("suppressed", true)
     .neq("id", video_id)
