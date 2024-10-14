@@ -21,3 +21,4 @@ node_modules
 
 # cli
 dist
+packages/nextjs/app/(protected)/mod/page.tsx

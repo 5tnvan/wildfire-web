@@ -7,9 +7,13 @@ import { VideoCameraIcon } from "@heroicons/react/20/solid";
 import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
+import { useTheme } from "next-themes";
 
 export const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { resolvedTheme } = useTheme(); // Get the current theme
+  const isDarkMode = resolvedTheme === "dark"; // Check if dark mode is active
+  
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -101,10 +105,23 @@ export const Sidebar = () => {
             </Link>
           </li>
         </ul>
-        <Link href="/create" className="btn btn-neutral">
-          <span>Create</span>
-          <VideoCameraIcon width={20} />
-        </Link>
+        <div className="w-full flex flex-col">
+          <Link href="www.livepeer.org" target="_blank" className="mt-8 mb-2 self-center">
+            <Image
+              src={isDarkMode ? `/lp_white_no_bg.png` : `/lp_black_no_bg.png`} // Change image based on theme
+              alt="hero"
+              height={462}
+              width={158}
+              className=""
+              draggable={false}
+              style={{ width: "150px", height: "auto" }}
+            />
+          </Link>
+          <Link href="/create" className="btn btn-neutral">
+            <span>Create</span>
+            <VideoCameraIcon width={20} />
+          </Link>
+        </div>
         <div className="pointer-events-none flex flex-row justify-center p-1">
           <SwitchTheme className={`pointer-events-auto`} />
         </div>
@@ -112,3 +129,4 @@ export const Sidebar = () => {
     </>
   );
 };
+

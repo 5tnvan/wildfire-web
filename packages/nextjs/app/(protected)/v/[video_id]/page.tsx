@@ -55,7 +55,7 @@ const Video: NextPage = () => {
         </div>
       )}
       {feed && feed.length > 0 && (
-        <div ref={sliderRef} className="infinite-scroll">
+        <div ref={sliderRef} className="infinite-scroll flex flex-col items-center">
           {feed.map((video, index) => (
             <VideoCard
               key={video.id + index}

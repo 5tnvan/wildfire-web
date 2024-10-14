@@ -11,6 +11,7 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import { HeartIcon, PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext } from "~~/app/context";
 import { useGlobalState } from "~~/services/store/store";
+import { livepeerClient } from "~~/utils/livepeer/livepeer";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
@@ -19,6 +20,7 @@ import { incrementViews } from "~~/utils/wildfire/incrementViews";
 const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
   const price = useGlobalState(state => state.nativeCurrency.price);
+  const [playbackInfo, setPlaybackInfo] = useState<any>(null);
 
   //CONSUME PROVIDERS
   const { isAuthenticated } = useContext(AuthContext);
@@ -160,6 +162,25 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     }
   }, [isPlaying]);
 
+  console.log("playbackInfo", playbackInfo);
+
+  // Fetch playback info from playback_id
+  useEffect(() => {
+    const fetchPlaybackInfo = async () => {
+      try {
+        console.log("playback_id", data.playback_id);
+        const info = await livepeerClient.playback.get(data.playback_id);
+        setPlaybackInfo(info.playbackInfo?.meta.source[0].url); // Set the playback info state
+      } catch (error) {
+        console.error("Error fetching playback info:", error);
+      }
+    };
+
+    if (data.playback_id) {
+      fetchPlaybackInfo();
+    }
+  }, [data.playback_id]);
+
   return (
     <div className="infinite-scroll-item flex flex-col md:flex-row" data-index={index}>
       {/* MODAL */}
@@ -180,7 +201,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
         <video
           id={index}
           ref={videoRef}
-          src={data.video_url}
+          src={playbackInfo}
           className="video rounded-lg"
           onEnded={handleVideoEnd}
           muted={isMuted}
