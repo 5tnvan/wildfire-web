@@ -55,6 +55,7 @@
     "livepeer": "^3.4.0",
     "react-dropzone": "^14.2.3",
     "tailwind-merge": "^2.3.0",
-    "tus-js-client": "^4.2.3"
+    "tus-js-client": "^4.2.3",
+    "zod": "^3.23.8"
   }
 }
