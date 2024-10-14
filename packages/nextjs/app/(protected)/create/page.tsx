@@ -3,6 +3,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
+import * as tus from "tus-js-client";
 import { MapPinIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import { CheckCircleIcon, ChevronRightIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext } from "~~/app/context";
@@ -11,10 +12,8 @@ import { TimeAgo } from "~~/components/wildfire/TimeAgo";
 import { ACCESS_KEY, HOSTNAME, STORAGE_ZONE_NAME } from "~~/constants/BunnyAPI";
 import { useCountries } from "~~/hooks/wildfire/useCountries";
 import { useDailyPostLimit } from "~~/hooks/wildfire/useDailyPostLimit";
-import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/3sec";
 import { livepeerClient } from "~~/utils/livepeer/livepeer";
-import * as tus from "tus-js-client";
-
+import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/3sec";
 
 const Create: NextPage = () => {
   const router = useRouter();
@@ -101,8 +100,8 @@ const Create: NextPage = () => {
         if (videoPath && thumbnailPath) {
           const res = await insertVideo(videoPath, thumbnailPath, countryId);
           if (Array.isArray(res) && res.length > 0) {
-            const videoId = res[0].id; 
-            await uploadToLivepeer( file ,videoId);
+            const videoId = res[0].id;
+            await uploadToLivepeer(file, videoId);
           }
         }
       } catch (error) {
@@ -113,41 +112,42 @@ const Create: NextPage = () => {
   };
 
   const uploadToLivepeer = async (assetData: File, video_id: any) => {
-    livepeerClient
-          .asset.create(assetData)
-          .then(async (response) => {
-            console.log("Asset upload request:", response);
-            const upload = new tus.Upload(assetData, {
-              endpoint: response.data?.tusEndpoint,
-              retryDelays: [0, 3000, 5000, 10000, 20000],
-              metadata: {
-                filename: `${profile.id}_${assetData.name}`,
-                filetype: assetData.type,
-              },
-              onError: error => {
-                console.error("Failed because: " + error);
-              },
-              onProgress: (bytesUploaded, bytesTotal) => {
-              },
-              onSuccess: async () => {
-                console.log("Download %s from %s", assetData.name, upload.url);
-                if (upload.url != null) {
-                  // Insert record into '3sec' table
-                  const error = await upsertVideo(video_id, response.data?.asset.playbackId, user?.id);
-                  if (!error) {
-                    router.push("/" + profile.username);
-                  } else {
-                    console.log("error", error);
-                  }
-                }
-              },
-            });
-            upload.start();
-          })
-          .catch((error) => {
-            console.error("Error requesting asset upload:", error);
-          });
-  }
+    livepeerClient.asset
+      .create(assetData)
+      .then(async response => {
+        console.log("Asset upload request:", response);
+        const upload = new tus.Upload(assetData, {
+          endpoint: response.data?.tusEndpoint,
+          retryDelays: [0, 3000, 5000, 10000, 20000],
+          metadata: {
+            filename: `${profile.id}_${assetData.name}`,
+            filetype: assetData.type,
+          },
+          onError: error => {
+            console.error("Failed because: " + error);
+          },
+          onProgress: (bytesUploaded, bytesTotal) => {
+            console.log("bytesUploaded", bytesUploaded), console.log("bytesTotal", bytesTotal);
+          },
+          onSuccess: async () => {
+            console.log("Download %s from %s", assetData.name, upload.url);
+            if (upload.url != null) {
+              // Insert record into '3sec' table
+              const error = await upsertVideo(video_id, response.data?.asset.playbackId, user?.id);
+              if (!error) {
+                router.push("/" + profile.username);
+              } else {
+                console.log("error", error);
+              }
+            }
+          },
+        });
+        upload.start();
+      })
+      .catch(error => {
+        console.error("Error requesting asset upload:", error);
+      });
+  };
 
   const uploadToBunny = async (file: File | Blob, type: "video" | "thumbnail") => {
     const now = new Date().getTime();
