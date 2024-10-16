@@ -57,6 +57,9 @@ export async function updateView(id: any, view: number) {
 
   if (error) {
     console.log("updateView", error);
-    return error;
+    return false;
   }
+
+  console.log("data", data);
+  return true;
 }

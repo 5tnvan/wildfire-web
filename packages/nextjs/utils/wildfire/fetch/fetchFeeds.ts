@@ -8,10 +8,8 @@ import { createClient } from "~~/utils/supabase/server";
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchAll = async (limit: number, page = 0) => {
+export const fetchAll = async (from: number, to: number) => {
   const supabase = createClient();
-  const from = page * limit; // Calculate starting point
-  const to = from + limit - 1; // Calculate ending point
 
   const { data, error } = await supabase
     .from("3sec_desc_view")
@@ -26,7 +24,7 @@ export const fetchAll = async (limit: number, page = 0) => {
        3sec_comments(*, profile:user_id(id, username, avatar_url))`,
       { count: "exact" },
     )
-    .range(from, to); // Use range instead of limit and offset
+    .range(from, to);
 
   if (error) {
     throw new Error(error.message);

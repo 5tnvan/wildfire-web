@@ -106,7 +106,7 @@ export const Sidebar = () => {
           </li>
         </ul>
         <div className="w-full flex flex-col">
-          <Link href="www.livepeer.org" target="_blank" className="mt-8 mb-2 self-center">
+          <Link href="https://www.livepeer.org/" target="_blank" className="mt-8 mb-2 self-center">
             <Image
               src={isDarkMode ? `/lp_white_no_bg.png` : `/lp_black_no_bg.png`} // Change image based on theme
               alt="hero"
