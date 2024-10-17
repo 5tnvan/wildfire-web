@@ -9,10 +9,11 @@ const apolloClientEthereum = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-//https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/0.0.1
 //https://api.studio.thegraph.com/query/68297/wildpay-base-sepolia/0.0.1
+const SUBGRAPH_API_KEY = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY;
+
 const apolloClientBase = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/0.0.1",
+  uri: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/ANu9ycvF7GU3K9Gt7ZkSRbXEt9wVr8vVEvH92p7MjX3P`,
   cache: new InMemoryCache(),
 });
 
