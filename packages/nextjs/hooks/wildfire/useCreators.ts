@@ -11,18 +11,16 @@ const apolloClientEthereum = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+const SUBGRAPH_API_KEY = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY;
+
 const apolloClientBase = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/0.0.1",
+  uri: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/ANu9ycvF7GU3K9Gt7ZkSRbXEt9wVr8vVEvH92p7MjX3P`,
   cache: new InMemoryCache(),
 });
 
 const PAYMENTS_GRAPHQL = gql`
   query GetPaymentChanges($receiverAddress: Bytes!) {
-    paymentChanges(
-      where: { receiver: $receiverAddress }
-      orderBy: blockTimestamp
-      orderDirection: desc
-    ) {
+    paymentChanges(where: { receiver: $receiverAddress }, orderBy: blockTimestamp, orderDirection: desc) {
       id
       sender
       receiver
