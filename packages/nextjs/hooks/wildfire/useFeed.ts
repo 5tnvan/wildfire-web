@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchLatestTipped, fetchMostViewed, fetchRandomFeed, fetchWithin48Hrs } from "~~/utils/wildfire/fetch/fetchFeeds";
+import {
+  fetchLatestTipped,
+  fetchMostViewed,
+  fetchRandomFeed,
+  fetchWithin48Hrs,
+} from "~~/utils/wildfire/fetch/fetchFeeds";
 import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
@@ -9,7 +14,7 @@ import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useFeed = (filter:any) => {
+export const useFeed = (filter: any) => {
   const range = 3;
 
   const [loading, setLoading] = useState(false);
@@ -33,9 +38,9 @@ export const useFeed = (filter:any) => {
     try {
       setLoading(true);
       const user = await fetchUser();
-  
+
       let data;
-      
+
       // Use switch for better readability
       switch (filter) {
         case "within48hrs":
@@ -50,18 +55,18 @@ export const useFeed = (filter:any) => {
         default:
           data = await fetchRandomFeed(range);
       }
-  
+
       if (data && user) {
         // Check if each post is liked by the user
         const likedPostsPromises = data.map(async (post: any) => {
           return fetchLikes(post, user.user?.id);
         });
-  
+
         // Wait for all promises to resolve
         const masterData = await Promise.all(likedPostsPromises);
-  
+
         // Update the feed state with the new data
-        setFeed((existingFeed) => [...existingFeed, ...masterData]);
+        setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
     } catch (error) {
       console.error("Error fetching feed:", error);

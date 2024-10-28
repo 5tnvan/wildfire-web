@@ -5,12 +5,6 @@ import { fetchRandomFeed, fetchVideoAndRandomFeed } from "~~/utils/wildfire/fetc
 import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
-const getRange = (page: number, range: number) => {
-  const from = page * range;
-  const to = from + range - 1;
-  return { from, to };
-};
-
 /**
  * useFeed HOOK
  * Use this to a video, plus feed
@@ -42,8 +36,10 @@ export const useVideo = (video_id:any) => {
     let data: any[] | null = null;
     if (page == 0) {
       data = await fetchVideoAndRandomFeed(video_id, range);
+      console.log("data", data);
     } else if (page > 0) {
       data = await fetchRandomFeed(range);
+      console.log("data", data);
     }
     if (data) {
       // Check if each post is liked by the user

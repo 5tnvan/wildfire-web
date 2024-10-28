@@ -6,21 +6,30 @@ import FormatNumber from "./FormatNumber";
 import ShareModal from "./ShareModal";
 import { TimeAgo } from "./TimeAgo";
 import TipModal from "./TipModal";
-import { ChatBubbleOvalLeftEllipsisIcon, EyeIcon, FireIcon, PlayIcon } from "@heroicons/react/20/solid";
-import { MapPinIcon } from "@heroicons/react/24/outline";
-import { HeartIcon, PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/solid";
+import {
+  ChatBubbleOvalLeftEllipsisIcon,
+  ChevronDownIcon,
+  EyeIcon,
+  FireIcon,
+  PlayIcon,
+} from "@heroicons/react/20/solid";
+import { ChatBubbleLeftEllipsisIcon, HeartIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { PaperAirplaneIcon, SpeakerWaveIcon, SpeakerXMarkIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext } from "~~/app/context";
 import { useGlobalState } from "~~/services/store/store";
 import { livepeerClient } from "~~/utils/livepeer/livepeer";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { insertComment } from "~~/utils/wildfire/crud/3sec_comments";
 import { insertLike } from "~~/utils/wildfire/crud/3sec_fires";
+import { insertReply } from "~~/utils/wildfire/crud/3sec_replies";
 import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
   const price = useGlobalState(state => state.nativeCurrency.price);
   const [playbackInfo, setPlaybackInfo] = useState<any>(null);
+
+  console.log("data", data);
 
   //CONSUME PROVIDERS
   const { isAuthenticated } = useContext(AuthContext);
@@ -34,12 +43,29 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const [showPaused, setShowPaused] = useState(true);
   const [likeCount, setLikeCount] = useState<any>(data["3sec_fires"][0]?.count);
   const [temporaryLiked, setTemporaryLiked] = useState(false);
-  const [commentCount, setCommentCount] = useState<any>(data["3sec_comments"]?.length);
+  const [commentCount, setCommentCount] = useState<number>(0);
   const [tempComment, setTempComment] = useState<any>("");
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
+  const [replyButton, setReplyButton] = useState<null | string>(null); //comment id
+  const [replyInput, setReplyInput] = useState("");
   const [toast, setToast] = useState<any>(null);
+  const [showReplies, setShowReplies] = useState<boolean>(false);
+  const [tempReply, setTempReply] = useState<{ text: string; commentId: string } | null>(null);
+  //const [temporaryLikedComment, setTemporaryLikedComment] = useState<any>();
+  //const [likedCommentCount, setLikedCommentCount] = useState<any>(data["3sec_comments"]?.length);
+
+  useEffect(() => {
+    if (data["3sec_comments"]) {
+      const totalCommentCount = data["3sec_comments"].reduce((count: number, comment: any) => {
+        const repliesCount = comment["3sec_replies"]?.length || 0;
+        return count + 1 + repliesCount; // 1 for the main comment + number of replies
+      }, 0);
+
+      setCommentCount(totalCommentCount);
+    }
+  }, [data]);
 
   //TIP MODAL
   const [isTipModalOpen, setTipModalOpen] = useState(false);
@@ -58,6 +84,14 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   // Toggle mute state globally
   const handleToggleMute = () => {
     onCtaMute(!isMuted);
+  };
+
+  const handleReply = (comment_id: string) => {
+    if (replyButton == comment_id) {
+      setReplyButton(null);
+    } else {
+      setReplyButton(comment_id);
+    }
   };
 
   //manually pause video
@@ -113,6 +147,26 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     }
   };
 
+  // const handleLikeComment = async () => {
+  //   //incr like
+  //   const error = await insertLikeComment(data.id);
+  //   if (!error) {
+  //     setTemporaryLikedComment(true); // Set temporary like state
+  //     setLikedCommentCount((prevCount: any) => prevCount + 1); // Increment like count
+  //   } else {
+  //     console.log("You already liked this comment");
+  //     setToast("You already liked this comment");
+
+  //     // Set the toast back to null after 4 seconds
+  //     setTimeout(() => {
+  //       setToast(null);
+  //     }, 3000);
+  //   }
+  // };
+
+  // console.log("temporaryLikedComment", temporaryLikedComment);
+  // console.log("likedCommentCount", likedCommentCount);
+
   const toggleComment = () => {
     setShowCommentInput(!showCommentInput);
   };
@@ -127,8 +181,33 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       setTempComment(commentInput); // Store the new comment temporarily
       setCommentCount((prevCount: any) => prevCount + 1); // Increment count
       setCommentInput(""); // Clear the input field
-      setShowCommentInput(false);
+      //setShowCommentInput(false);
       setLoadingComment(false);
+    }
+  };
+
+  const toggleShowReplies = (commentId: string) => {
+    // Toggle replies for the specific commentId
+    if (replyButton === commentId) {
+      setShowReplies(!showReplies); // Toggle if same commentId
+    } else {
+      setReplyButton(commentId); // Set new commentId
+      setShowReplies(true); // Show replies for new comment
+    }
+  };
+
+  const handleReplySubmit = async () => {
+    if (!replyInput.trim() || !replyButton) {
+      return; // Do not submit empty comments or if there's no comment ID
+    }
+    setLoadingComment(true);
+    const error = await insertReply(replyButton, replyInput);
+    if (!error) {
+      setTempReply({ text: replyInput, commentId: replyButton }); // Store the new comment temporarily
+      setCommentCount((prevCount: any) => prevCount + 1); // Increment count
+      setReplyInput(""); // Clear the input field
+      setLoadingComment(false);
+      setShowReplies(true);
     }
   };
 
@@ -161,8 +240,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
       }
     }
   }, [isPlaying]);
-
-  console.log("playbackInfo", playbackInfo);
 
   // Fetch playback info from playback_id
   useEffect(() => {
@@ -370,7 +447,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="flex flex-row gap-2 justify-between items-center">
                   <div className="flex flex-row items-center gap-1">
                     <Avatar profile={profile} width={6} height={6} />
-                    <span className="text-sm">{profile.username}</span>
+                    <span className="text-sm font-semibold">{profile.username}</span>
                   </div>
                   <div className="text-xs opacity-55">just now</div>
                 </div>
@@ -381,35 +458,90 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
             {data["3sec_comments"]
               .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // Sort in descending order
               .map((comment: any, id: number) => (
-                <div key={comment.id || id} className="flex flex-col gap-2 p-3 rounded-full">
+                <div key={comment.id || id} className="flex flex-col gap-3 p-3 rounded-full">
                   <div className="flex flex-row gap-2 justify-between items-center">
-                    <Link href={"/" + comment.profile.username} className="flex flex-row gap-1">
+                    <Link
+                      href={"/" + comment.profile.username}
+                      className="flex flex-row gap-1 justify-between items-center"
+                    >
                       <Avatar profile={comment.profile} width={6} height={6} />
-                      <span className="text-sm">{comment.profile.username}</span>
+                      <span className="text-xs font-semibold">{comment.profile.username}</span>
                     </Link>
                     <div className="text-xs opacity-55">
                       <TimeAgo timestamp={comment.created_at} />
                     </div>
                   </div>
-                  <div className="text-sm opacity-75">{comment.comment}</div>
+                  <div className="text-sm">{comment.comment}</div>
+                  <div className="text-xs flex flex-row gap-5 mt-2">
+                    {/* <div className="flex flex-row gap-1 cursor-pointer" onClick={() => handleLikeComment()}>
+                      <HeartIcon width={15} />
+                      Like
+                    </div> */}
+                    <div
+                      className={`cursor-pointer ${
+                        replyButton !== null && replyButton == comment.id && "text-primary block"
+                      } flex flex-row items-center justify-center gap-1`}
+                      onClick={() => handleReply(comment.id)}
+                    >
+                      <ChatBubbleLeftEllipsisIcon width={18} height={18} />
+                      Reply
+                      <div className={replyButton !== null && replyButton == comment.id ? "block" : "hidden"}>
+                        <XMarkIcon width={10} height={10} />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Render replies */}
+                  {comment["3sec_replies"] && comment["3sec_replies"].length > 0 && (
+                    <>
+                      <div
+                        className="cursor-pointer text-sm text-blue-400 flex flex-row items-center gap-1"
+                        onClick={() => toggleShowReplies(comment.id)}
+                      >
+                        <ChevronDownIcon width={20} height={20} />
+                        {comment["3sec_replies"].length} {comment["3sec_replies"].length === 1 ? "reply" : "replies"}
+                      </div>
+
+                      {showReplies && replyButton === comment.id && (
+                        <div className="ml-4">
+                          {comment["3sec_replies"]
+                            .filter((reply: any) => reply.comment_id === comment.id) // Show only replies for this comment
+                            .sort(
+                              (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+                            )
+                            .map((reply: any, index: number) => (
+                              <div key={reply.id || index} className="text-sm p-1">
+                                <div className="flex items-center gap-1">
+                                  <a href={`/${reply.profile.username}`} className="flex flex-row items-center gap-1">
+                                    <Avatar profile={reply.profile} width={6} height={6} />
+                                    <span className="text-xs font-semibold">{reply.profile.username}</span>
+                                  </a>
+                                  <div className="text-xs">{reply.reply}</div>
+                                  <span className="text-xs">
+                                    <TimeAgo timestamp={reply.created_at} />
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* temporary reply */}
+                  {tempReply !== null && tempReply.commentId === comment.id && (
+                    <div className="text-sm p-1 ml-4">
+                      <div className="flex items-center gap-1">
+                        <div className="flex flex-row items-center gap-1">
+                          <Avatar profile={profile} width={6} height={6} />
+                          <span className="text-xs font-semibold">{profile.username}</span>
+                        </div>
+                        <div className="text-xs">{tempReply.text}</div>
+                        <span className="text-xs">now</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
-            {/* {showCommentInput && (
-              <div className="">
-                <textarea
-                  className="textarea textarea-primary absolute w-full h-full top-0 rounded-lg"
-                  placeholder="Start typing..."
-                  value={commentInput}
-                  onChange={e => setCommentInput(e.target.value)}
-                ></textarea>
-                <PaperAirplaneIcon
-                  width={22}
-                  color="orange"
-                  className="absolute bottom-2 right-2 hover:opacity-75 cursor-pointer"
-                  onClick={() => handleCommentSubmit()}
-                />
-              </div>
-            )} */}
           </div>
           {/* Comment input */}
           {isAuthenticated && (
@@ -418,15 +550,28 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 <div className="absolute top-2.5 left-2.5">
                   <Avatar profile={profile} width={5} height={5} />
                 </div>
-                <input
-                  type="text"
-                  className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
-                  style={{ width: "87%" }}
-                  placeholder="Type your comment..."
-                  value={commentInput}
-                  onChange={e => setCommentInput(e.target.value)}
-                  maxLength={100}
-                />
+                {replyButton !== null ? (
+                  <input
+                    type="text"
+                    className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
+                    style={{ width: "87%" }}
+                    placeholder="Type your reply..."
+                    value={replyInput}
+                    onChange={e => setReplyInput(e.target.value)}
+                    maxLength={100}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    className="ml-6 mr-12 bg-transparent placeholder:text-slate-400 text-slate-600 dark:text-slate-300 text-sm"
+                    style={{ width: "87%" }}
+                    placeholder="Type your comment..."
+                    value={commentInput}
+                    onChange={e => setCommentInput(e.target.value)}
+                    maxLength={100}
+                  />
+                )}
+
                 {commentInput.length > 0 && (
                   <div
                     className="text-sm absolute w-fit h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer flex flex-row items-center"
@@ -436,7 +581,15 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                     {loadingComment && <span className="loading loading-ring loading-xs ml-1"></span>}
                   </div>
                 )}
-                {/* <FaceSmileIcon width={30} color="black" className="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600" /> */}
+                {replyInput.length > 0 && (
+                  <div
+                    className="text-sm absolute w-fit h-5 top-2.5 right-6 text-blue-600 font-semibold cursor-pointer flex flex-row items-center"
+                    onClick={() => handleReplySubmit()}
+                  >
+                    <span>Post</span>
+                    {loadingComment && <span className="loading loading-ring loading-xs ml-1"></span>}
+                  </div>
+                )}
               </div>
             </div>
           )}

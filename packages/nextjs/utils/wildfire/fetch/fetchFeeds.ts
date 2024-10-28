@@ -39,18 +39,93 @@ export const fetchAll = async (from: number, to: number) => {
  * TABLE: "3sec_desc_view"
  **/
 
+export const fetchAllApproved = async (from: number, to: number) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("3sec_desc_view")
+    .select(
+      `id, playback_id, created_at,
+       video_url, thumbnail_url, 
+       country:country_id(id, name), 
+       profile:user_id(id, username, avatar_url),
+       suppressed, 
+       3sec_views(view_count), 
+       3sec_fires(count), 
+       3sec_comments(*, profile:user_id(id, username, avatar_url))`,
+      { count: "exact" },
+    )
+    .eq("suppressed", false)
+    .range(from, to);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+/**
+ * FETCH: fetchRandomFeed()
+ * DB: supabase
+ * TABLE: "3sec_desc_view"
+ **/
+
 export const fetchRandomFeed = async (limit: any) => {
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec_random_view")
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url,
+      video_url, playback_id,
+      created_at, country:country_id(id, name),
+      profile:user_id(id, username, avatar_url, wallet_id),
+      3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)),
+      3sec_views(view_count), 3sec_fires(count),
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
     .neq("suppressed", true)
     .limit(limit);
 
   return data;
+};
+
+export const fetchVideoAndRandomFeed = async (video_id: any, limit: any) => {
+  const supabase = createClient();
+  const { data: data1 } = await supabase
+    .from("3sec")
+    .select(
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(id, name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 
+      3sec_views(view_count), 3sec_fires(count), 
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 
+      3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
+    )
+    .eq("id", video_id)
+    .single();
+
+  const { data: data2 } = await supabase
+    .from("3sec_random_view")
+    .select(
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(id, name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 
+      3sec_views(view_count), 3sec_fires(count), 
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
+    )
+    .neq("suppressed", true)
+    .neq("id", video_id)
+    .limit(limit - 1);
+
+  const combinedData = data2 ? [data1, ...data2] : data2;
+
+  return combinedData;
 };
 
 /**
@@ -71,7 +146,13 @@ export const fetchWithin48Hrs = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view")
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(id, name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_tips(created_at, network, transaction_hash, amount, currency, comment, 
+      tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
@@ -103,7 +184,12 @@ export const fetchLatestTipped = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view") // Ensure the table name is correct
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(id, name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 
+      3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
@@ -131,7 +217,12 @@ export const fetchMostViewed = async (limit: any) => {
   const { data, error } = await supabase
     .from("3sec_random_view") // Use the correct table name here
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(id, name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 
+      3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
@@ -152,29 +243,7 @@ export const fetchMostViewed = async (limit: any) => {
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchVideoAndRandomFeed = async (video_id: any, limit: any) => {
-  const supabase = createClient();
-  const { data: data1 } = await supabase
-    .from("3sec")
-    .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
-    )
-    .eq("id", video_id)
-    .single();
 
-  const { data: data2 } = await supabase
-    .from("3sec_random_view")
-    .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(id, name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_tips(id, created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
-    )
-    .neq("suppressed", true)
-    .neq("id", video_id)
-    .limit(limit - 1);
-
-  const combinedData = data2 ? [data1, ...data2] : data2;
-
-  return combinedData;
-};
 
 /**
  * FETCH: fetchFeedAll()
@@ -187,7 +256,11 @@ export const fetchUserFeedAll = async (user_id: any) => {
   const { data } = await supabase
     .from("3sec")
     .select(
-      "id, thumbnail_url, video_url, created_at, country:country_id(name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, created_at, country:country_id(name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_views(view_count), 3sec_fires(count), 
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .eq("user_id", user_id)
     .limit(3)
@@ -210,7 +283,12 @@ export const fetchUserFeedWithRange = async (user_id: string, from: any, to: any
   const { data } = await supabase
     .from("3sec")
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 
+      3sec_views(view_count), 3sec_fires(count), 
+      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })
@@ -229,7 +307,12 @@ export const fetchUserFeedFromArrayOfFollowing = async (followingArray: any, fro
   const { data } = await supabase
     .from("3sec_desc_view")
     .select(
-      "id, thumbnail_url, video_url, playback_id, created_at, country:country_id(name), profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count), 3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url))",
+      `id, thumbnail_url, 
+      video_url, playback_id, 
+      created_at, country:country_id(name), 
+      profile:user_id(id, username, avatar_url, wallet_id), 3sec_views(view_count),
+      3sec_tips(created_at, network, transaction_hash, amount, currency, comment, tipper:wallet_id(id, username, avatar_url)), 
+      3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .in("user_id", followingArray)
     .range(from, to);

@@ -13,6 +13,8 @@ const Video: NextPage = () => {
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  console.log("feed", feed);
+
   // Toggle mute state
   const handleOnCtaMute = (mute: any) => {
     setIsMuted(mute);
@@ -45,7 +47,6 @@ const Video: NextPage = () => {
       observer.observe(card);
     });
   }, [feed]); // Ensure to run effect whenever feed changes
-
 
   return (
     <>
