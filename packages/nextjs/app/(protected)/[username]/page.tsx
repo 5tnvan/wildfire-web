@@ -262,12 +262,12 @@ const Profile: NextPage = () => {
           <div className="px-5">
             {isAuthenticated == true && (
               <div className="btn btn-primary w-full" onClick={() => setTipModalOpen(true)}>
-                Tip Now
+                Send Love
               </div>
             )}
             {isAuthenticated == false && (
               <Link href="/login" className="btn btn-primary w-full">
-                Tip Now
+                Send Love
               </Link>
             )}
           </div>

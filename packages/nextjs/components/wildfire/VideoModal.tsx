@@ -242,7 +242,7 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             {/* VIEW LIKES COMMENTS */}
             <div className="w-full md:w-[350px] h-[300px] bg-base-200 rounded-3xl p-2 flex flex-col shadow">
               <div className="btn btn-primary w-full mb-2" onClick={() => setTipModalOpen(true)}>
-                Tip Now
+                Send Love
               </div>
               {/* COMMENTS */}
               <div className="grow m-h-[180px] overflow-scroll relative">

@@ -187,11 +187,11 @@ const VideoCardPreview = ({ index, data, isPlaying, isMuted, feedLength, getVide
         {data["3sec_tips"]?.length > 0 ?
             (<div className="flex flex-row items-top">
                 <div className="btn btn-primary w-1/2 mb-2" onClick={() => router.push("/login")}>
-                  Tip Now
+                  Send Love
                 </div>
                 <div className="btn bg-base-300 w-1/2 text-sm">${data["3sec_tips"] && totalTipsUsd.toFixed(2)}</div>
             </div>) : (<div className="btn btn-primary w-full mb-2" onClick={() => router.push("/login")}>
-                  Tip Now
+                  Send Love
                 </div>)}
           {/* COMMENTS */}
           <div className="grow m-h-[180px] overflow-scroll relative">

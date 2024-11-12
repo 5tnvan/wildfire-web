@@ -314,7 +314,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   className="btn btn-primary w-1/2 mb-2"
                   onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
                 >
-                  Tip Now
+                  Send Love
                 </div>
                 <div className="btn bg-base-300 w-1/2 text-sm">
                   <HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}
@@ -325,7 +325,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 className="btn btn-primary w-full mb-2"
                 onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
               >
-                Tip Now
+                Send Love
               </div>
             )}
           </div>
@@ -389,7 +389,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                 className="btn btn-primary w-1/2 mb-2"
                 onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
               >
-                Tip Now
+                Send Love
               </div>
               <div className="btn bg-base-300 w-1/2 text-sm">
                 <HeartIcon width={14} />${data["3sec_tips"] && totalTipsUsd.toFixed(2)}
@@ -400,7 +400,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
               className="btn btn-primary w-full mb-2"
               onClick={isAuthenticated ? () => setTipModalOpen(true) : () => router.push("/login")}
             >
-              Tip Now
+              Send Love
             </div>
           )}
           {/* COMMENTS */}
@@ -426,7 +426,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                     <div className="w-[20px] h-[20px]">
                       <Avatar profile={tip.tipper} width={6} height={6} />
                     </div>
-                    <span className="text-sm font-semibold">tipped</span>
+                    <span className="text-sm font-semibold">sent love</span>
                     <div className="badge badge-primary">${convertEthToUsd(tip.amount, price)}</div>
                     <span className="text-sm">{tip.comment}</span>
                   </Link>

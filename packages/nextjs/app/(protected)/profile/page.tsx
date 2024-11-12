@@ -275,7 +275,7 @@ const Profile: NextPage = () => {
         </div>
         <div className="stat">
           <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
-            Tip Now
+            Send Love
           </div>
         </div>
       </div>

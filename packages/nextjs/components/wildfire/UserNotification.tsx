@@ -159,7 +159,7 @@ export const Notification = () => {
                     <div className="flex flex-row justify-between w-full items-center">
                       <div className="flex flex-row gap-1 items-center">
                         <Avatar profile={notif["3sec_tips"].tipper} width={6} height={6} />
-                        <span className="font-semibold">{notif["3sec_tips"].tipper.username}</span> tipped you{" "}
+                        <span className="font-semibold">{notif["3sec_tips"].tipper.username}</span> sent you love{" "}
                         <div className="badge badge-primary">${convertEthToUsd(notif["3sec_tips"].amount, price)}</div>
                       </div>
                       <div className="text-xs opacity-75">
