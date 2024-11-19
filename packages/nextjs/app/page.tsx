@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthContext, AuthUserFollowsContext } from "./context";
 import type { NextPage } from "next";
+import { useTheme } from "next-themes";
 import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
 import { WobbleCard } from "~~/components/ui/wooble-card";
 import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
@@ -14,8 +15,9 @@ import { Header } from "~~/components/wildfire/Header";
 
 const Landing: NextPage = () => {
   const router = useRouter();
+  const { resolvedTheme } = useTheme(); // Get the current theme
+  const isDarkMode = resolvedTheme === "dark"; // Check if dark mode is active
   const { isAuthenticated } = useContext(AuthContext);
-
   const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
 
   //TIP MODAL
@@ -41,7 +43,11 @@ const Landing: NextPage = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center pb-0 pt-8 lg:pt-16">
             <h1 className="text-5xl font-bold">wildfire</h1>
-            <h3 className="text-lg">A 3-second super dApp that pays off.</h3>
+            <h2 className="text-lg">Every moment, tell a story.</h2>
+            <h2 className="text-lg">
+              Earn <span className="text-blue-500 font-semibold">$ETH</span> &{" "}
+              <span className="text-blue-500 font-semibold">$FUSE</span> rewards.
+            </h2>
             {isAuthenticated && (
               <Link href="/feed" className="btn btn-outline text-base">
                 Launch App
@@ -126,6 +132,49 @@ const Landing: NextPage = () => {
             Content & Commerce & Community
           </h3>
           <Carousel items={cards} />
+        </div>
+
+        {/* Ecosystem */}
+        <div className="flex flex-col items-center mb-24">
+          <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+            Powered by
+          </h2>
+          <div className="flex flex-col flex-wrap md:flex-row justify-center items-center gap-20">
+            <Link href="https://www.kinnectwallet.com/" target="_blank" className="mt-8 mb-2 self-center">
+              <Image
+                src={isDarkMode ? `/kinnect/kinnect-full-logo-white.svg` : `/kinnect/kinnect-full-logo-blue.svg`} // Change image based on theme
+                alt="hero"
+                height={600}
+                width={200}
+                className=""
+                draggable={false}
+                style={{ width: "300px", height: "auto" }}
+              />
+            </Link>
+            <Link href="https://www.livepeer.org/" target="_blank" className="mt-8 mb-2 self-center">
+              <Image
+                src={isDarkMode ? `/livepeer/Livepeer-Logo-Full-Light.svg` : `/livepeer/Livepeer-Logo-Full-Dark.svg`} // Change image based on theme
+                alt="hero"
+                height={600}
+                width={200}
+                className=""
+                draggable={false}
+                style={{ width: "300px", height: "auto" }}
+              />
+            </Link>
+            <Link href="https://www.fuse.io/" target="_blank" className="mt-8 mb-2 self-center">
+              <Image
+                src={isDarkMode ? `/fuse/fuse-white.svg` : `/fuse/fuse-dark.svg`} // Change image based on theme
+                alt="hero"
+                height={600}
+                width={200}
+                className=""
+                draggable={false}
+                style={{ width: "200px", height: "auto" }}
+              />
+            </Link>
+          </div>
+          <div className="flex flex-col md:flex-row justify-center"></div>
         </div>
 
         {/* 3-GRID */}
@@ -227,32 +276,26 @@ const DummyContent = () => {
 
 const data = [
   {
-    category: "Content",
-    title: "3 seconds a day.",
+    category: "Capture",
+    title: "A moment, every day.",
     src: "https://images.unsplash.com/photo-1719937206930-84afb0daf141?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     content: <DummyContent />,
   },
   {
     category: "Storytelling",
-    title: "Stitched into a story.",
+    title: "Unleash your story.",
     src: "/ezgif-4-e1d7762367.gif",
     content: <DummyContent />,
   },
   {
-    category: "Audience",
-    title: "Grow with Gen Z and Alpha.",
+    category: "Life",
+    title: "Celebrate life, unfiltered.",
     src: "/premium_photo-1687989651281-d9dfee04ec74.png",
     content: <DummyContent />,
   },
   {
-    category: "E-commerce",
-    title: "Your store accepts crypto.",
-    src: "https://images.unsplash.com/photo-1599202875854-23b7cd490ff4?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
-  },
-  {
     category: "Community",
-    title: "Go beyond virtual.",
+    title: "Earn while inspiring others.",
     src: "/ezgif-3-489a4dc383.gif",
     content: <DummyContent />,
   },

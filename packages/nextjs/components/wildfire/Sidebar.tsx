@@ -3,17 +3,17 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { VideoCameraIcon } from "@heroicons/react/20/solid";
 import { EyeIcon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { SwitchTheme } from "~~/components/wildfire/SwitchTheme";
-import { useTheme } from "next-themes";
 
 export const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { resolvedTheme } = useTheme(); // Get the current theme
   const isDarkMode = resolvedTheme === "dark"; // Check if dark mode is active
-  
+
   const handleToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -129,4 +129,3 @@ export const Sidebar = () => {
     </>
   );
 };
-

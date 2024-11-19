@@ -60,14 +60,14 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
             {wildpay && (
               <li className="bg-blue-600 rounded-full">
                 <Link
-                  href={"https://www.wildpay.app/" + profile.username}
+                  href={"https://www.kinnectwallet.com/" + profile.username}
                   target="new"
                   onClick={closeDropdown}
                   className="flex flex-row justify-between"
                 >
                   <div className="flex flex-row gap-2">
-                    <Image alt="wildpay" src="/wildpay-logo-white.svg" width={18} height={18} />
-                    <span className="text-white">My Wildpay</span>
+                    <Image alt="wildpay" src="/kinnect/kinnect.svg" width={18} height={18} />
+                    <span className="text-white">Kinnect Wallet</span>
                   </div>
                   <div className="-mr-3">
                     <ChevronRightIcon width={20} color="white" />

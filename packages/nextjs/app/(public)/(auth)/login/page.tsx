@@ -100,18 +100,18 @@ const Login: NextPage = () => {
             </button>
             <Link
               className="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150"
-              href="https://www.wildpay.app/getstarted"
+              href="https://www.kinnectwallet.com/getstarted"
               target="new"
             >
               <Image
                 className="w-6 h-6"
-                src="/wildpay-logo.svg"
+                src="/kinnect/kinnect.svg"
                 loading="lazy"
                 alt="google logo"
                 width={10}
                 height={10}
               />
-              <span>Register with Wildpay</span>
+              <span>Get Kinnect Wallet</span>
             </Link>
           </div>
           {/* <div>
