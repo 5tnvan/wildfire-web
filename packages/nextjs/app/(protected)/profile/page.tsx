@@ -45,7 +45,11 @@ const Profile: NextPage = () => {
   const highestLevel = profile?.levels.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
-  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
+  const balance = (
+    calculateSum(incomingRes.ethereumData) +
+    calculateSum(incomingRes.baseData) +
+    calculateSum(incomingRes.fuseData)
+  ).toFixed(4);
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);

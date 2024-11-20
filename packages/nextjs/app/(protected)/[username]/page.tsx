@@ -8,6 +8,7 @@ import { NextPage } from "next";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
 import FollowersModal from "~~/components/wildfire/FollowersModal";
+import FollowingModal from "~~/components/wildfire/FollowingModal";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
 import ThumbCard from "~~/components/wildfire/ThumCard";
 import TipModal from "~~/components/wildfire/TipModal";
@@ -37,6 +38,7 @@ const Profile: NextPage = () => {
     loading: loadingFollows,
     followers,
     followed,
+    following,
     refetch: refetchProfileFollows,
   } = useUserFollowsByUsername(username);
   const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
@@ -44,7 +46,7 @@ const Profile: NextPage = () => {
 
   //DYNAMICALLY GENERATE LEVEL NAME
   const highestLevel = profile?.levels?.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
-  const levelNames = ["Noob", "Creator", "Builder", "Architect", "Visionary", "God-mode"];
+  const levelNames = ["Fresh", "Creator", "Builder", "Architect", "Visionary", "God-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
   const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
@@ -144,6 +146,13 @@ const Profile: NextPage = () => {
     setFollowsModalOpen(false);
   };
 
+  //FOLLOWS MODAL
+  const [isFollowingModalOpen, setFollowingModalOpen] = useState(false);
+
+  const closeFollowingModal = () => {
+    setFollowingModalOpen(false);
+  };
+
   //TRANSACTIONS MODAL
   const [isTransactionsModalOpen, setTransactionsModalOpen] = useState(false);
 
@@ -160,6 +169,9 @@ const Profile: NextPage = () => {
         {isTransactionsModalOpen && <TransactionsModal data={profile} onClose={closeTransactionsModal} />}
         {isFollowsModalOpen && (
           <FollowersModal data={{ profile, followers, followed }} onClose={closeFollowsModal} onCta={handleUnfollow} />
+        )}
+        {isFollowingModalOpen && (
+          <FollowingModal data={{ profile, following, followed }} onClose={closeFollowingModal} />
         )}
         {/* NO FEED TO SHOW */}
         {!loadingFeed && feed && feed.length == 0 && (
@@ -226,6 +238,18 @@ const Profile: NextPage = () => {
               {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
             </div>
             <div className="stat-desc">See followers</div>
+          </div>
+          <div className="stat cursor-pointer" onClick={() => setFollowingModalOpen(true)}>
+            <div className="stat-figure text-primary">
+              <UserIcon width={60} />
+            </div>
+            <div className="stat-title">Following</div>
+            <div className="stat-value text-primary">
+              {!loadingFollows && following && following.length > 0 && <FormatNumber number={following.length} />}
+              {!loadingFollows && following && following.length == 0 && "0"}
+              {loadingFollows && <span className="loading loading-ring loading-sm"></span>}
+            </div>
+            <div className="stat-desc">See following</div>
           </div>
           <div onClick={() => setTransactionsModalOpen(true)} className="stat cursor-pointer hover:opacity-85">
             <div className="stat-figure text-primary">

@@ -9,11 +9,17 @@ const apolloClientEthereum = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+//https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/0.0.1
 //https://api.studio.thegraph.com/query/68297/wildpay-base-sepolia/0.0.1
-const SUBGRAPH_API_KEY = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY;
-
 const apolloClientBase = new ApolloClient({
-  uri: `https://gateway.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/ANu9ycvF7GU3K9Gt7ZkSRbXEt9wVr8vVEvH92p7MjX3P`,
+  uri: "https://api.studio.thegraph.com/query/68297/wildpay-base-mainnet/0.0.1",
+  cache: new InMemoryCache(),
+});
+
+//https://api.studio.thegraph.com/query/68297/wildpay-fuse-mainnet/version/latest
+//https://api.studio.thegraph.com/query/68297/wildpay-fuse-testnet/version/latest
+const apolloClientFuse = new ApolloClient({
+  uri: "https://api.studio.thegraph.com/query/68297/wildpay-fuse-mainnet/version/latest",
   cache: new InMemoryCache(),
 });
 
@@ -59,5 +65,12 @@ export const useOutgoingTransactions = (senderAddress: any) => {
     client: apolloClientBase,
   });
 
-  return { ethereumData, baseData };
+  const { data: fuseData } = useQuery(gql(PAYMENTS_GRAPHQL), {
+    variables: { senderAddress },
+    pollInterval: 10000,
+    fetchPolicy: "network-only",
+    client: apolloClientFuse,
+  });
+
+  return { ethereumData, baseData, fuseData };
 };

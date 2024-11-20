@@ -35,6 +35,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
     const allTransactions = [
       ...(incomingRes?.ethereumData?.paymentChanges || []),
       ...(incomingRes?.baseData?.paymentChanges || []),
+      ...(incomingRes?.fuseData?.paymentChanges || []),
     ];
 
     allTransactions.forEach(tx => {
@@ -47,7 +48,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
       return (
         <>
           <div className="flex flex-row justify-center items-center grow">
-            <div className="btn bg-base-100">Be first to tip 🥳</div>
+            <div className="btn bg-base-100">Be first to send love 🥳</div>
           </div>
         </>
       );
@@ -100,17 +101,26 @@ const TransactionsModal = ({ data, onClose }: any) => {
             Ethereum
           </button>
           <button
-            className={`rounded-lg px-4 py-2 ${
+            className={`rounded-lg px-4 py-2 mr-2 ${
               selectedTab === "base" ? "bg-primary text-black" : "bg-gray-300 text-black"
             }`}
             onClick={() => setSelectedTab("base")}
           >
             Base
           </button>
+          <button
+            className={`rounded-lg px-4 py-2 ${
+              selectedTab === "fuse" ? "bg-primary text-black" : "bg-gray-300 text-black"
+            }`}
+            onClick={() => setSelectedTab("fuse")}
+          >
+            Fuse
+          </button>
         </div>
         <div className="overflow-scroll" style={{ height: "85%" }}>
           {selectedTab === "ethereum" && renderTransactions(incomingRes?.ethereumData?.paymentChanges || [])}
           {selectedTab === "base" && renderTransactions(incomingRes?.baseData?.paymentChanges || [])}
+          {selectedTab === "fuse" && renderTransactions(incomingRes?.fuseData?.paymentChanges || [])}
         </div>
       </div>
     </div>
