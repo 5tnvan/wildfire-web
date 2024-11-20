@@ -25,31 +25,65 @@ export const useDailyPostLimit = () => {
   const init = async () => {
     setIsLoading(true); // Start loading
 
-    const now = new Date(); // Get current date and time
-    const user = await fetchUser(); // Fetch user data
+    const now = new Date();
+    const user = await fetchUser();
 
-    // Fetch the user's last video posts
+    // Fetch last video posts
     const posts = await fetchLastVideoPosts(user.user?.id);
-    setPosts(posts); // Store fetched posts in state
+    setPosts(posts);
+    const levelData = await fetchLevel(user.user?.id);
 
-    const levelData = await fetchLevel(user.user?.id); // Fetch user level data
+    if (!levelData) {
+      if (posts && posts.length > 0) {
+        const postDate = new Date(posts[0].created_at);
+        const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // difference in hours
 
-    // Determine the allowed number of posts based on user classification
-    const maxPosts = levelData ? 6 : 3; // 'Creator' allows 6 posts, 'Noob' allows 3 posts
+        if (diff < 24) {
+          setLimit(true);
+          setPostLeft(0);
+        } else {
+          setLimit(false);
+          setPostLeft(1);
+        }
+      } else {
+        setLimit(false);
+        setPostLeft(1);
+      }
+    }
 
-    // Filter posts made within the last 24 hours, default to empty array if posts is undefined
-    const postsInLast24Hours = (posts || []).filter(post => {
-      const postDate = new Date(post.created_at);
-      const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // Difference in hours
-      return diff < 24;
-    });
+    if (levelData) {
+      if (posts && posts.length > 1) {
+        const postDate1 = new Date(posts[0].created_at);
+        const postDate2 = new Date(posts[1].created_at);
+        const diff1 = (now.getTime() - postDate1.getTime()) / (1000 * 60 * 60); // difference in hours
+        const diff2 = (now.getTime() - postDate2.getTime()) / (1000 * 60 * 60); // difference in hours
 
-    // Calculate the number of posts left
-    const postsLeft = Math.max(0, maxPosts - postsInLast24Hours.length);
-    setPostLeft(postsLeft);
+        if (diff1 < 24 && diff2 < 24) {
+          setLimit(true);
+          setPostLeft(0);
+        } else if (diff1 < 24) {
+          setLimit(false);
+          setPostLeft(1);
+        } else {
+          setLimit(false);
+          setPostLeft(2);
+        }
+      } else if (posts && posts?.length === 1) {
+        const postDate = new Date(posts[0].created_at);
+        const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // difference in hours
 
-    // Determine if the user has reached their limit
-    setLimit(postsLeft === 0);
+        if (diff < 24) {
+          setLimit(false);
+          setPostLeft(1);
+        } else {
+          setLimit(false);
+          setPostLeft(2);
+        }
+      } else {
+        setLimit(false);
+        setPostLeft(2);
+      }
+    }
 
     setIsLoading(false); // Stop loading
   };
