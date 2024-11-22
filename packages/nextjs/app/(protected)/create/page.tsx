@@ -192,9 +192,9 @@ const Create: NextPage = () => {
   const validateVideoFile = async (videoFile: File): Promise<{ valid: boolean; errors: string[] }> => {
     const errors: string[] = [];
 
-    // Check file size (5 MB limit)
-    if (videoFile.size > 5 * 1024 * 1024) {
-      errors.push("File size exceeds 5 MB");
+    // Check file size (10 MB limit)
+    if (videoFile.size > 10 * 1024 * 1024) {
+      errors.push("File size exceeds 10 MB");
     }
 
     // Create a video element to get duration and aspect ratio
@@ -205,8 +205,8 @@ const Create: NextPage = () => {
       video.onloadedmetadata = () => {
         // Check duration (between 2.5 and 3.5 seconds)
         const duration = video.duration;
-        if (duration < 2.5 || duration > 3.5) {
-          errors.push("Duration should be between 2.5 and 3.5 seconds");
+        if (duration < 2.5 || duration > 5) {
+          errors.push("Video duration is too short or too long.");
         }
 
         // Check aspect ratio (9:16)
@@ -333,7 +333,7 @@ const Create: NextPage = () => {
               </label>
               <label className="label cursor-pointer">
                 <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">under 5MB</span>
+                <span className="label-text text-white dark:text-black ml-1">under 10MB</span>
               </label>
             </div>
           </div>

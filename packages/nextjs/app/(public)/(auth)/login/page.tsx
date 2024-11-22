@@ -42,7 +42,7 @@ const Login: NextPage = () => {
       <div className="flex flex-col justify-center items-center px-5 grow">
         <h1 className="text-3xl my-5">
           Welcome back
-          <div className="tooltip tooltip-top ml-2" data-tip="Sign in using your Kinnect account credentials.">
+          <div className="tooltip tooltip-top ml-2" data-tip="Sign in using your Kinnect Wallet credentials.">
             <button className="ml-1">
               <InformationCircleIcon width={14} />
             </button>
