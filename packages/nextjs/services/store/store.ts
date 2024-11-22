@@ -16,8 +16,14 @@ type GlobalState = {
     price: number;
     isFetching: boolean;
   };
-  setNativeCurrencyPrice: (newNativeCurrencyPriceState: number) => void;
-  setIsNativeCurrencyFetching: (newIsNativeCurrencyFetching: boolean) => void;
+  fuseCurrency: {
+    price: number;
+    isFetching: boolean;
+  };
+  setNativeCurrencyPrice: (newPrice: number) => void;
+  setIsNativeCurrencyFetching: (isFetching: boolean) => void;
+  setFuseCurrencyPrice: (newPrice: number) => void;
+  setIsFuseCurrencyFetching: (isFetching: boolean) => void;
   targetNetwork: ChainWithAttributes;
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => void;
 };
@@ -27,10 +33,18 @@ export const useGlobalState = create<GlobalState>(set => ({
     price: 0,
     isFetching: true,
   },
-  setNativeCurrencyPrice: (newValue: number): void =>
-    set(state => ({ nativeCurrency: { ...state.nativeCurrency, price: newValue } })),
-  setIsNativeCurrencyFetching: (newValue: boolean): void =>
-    set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching: newValue } })),
+  fuseCurrency: {
+    price: 0,
+    isFetching: true,
+  },
+  setNativeCurrencyPrice: (newPrice: number): void =>
+    set(state => ({ nativeCurrency: { ...state.nativeCurrency, price: newPrice } })),
+  setIsNativeCurrencyFetching: (isFetching: boolean): void =>
+    set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching } })),
+  setFuseCurrencyPrice: (newPrice: number): void =>
+    set(state => ({ fuseCurrency: { ...state.fuseCurrency, price: newPrice } })),
+  setIsFuseCurrencyFetching: (isFetching: boolean): void =>
+    set(state => ({ fuseCurrency: { ...state.fuseCurrency, isFetching } })),
   targetNetwork: scaffoldConfig.targetNetworks[0],
-  setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => set(() => ({ targetNetwork: newTargetNetwork })),
+  setTargetNetwork: (newTargetNetwork: ChainWithAttributes): void => set(() => ({ targetNetwork: newTargetNetwork })),
 }));

@@ -9,10 +9,12 @@ import { WagmiProvider } from "wagmi";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { ProgressBar } from "~~/components/scaffold-eth/ProgressBar";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
+import { useInitializeFuseCurrencyPrice } from "~~/hooks/scaffold-eth/useInitializeFuseCurrencyPrice";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
+  useInitializeFuseCurrencyPrice();
 
   return (
     <>

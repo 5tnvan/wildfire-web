@@ -25,7 +25,8 @@ import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
   const { username } = useParams();
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
   const router = useRouter();
 
   //CONSUME PROVIDERS
@@ -44,11 +45,21 @@ const Profile: NextPage = () => {
   const { loading: loadingFeed, feed, fetchMore } = useUserFeedByUsername(username);
   const incomingRes = useIncomingTransactions(profile?.wallet_id);
 
+  //BALANCE
+  const ethSum = calculateSum(incomingRes.ethereumData);
+  const fuseSum = calculateSum(incomingRes.fuseData);
+  const baseSum = calculateSum(incomingRes.baseData);
+
+  // Convert each network's balance to USD
+  const ethUsd = convertEthToUsd(ethSum, ethPrice);
+  const baseUsd = convertEthToUsd(baseSum, ethPrice);
+  const fuseUsd = convertEthToUsd(fuseSum, fusePrice);
+  const totalUsd = (ethUsd + baseUsd + fuseUsd).toFixed(2); // Total balance in USD
+
   //DYNAMICALLY GENERATE LEVEL NAME
   const highestLevel = profile?.levels?.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
   const levelNames = ["Fresh", "Creator", "Builder", "Architect", "Visionary", "God-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
-  const balance = (calculateSum(incomingRes.ethereumData) + calculateSum(incomingRes.baseData)).toFixed(4);
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
@@ -257,8 +268,10 @@ const Profile: NextPage = () => {
             </div>
 
             <div className="stat-title">Received</div>
-            <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
-            <div className="stat-desc">{balance} ETH</div>
+            <div className="stat-value text-primary">${totalUsd}</div>
+            <div className="stat-desc">
+              {totalUsd && ethPrice ? (parseFloat(totalUsd) / ethPrice).toFixed(4) : "0.0000"} ETH
+            </div>
           </div>
           <div className="px-5 my-2">
             {isAuthenticated == false && (

@@ -10,7 +10,8 @@ import { fetchProfileFromWalletId } from "~~/utils/wildfire/fetch/fetchProfile";
 
 const TransactionsModal = ({ data, onClose }: any) => {
   const incomingRes = useIncomingTransactions(data.wallet_id);
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
 
   const [selectedTab, setSelectedTab] = useState("ethereum");
   const [profiles, setProfiles] = useState<{ [key: string]: any }>({});
@@ -43,35 +44,38 @@ const TransactionsModal = ({ data, onClose }: any) => {
     });
   }, [incomingRes]);
 
-  const renderTransactions = (transactions: any) => {
+  const renderTransactions = (transactions: any, price: number) => {
     if (transactions.length === 0) {
       return (
-        <>
-          <div className="flex flex-row justify-center items-center grow">
-            <div className="btn bg-base-100">Be first to send love 🥳</div>
-          </div>
-        </>
+        <div className="flex flex-row justify-center items-center grow">
+          <div className="btn bg-base-100">Be first to send love 🥳</div>
+        </div>
       );
     }
-    return transactions.map((tx: any) => (
-      <div key={tx.id} className="rounded-lg shadow-md p-4 mb-4 bg-base-100">
-        <div>
-          <strong>From:</strong> {profiles[tx.sender]?.username || tx.sender}
+
+    return transactions.map((tx: any) => {
+      const currencyLabel = selectedTab === "fuse" ? "Fuse" : "ETH"; // Conditionally change the currency label
+
+      return (
+        <div key={tx.id} className="rounded-lg shadow-md p-4 mb-4 bg-base-100">
+          <div>
+            <strong>From:</strong> {profiles[tx.sender]?.username || tx.sender}
+          </div>
+          <div>
+            <strong>Message:</strong> {tx.newMessage}
+          </div>
+          <div>
+            <strong>USD:</strong> {convertEthToUsd(formatEther(tx.value), price)}
+          </div>
+          <div>
+            <strong>{currencyLabel}:</strong> {Number(formatEther(tx.value)).toFixed(4)}
+          </div>
+          <div>
+            <strong>Timestamp:</strong> <TimeAgoUnix timestamp={tx.blockTimestamp} />
+          </div>
         </div>
-        <div>
-          <strong>Message:</strong> {tx.newMessage}
-        </div>
-        <div>
-          <strong>USD:</strong> {convertEthToUsd(formatEther(tx.value), price)}
-        </div>
-        <div>
-          <strong>ETH:</strong> {Number(formatEther(tx.value)).toFixed(4)}
-        </div>
-        <div>
-          <strong>Timestamp:</strong> <TimeAgoUnix timestamp={tx.blockTimestamp} />
-        </div>
-      </div>
-    ));
+      );
+    });
   };
 
   return (
@@ -118,9 +122,9 @@ const TransactionsModal = ({ data, onClose }: any) => {
           </button>
         </div>
         <div className="overflow-scroll" style={{ height: "85%" }}>
-          {selectedTab === "ethereum" && renderTransactions(incomingRes?.ethereumData?.paymentChanges || [])}
-          {selectedTab === "base" && renderTransactions(incomingRes?.baseData?.paymentChanges || [])}
-          {selectedTab === "fuse" && renderTransactions(incomingRes?.fuseData?.paymentChanges || [])}
+          {selectedTab === "ethereum" && renderTransactions(incomingRes?.ethereumData?.paymentChanges || [], ethPrice)}
+          {selectedTab === "base" && renderTransactions(incomingRes?.baseData?.paymentChanges || [], ethPrice)}
+          {selectedTab === "fuse" && renderTransactions(incomingRes?.fuseData?.paymentChanges || [], fusePrice)}
         </div>
       </div>
     </div>
