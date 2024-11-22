@@ -26,7 +26,8 @@ import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onCtaMute }: any) => {
   const router = useRouter();
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
   const [playbackInfo, setPlaybackInfo] = useState<any>(null);
 
   console.log("data", data);
@@ -214,7 +215,8 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   // Calculate total tips in USD
   const totalTipsUsd =
     data["3sec_tips"]?.reduce((acc: number, tip: any) => {
-      return acc + convertEthToUsd(tip.amount, price);
+      const applicablePrice = tip.network === 122 ? fusePrice : ethPrice;
+      return acc + convertEthToUsd(tip.amount, applicablePrice);
     }, 0) || 0;
 
   //fetch more at last video
@@ -427,7 +429,9 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                       <Avatar profile={tip.tipper} width={6} height={6} />
                     </div>
                     <span className="text-sm font-semibold">sent love</span>
-                    <div className="badge badge-primary">${convertEthToUsd(tip.amount, price)}</div>
+                    <div className="badge badge-primary">
+                      ${convertEthToUsd(tip.amount, tip.network === 122 ? fusePrice : ethPrice)}
+                    </div>
                     <span className="text-sm">{tip.comment}</span>
                   </Link>
                   <div className="text-xs opacity-55">

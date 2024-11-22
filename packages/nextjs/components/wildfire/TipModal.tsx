@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Avatar } from "../Avatar";
 import { Address } from "../scaffold-eth/Address";
 import { RainbowKitCustomConnectButton } from "../scaffold-eth/RainbowKitCustomConnectButton";
@@ -12,19 +13,19 @@ import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "~~/
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
 import { insertTip } from "~~/utils/wildfire/crud/3sec_tips";
-import { useRouter } from "next/navigation";
 
 const TipModal = ({ data, video_id, onClose }: any) => {
   console.log("video_id", video_id);
   const router = useRouter();
-  const price = useGlobalState(state => state.nativeCurrency.price);
-  
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
+
   //CONSUME CONTEXT
   const { profile } = useContext(AuthUserContext);
 
   //STATES
   const { address: connectedAddress } = useAccount();
-  const [ethAmountWithFee, setEthAmountWithFee] = useState(0);
+  const [tokenAmountWithFee, setTokenAmountWithFee] = useState(0);
   const [dollarAmount, setDollarAmount] = useState(0);
   const [dollarAmountWithFee, setDollarAmountWithFee] = useState(0);
   const [addMessage, setAddMessage] = useState(false);
@@ -42,6 +43,8 @@ const TipModal = ({ data, video_id, onClose }: any) => {
       setNetwork("base");
     } else if (targetNetwork.id == 11155111 || targetNetwork.id == 1) {
       setNetwork("ethereum");
+    } else if (targetNetwork.id == 122 || targetNetwork.id == 123) {
+      setNetwork("fuse");
     }
   }, [targetNetwork]);
 
@@ -65,11 +68,17 @@ const TipModal = ({ data, video_id, onClose }: any) => {
    **/
   const handleInput = (e: any) => {
     const dollarAmount = Number(e.target.value);
-    const ethAmount = convertUsdToEth(dollarAmount, price);
-    setDollarAmount(dollarAmount);
-    setDollarAmountWithFee(dollarAmount + (dollarAmount * 3) / 100);
-    //setEthAmount(ethAmount);
-    setEthAmountWithFee(ethAmount + (ethAmount * 3) / 100);
+    if (network == "ethereum" || network == "base") {
+      const ethAmount = convertUsdToEth(dollarAmount, ethPrice);
+      setDollarAmount(dollarAmount);
+      setDollarAmountWithFee(dollarAmount + (dollarAmount * 3) / 100);
+      setTokenAmountWithFee(ethAmount + (ethAmount * 3) / 100);
+    } else if (network == "fuse") {
+      const fuseAmount = convertUsdToEth(dollarAmount, fusePrice);
+      setDollarAmount(dollarAmount);
+      setDollarAmountWithFee(dollarAmount + (dollarAmount * 3) / 100);
+      setTokenAmountWithFee(fuseAmount + (fuseAmount * 3) / 100);
+    }
   };
 
   /**
@@ -84,8 +93,17 @@ const TipModal = ({ data, video_id, onClose }: any) => {
    * ACTION: Save transaction
    **/
   const saveTransaction = (hash: any) => {
-    console.log("saveTransaction", video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
-    insertTip(video_id, targetNetwork.id, hash, ethAmountWithFee, "ETH", message, connectedAddress);
+    console.log(
+      "saveTransaction",
+      video_id,
+      targetNetwork.id,
+      hash,
+      tokenAmountWithFee,
+      "ETH/FUSE",
+      message,
+      connectedAddress,
+    );
+    insertTip(video_id, targetNetwork.id, hash, tokenAmountWithFee, null, message, connectedAddress);
     setSuccessHash(hash);
   };
 
@@ -100,7 +118,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
         {
           functionName: "setPayment",
           args: [data.wallet_id, constructedMessage],
-          value: parseEther(ethAmountWithFee.toString()),
+          value: parseEther(tokenAmountWithFee.toString()),
         },
         {
           blockConfirmations: 1,
@@ -125,7 +143,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
   });
 
   const handleClose = () => {
-    if(successHash) {
+    if (successHash) {
       router.push("/v/" + video_id);
     } else {
       onClose();
@@ -190,7 +208,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
                     <div className="font-semibold">{`$${dollarAmountWithFee}`}</div>
                   </div>
                   <div className="flex justify-end">
-                    <div>{`${ethAmountWithFee} ETH`}</div>
+                    <div>{`${tokenAmountWithFee.toFixed(4)} ${network == "fuse" ? "FUSE" : "ETH"}`}</div>
                   </div>
                 </div>
               </>
