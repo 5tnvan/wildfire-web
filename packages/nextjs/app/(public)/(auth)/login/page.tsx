@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import { XCircleIcon } from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserAccountContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
 import { login, signInWithGoogle } from "~~/utils/login";
 
@@ -39,7 +40,15 @@ const Login: NextPage = () => {
     <>
       {/* CONTENT */}
       <div className="flex flex-col justify-center items-center px-5 grow">
-        <h1 className="text-3xl my-5">Welcome back</h1>
+        <h1 className="text-3xl my-5">
+          Welcome back
+          <div className="tooltip tooltip-top ml-2" data-tip="Sign in using your Kinnect account credentials.">
+            <button className="ml-1">
+              <InformationCircleIcon width={14} />
+            </button>
+          </div>
+        </h1>
+
         <form onSubmit={handleLogin} className="w-full lg:w-[450px]">
           <label className="input input-bordered flex items-center gap-2 mb-3">
             <svg
