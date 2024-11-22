@@ -415,11 +415,13 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
                   className="flex flex-row rounded-full items-center gap-2 px-3 pl-0 justify-between"
                 >
                   <Link
-                    href={`https://www.wildpay.app/transaction/payment/${
+                    href={`https://www.kinnectwallet.com/transaction/payment/${
                       tip.network === 84532 || tip.network === 8453
                         ? "base"
                         : tip.network === 11155111 || tip.network === 1
                         ? "ethereum"
+                        : tip.network === 122
+                        ? "fuse"
                         : ""
                     }/${tip.transaction_hash}`}
                     className="px-4 py-2 rounded-3xl flex flex-row items-center gap-2 mb-1 bg-base-100"

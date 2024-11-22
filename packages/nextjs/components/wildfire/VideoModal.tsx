@@ -29,7 +29,8 @@ import { incrementViews } from "~~/utils/wildfire/incrementViews";
 
 const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const router = useRouter();
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
 
   //CONSUME PROVIDERS
   const { isAuthenticated } = useContext(AuthContext);
@@ -213,7 +214,8 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   // Calculate total tips in USD
   const totalTipsUsd =
     data["3sec_tips"]?.reduce((acc: number, tip: any) => {
-      return acc + convertEthToUsd(tip.amount, price);
+      const applicablePrice = tip.network === 122 ? fusePrice : ethPrice;
+      return acc + convertEthToUsd(tip.amount, applicablePrice);
     }, 0) || 0;
 
   // Fetch playback info from playback_id
@@ -343,11 +345,13 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                       className="flex flex-row rounded-full items-center gap-2 px-3 pl-0 justify-between"
                     >
                       <Link
-                        href={`https://www.wildpay.app/transaction/payment/${
+                        href={`https://www.kinnectwallet.com/transaction/payment/${
                           tip.network === 84532 || tip.network === 8453
                             ? "base"
                             : tip.network === 11155111 || tip.network === 1
                             ? "ethereum"
+                            : tip.network === 122
+                            ? "fuse"
                             : ""
                         }/${tip.transaction_hash}`}
                         className="px-4 py-2 rounded-3xl flex flex-row items-center gap-2 mb-1 bg-base-100"
@@ -357,7 +361,9 @@ const VideoModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
                           <Avatar profile={tip.tipper} width={6} height={6} />
                         </div>
                         <span className="text-sm font-semibold">sent love</span>
-                        <div className="badge badge-primary">${convertEthToUsd(tip.amount, price)}</div>
+                        <div className="badge badge-primary">
+                          ${convertEthToUsd(tip.amount, tip.network === 122 ? fusePrice : ethPrice)}
+                        </div>
                         <span className="text-sm">{tip.comment}</span>
                       </Link>
                       <div className="text-xs opacity-55">

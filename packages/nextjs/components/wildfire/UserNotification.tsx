@@ -2,18 +2,25 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
+import { Avatar } from "../Avatar";
+import { TimeAgo } from "./TimeAgo";
 import { BellAlertIcon } from "@heroicons/react/24/solid";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { useNotifications } from "~~/hooks/wildfire/useNotifications";
-import { Avatar } from "../Avatar";
-import { TimeAgo } from "./TimeAgo";
-import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { useGlobalState } from "~~/services/store/store";
-import { updateCommentRead, updateFireRead, updateFollowerRead, updateTipRead } from "~~/utils/wildfire/crud/notifications";
+import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
+import {
+  updateCommentRead,
+  updateFireRead,
+  updateFollowerRead,
+  updateTipRead,
+} from "~~/utils/wildfire/crud/notifications";
 
 export const Notification = () => {
-  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } = useNotifications();
-  const price = useGlobalState((state) => state.nativeCurrency.price);
+  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } =
+    useNotifications();
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
 
   // Merge notifications into a single array
   const allNotifications = [
@@ -41,7 +48,7 @@ export const Notification = () => {
   ];
 
   // Count unread notifications
-  const unreadCount = allNotifications.filter((notif) => notif.isUnread).length;
+  const unreadCount = allNotifications.filter(notif => notif.isUnread).length;
 
   // Sort and slice notifications for display
   const displayedNotifications = allNotifications
@@ -160,7 +167,13 @@ export const Notification = () => {
                       <div className="flex flex-row gap-1 items-center">
                         <Avatar profile={notif["3sec_tips"].tipper} width={6} height={6} />
                         <span className="font-semibold">{notif["3sec_tips"].tipper.username}</span> sent you love{" "}
-                        <div className="badge badge-primary">${convertEthToUsd(notif["3sec_tips"].amount, price)}</div>
+                        <div className="badge badge-primary">
+                          $
+                          {convertEthToUsd(
+                            notif["3sec_tips"].amount,
+                            notif["3sec_tips"].network === 122 ? fusePrice : ethPrice,
+                          )}
+                        </div>
                       </div>
                       <div className="text-xs opacity-75">
                         <TimeAgo timestamp={notif.created_at} />
@@ -177,9 +190,7 @@ export const Notification = () => {
                 <a href="/notifications">View all</a>
               </li>
             )}
-            {displayedNotifications.length === 0 && (
-              <span>Welcome to your notification space.</span>
-            )}
+            {displayedNotifications.length === 0 && <span>Welcome to your notification space.</span>}
           </div>
         </ul>
       </details>

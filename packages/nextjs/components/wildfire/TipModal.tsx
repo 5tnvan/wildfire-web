@@ -103,7 +103,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
       message,
       connectedAddress,
     );
-    insertTip(video_id, targetNetwork.id, hash, tokenAmountWithFee, null, message, connectedAddress);
+    insertTip(video_id, targetNetwork.id, hash, tokenAmountWithFee, "currency", message, connectedAddress);
     setSuccessHash(hash);
   };
 

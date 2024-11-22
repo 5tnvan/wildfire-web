@@ -1,19 +1,26 @@
 "use client";
 
-import type { NextPage } from "next";
-import Link from "next/link";
 import { useRef } from "react";
+import Link from "next/link";
+import type { NextPage } from "next";
 import { Avatar } from "~~/components/Avatar";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
 import { useOutsideClick } from "~~/hooks/scaffold-eth/useOutsideClick";
 import { useNotifications } from "~~/hooks/wildfire/useNotifications";
 import { useGlobalState } from "~~/services/store/store";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
-import { updateCommentRead, updateFireRead, updateFollowerRead, updateTipRead } from "~~/utils/wildfire/crud/notifications";
+import {
+  updateCommentRead,
+  updateFireRead,
+  updateFollowerRead,
+  updateTipRead,
+} from "~~/utils/wildfire/crud/notifications";
 
 const Notifications: NextPage = () => {
-  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } = useNotifications();
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } =
+    useNotifications();
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
 
   console.log("notif", firesNotifications);
 
@@ -29,7 +36,7 @@ const Notifications: NextPage = () => {
     ...(followersNotifications ?? []).map((notif: any) => ({
       ...notif,
       type: "follow",
-      created_at: notif.follower_created_at,  // Use follower_created_at for sorting
+      created_at: notif.follower_created_at, // Use follower_created_at for sorting
       isUnread: !notif.follower_read,
     })),
     ...(firesNotifications ?? []).map((notif: any) => ({
@@ -72,7 +79,7 @@ const Notifications: NextPage = () => {
       }
 
       // Refetch notifications after updating read status
-    refetch();
+      refetch();
     }
   };
 
@@ -92,7 +99,7 @@ const Notifications: NextPage = () => {
           </details>
         </>
       )} */}
-      {allNotifications.map((notif) => {
+      {allNotifications.map(notif => {
         let message: React.ReactNode = "";
 
         if (notif.type === "follow") {
@@ -160,7 +167,13 @@ const Notifications: NextPage = () => {
                 <div className="flex flex-row gap-1 items-center">
                   <Avatar profile={notif["3sec_tips"].tipper} width={6} height={6} />
                   <span className="font-semibold">{notif["3sec_tips"].tipper.username}</span> sent you love{" "}
-                  <div className="badge badge-primary">${convertEthToUsd(notif["3sec_tips"].amount, price)}</div>
+                  <div className="badge badge-primary">
+                    $
+                    {convertEthToUsd(
+                      notif["3sec_tips"].amount,
+                      notif["3sec_tips"].network === 122 ? fusePrice : ethPrice,
+                    )}
+                  </div>
                 </div>
                 <div className="text-xs opacity-75">
                   <TimeAgo timestamp={notif.created_at} />

@@ -25,7 +25,8 @@ import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { deleteFollow } from "~~/utils/wildfire/crud/followers";
 
 const Profile: NextPage = () => {
-  const price = useGlobalState(state => state.nativeCurrency.price);
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
+  const fusePrice = useGlobalState(state => state.fuseCurrency.price);
 
   //CONSUME PROVIDERS
   const { profile } = useContext(AuthUserContext);
@@ -45,11 +46,17 @@ const Profile: NextPage = () => {
   const highestLevel = profile?.levels.reduce((max: number, item: any) => (item.level > max ? item.level : max), 0);
   const levelNames = ["noob", "creator", "builder", "architect", "visionary", "god-mode"];
   const levelName = levelNames[highestLevel] || "unknown";
-  const balance = (
-    calculateSum(incomingRes.ethereumData) +
-    calculateSum(incomingRes.baseData) +
-    calculateSum(incomingRes.fuseData)
-  ).toFixed(4);
+
+  //BALANCE
+  const ethSum = calculateSum(incomingRes.ethereumData);
+  const fuseSum = calculateSum(incomingRes.fuseData);
+  const baseSum = calculateSum(incomingRes.baseData);
+
+  // Convert each network's balance to USD
+  const ethUsd = convertEthToUsd(ethSum, ethPrice);
+  const baseUsd = convertEthToUsd(baseSum, ethPrice);
+  const fuseUsd = convertEthToUsd(fuseSum, fusePrice);
+  const totalUsd = (ethUsd + baseUsd + fuseUsd).toFixed(2); // Total balance in USD
 
   //FETCH MORE FEED
   const carousellRef = useRef<HTMLDivElement>(null);
@@ -274,8 +281,10 @@ const Profile: NextPage = () => {
             <CircleStackIcon width={60} />
           </div>
           <div className="stat-title">Incoming</div>
-          <div className="stat-value text-primary">${convertEthToUsd(balance, price)}</div>
-          <div className="stat-desc">{balance} ETH</div>
+          <div className="stat-value text-primary">${totalUsd}</div>
+          <div className="stat-desc">
+            {totalUsd && ethPrice ? (parseFloat(totalUsd) / ethPrice).toFixed(4) : "0.0000"} ETH
+          </div>
         </div>
         <div className="stat">
           <div className="btn btn-primary" onClick={() => setTipModalOpen(true)}>
