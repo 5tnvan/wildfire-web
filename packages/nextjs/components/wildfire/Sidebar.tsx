@@ -32,13 +32,13 @@ export const Sidebar = () => {
 
           <Link href="/">
             <Image
-              src={`/spark/spark-logo.svg`}
+              src={`/spark/spark-text-logo.png`}
               alt="hero"
               height={120}
               width={120}
               className=""
               draggable={false}
-              style={{ width: "70px", height: "auto" }}
+              style={{ width: "100px", height: "auto" }}
             />
           </Link>
           <Link href="/create" className="p-3 rounded-full bg-base-100" onClick={closeMenu}>
