@@ -1,7 +1,7 @@
-# Wildfire App
+# Spark App
 
 <h4 align="center">
-  Wildfire: <a href="https://www.3seconds.me">www.3seconds.me</a>
+  Wildfire: <a href="https://www.3seconds.me">Spark App</a>
 </h4>
 
 <p align="center">
