@@ -32,7 +32,7 @@ export const Sidebar = () => {
 
           <Link href="/">
             <Image
-              src={`/wildfire-logo-lit.png`}
+              src={`/spark/spark-logo.svg`}
               alt="hero"
               height={120}
               width={120}
@@ -78,13 +78,13 @@ export const Sidebar = () => {
       >
         <Link href="/">
           <Image
-            src={`/wildfire-logo-lit.png`}
+            src={`/spark/spark-text-logo.png`}
             alt="hero"
-            height={120}
-            width={120}
-            className="mt-8 mb-2 ml-4"
+            height={300}
+            width={300}
+            className="mt-5 mb-2 ml-4"
             draggable={false}
-            style={{ width: "70px", height: "auto" }}
+            style={{ width: "100px", height: "auto" }}
           />
         </Link>
         <ul className="grow text-base">

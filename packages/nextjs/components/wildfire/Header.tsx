@@ -23,16 +23,16 @@ export const Header = () => {
 
   return (
     <div className="sticky bg-base-200 lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
-      <div className="navbar-start w-full justify-between ">
-        <Link href="/">
+      <div className="navbar-start w-full justify-between">
+        <Link href="/" className="flex flex-row w-full">
           <Image
-            src={`/wildfire-logo-lit.png`}
+            src={`/spark/spark-text-logo.png`}
             alt="hero"
-            height={80}
-            width={80}
-            className="rounded-2xl object-cover h-full object-left-top mx-2"
+            height={50}
+            width={50}
+            className="mx-2"
             draggable={false}
-            style={{ width: "auto", height: "auto" }}
+            style={{ width: "100px", height: "auto" }}
           />
         </Link>
 

@@ -32,13 +32,13 @@ const ThumbCard = ({ index, data, onCta }: any) => {
           )}
         </div>
         <Image
-          src={`/wildfire-logo-lit.png`}
+          src={`/spark/spark-logo.png`}
           alt="hero"
           height={120}
           width={120}
           className=""
           draggable={false}
-          style={{ width: "70px", height: "auto" }}
+          style={{ width: "30px", height: "auto" }}
         />
       </div>
     </div>

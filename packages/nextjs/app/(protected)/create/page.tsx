@@ -1,380 +1,376 @@
 "use client";
 
-import React, { useContext, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { NextPage } from "next";
-import * as tus from "tus-js-client";
-import { MapPinIcon, XCircleIcon } from "@heroicons/react/20/solid";
-import { CheckCircleIcon, ChevronRightIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
-import { AuthContext, AuthUserContext } from "~~/app/context";
-import LocationModal from "~~/components/wildfire/LocationModal";
-import { TimeAgo } from "~~/components/wildfire/TimeAgo";
-import { ACCESS_KEY, HOSTNAME, STORAGE_ZONE_NAME } from "~~/constants/BunnyAPI";
-import { useCountries } from "~~/hooks/wildfire/useCountries";
-import { useDailyPostLimit } from "~~/hooks/wildfire/useDailyPostLimit";
-import { livepeerClient } from "~~/utils/livepeer/livepeer";
-import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/3sec";
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import type { NextPage } from "next";
+import { VideoCameraIcon } from "@heroicons/react/24/solid";
+import { Lens } from "~~/components/ui/lens";
+import { cn } from "~~/utils/cn";
 
 const Create: NextPage = () => {
-  const router = useRouter();
-
-  //CONSUME PROVIDER
-  const { user } = useContext(AuthContext);
-  const { profile } = useContext(AuthUserContext);
-
-  //FETCH DIRECTLY
-  const { isLoading: isLoadingLimit, limit, posts, postLeft } = useDailyPostLimit();
-  const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string>("");
-  const [countryId, setCountryId] = useState<string | null>(null);
-  const [countryName, setCountryName] = useState<string | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { countries } = useCountries();
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files[0] && files[0].type.includes("video")) {
-      const videoFile = files[0];
-      const validationResult = await validateVideoFile(videoFile);
-      if (validationResult.valid) {
-        const url = URL.createObjectURL(videoFile);
-        setFile(videoFile);
-        setVideoUrl(url);
-        createThumbnail(url); // Create thumbnail when video URL is set
-      } else {
-        handleValidationFailure(validationResult.errors);
-      }
-    } else {
-      alert("Please upload a valid video file");
-    }
-  };
-
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    if (files && files[0] && files[0].type.includes("video")) {
-      const videoFile = files[0];
-      const validationResult = await validateVideoFile(videoFile);
-      if (validationResult.valid) {
-        const url = URL.createObjectURL(videoFile);
-        setFile(videoFile);
-        setVideoUrl(url);
-        createThumbnail(url); // Create thumbnail when video URL is set
-      } else {
-        handleValidationFailure(validationResult.errors);
-      }
-    } else {
-      alert("Please upload a valid video file");
-    }
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  };
-
-  const handleSubmitPost = async () => {
-    if (limit === true) {
-      alert("You've reached your 24hrs posting limit. Try again later.");
-      return;
-    }
-    if (limit === false && videoUrl.length > 0 && thumbnailUrl.length > 0 && file) {
-      try {
-        setLoading(true);
-        // Fetch the thumbnail blob
-        const thumbnailBlob = await fetch(thumbnailUrl).then(res => res.blob());
-        console.log("thumbnailBlob", thumbnailBlob);
-        console.log("videoBlob", file);
-
-        // Upload video
-        const videoPath = await uploadToBunny(file, "video");
-        console.log("videoPath", videoPath);
-
-        // Upload thumbnail
-        const thumbnailPath = await uploadToBunny(thumbnailBlob, "thumbnail");
-        console.log("thumbnailPath", thumbnailPath);
-
-        // Insert record into '3sec' table
-        if (videoPath && thumbnailPath) {
-          const res = await insertVideo(videoPath, thumbnailPath, countryId);
-          if (Array.isArray(res) && res.length > 0) {
-            const videoId = res[0].id;
-            await uploadToLivepeer(file, videoId);
-          }
-        }
-      } catch (error) {
-        setLoading(false);
-        alert("Failed to upload video. Please try again.");
-      }
-    }
-  };
-
-  const uploadToLivepeer = async (assetData: File, video_id: any) => {
-    livepeerClient.asset
-      .create(assetData)
-      .then(async response => {
-        console.log("Asset upload request:", response);
-        const upload = new tus.Upload(assetData, {
-          endpoint: response.data?.tusEndpoint,
-          retryDelays: [0, 3000, 5000, 10000, 20000],
-          metadata: {
-            filename: `${profile.id}_${assetData.name}`,
-            filetype: assetData.type,
-          },
-          onError: error => {
-            console.error("Failed because: " + error);
-          },
-          onProgress: (bytesUploaded, bytesTotal) => {
-            console.log("bytesUploaded", bytesUploaded), console.log("bytesTotal", bytesTotal);
-          },
-          onSuccess: async () => {
-            console.log("Download %s from %s", assetData.name, upload.url);
-            if (upload.url != null) {
-              // Insert record into '3sec' table
-              const error = await upsertVideo(video_id, response.data?.asset.playbackId, user?.id);
-              if (!error) {
-                router.push("/" + profile.username);
-              } else {
-                console.log("error", error);
-              }
-            }
-          },
-        });
-        upload.start();
-      })
-      .catch(error => {
-        console.error("Error requesting asset upload:", error);
-      });
-  };
-
-  const uploadToBunny = async (file: File | Blob, type: "video" | "thumbnail") => {
-    const now = new Date().getTime();
-    let bunnyUrl, pullZoneUrl, contentType;
-
-    if (type === "video") {
-      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.mp4`;
-      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.mp4`;
-      contentType = "video/mp4";
-    } else if (type === "thumbnail") {
-      bunnyUrl = `https://${HOSTNAME}/${STORAGE_ZONE_NAME}/${profile.id}/${now}.jpg`;
-      pullZoneUrl = `https://wildfire.b-cdn.net/${profile.id}/${now}.jpg`;
-      contentType = "image/jpeg";
-    } else {
-      throw new Error("Unsupported file type");
-    }
-
-    const response = await fetch(bunnyUrl, {
-      method: "PUT",
-      headers: {
-        AccessKey: ACCESS_KEY ?? "",
-        "Content-Type": contentType,
-      },
-      body: file,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to upload ${type}`);
-    }
-
-    return pullZoneUrl;
-  };
-
-  const handleValidationFailure = (errors: string[]) => {
-    let errorMessage = "Validation failed:";
-    errors.forEach(error => {
-      errorMessage += `\n- ${error}`;
-    });
-    alert(errorMessage);
-  };
-
-  const validateVideoFile = async (videoFile: File): Promise<{ valid: boolean; errors: string[] }> => {
-    const errors: string[] = [];
-
-    // Check file size (10 MB limit)
-    if (videoFile.size > 10 * 1024 * 1024) {
-      errors.push("File size exceeds 10 MB");
-    }
-
-    // Create a video element to get duration and aspect ratio
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(videoFile);
-
-    return new Promise<{ valid: boolean; errors: string[] }>(resolve => {
-      video.onloadedmetadata = () => {
-        // Check duration (between 2.5 and 3.5 seconds)
-        const duration = video.duration;
-        if (duration < 2.5 || duration > 5) {
-          errors.push("Video duration is too short or too long.");
-        }
-
-        // Check aspect ratio (9:16)
-        const aspectRatioValid = video.videoWidth / video.videoHeight === 9 / 16;
-        if (!aspectRatioValid) {
-          errors.push("Aspect ratio should be 9:16");
-        }
-
-        resolve({ valid: errors.length === 0, errors });
-      };
-
-      video.onerror = () => resolve({ valid: false, errors: ["Failed to load the video"] });
-    });
-  };
-
-  const createThumbnail = (videoSrc: string) => {
-    const video = document.createElement("video");
-    video.src = videoSrc;
-
-    video.addEventListener("loadeddata", () => {
-      // Seek to the middle of the video to ensure the frame has enough data
-      video.currentTime = video.duration / 2;
-    });
-
-    video.addEventListener("seeked", () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(blob => {
-          if (blob) {
-            const thumbnailUrl = URL.createObjectURL(blob);
-            setThumbnailUrl(thumbnailUrl);
-          }
-        }, "image/jpeg");
-      }
-      // Clean up
-      URL.revokeObjectURL(videoSrc);
-    });
-
-    video.addEventListener("error", () => {
-      console.error("Error loading video for thumbnail generation");
-    });
-  };
-
-  const handleSetLocation = (country_id: any, country_name: any) => {
-    setIsLocationModalOpen(true);
-    setCountryId(country_id);
-    setCountryName(country_name);
-  };
-
-  const closeLocationModal = () => {
-    setIsLocationModalOpen(false);
-  };
-
+  const [hovering, setHovering] = useState(false);
   return (
-    <div className="flex flex-col md:flex-row p-2 pt-0 h-screen-custom">
-      <div className="flex flex-col">
-        {/* DRAG N DROP */}
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow mb-2"
-        >
-          <div className="font-semibold">Choose a video</div>
-          <div className="flex flex-col grow justify-center">
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              id="video-upload"
-            />
-            <label htmlFor="video-upload" className="flex flex-col items-center cursor-pointer">
-              <div className="flex flex-col grow items-center">
-                <VideoCameraIcon width={48} />
-                <span className="text-xl">Drag 'n' drop</span>
-                <div className="btn btn-base-300 mt-3">Select a file from a computer</div>
-              </div>
-            </label>
-          </div>
-        </div>
-        {/* POST LIMIT */}
-        <div className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow">
-          <div className="font-semibold">Your posts</div>
-          <div className="flex flex-col grow justify-center items-center">
-            {!isLoadingLimit && (
-              <>
-                {limit == true && <XCircleIcon width={48} color="red" />}
-                {limit == false && <CheckCircleIcon width={48} color="green" />}
-                <div>
-                  You can post <span className="text-primary font-semibold">{postLeft}x</span> today
-                </div>
-                {posts && posts.length > 0 && (
-                  <div className="flex flex-row gap-1">
-                    Last posted
-                    <span className="text-primary font-semibold">
-                      <TimeAgo timestamp={posts[0].created_at} />
-                    </span>
-                    ago
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* PREVIEW */}
-      <div className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow md:ml-2 relative mt-2 md:mt-0">
-        <div className="flex font-semibold mb-2">Preview</div>
-        {!videoUrl && (
-          <div className="flex flex-col justify-center items-center rounded-lg grow">
-            <div className="flex flex-col justify-center items-center h-[640px] w-[360px] bg-neutral rounded-lg">
-              <label className="label cursor-pointer">
-                <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">vertical 9:16</span>
-              </label>
-              <label className="label cursor-pointer">
-                <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">3 seconds</span>
-              </label>
-              <label className="label cursor-pointer">
-                <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">under 10MB</span>
-              </label>
-            </div>
-          </div>
-        )}
-        {videoUrl && (
-          <div className="flex flex-col md:flex-row items-center justify-between rounded-lg grow w-full">
-            {thumbnailUrl && (
-              <div className="hidden md:flex w-1/3 flex-col items-center grow">
-                <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-[70px] glow" />
-                <span className="text-sm">Thumbnail</span>
-              </div>
-            )}
-            <div className="flex flex-col justify-center items-center h-[640px] w-[360px] bg-neutral rounded-lg text-white dark:text-black">
-              <video
-                ref={videoRef}
-                src={videoUrl}
-                controls
-                className="h-full w-full object-cover rounded-lg"
-                autoPlay
-                loop
+    <div className="lg:flex lg:flex-row lg:gap-3 mt-10">
+      <div className="w-full relative rounded-3xl overflow-hidden max-w-md mx-auto bg-gradient-to-r from-[#1D2235] to-[#121318] p-8 my-10">
+        <Rays />
+        <Beams />
+        <div className="relative z-10">
+          <Lens hovering={hovering} setHovering={setHovering}>
+            <div className="w-full h-60">
+              <Image
+                src="/premium_photo-1687989651281-d9dfee04ec74.png"
+                alt="image"
+                width={500}
+                height={500}
+                className="rounded-2xl"
               />
             </div>
-            {limit == false && (
-              <div className="flex flex-col w-full ml-0 mt-3 md:mt-0 md:w-1/3 md:ml-3 gap-2">
-                <div className="btn btn-outline m-auto w-full md:w-auto" onClick={() => setIsLocationModalOpen(true)}>
-                  <MapPinIcon width={14} />
-                  {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
-                </div>
-                <div className="relative btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
-                  Post Now
-                  {loading && <span className="absolute loading loading-ring loading-md ml-1 right-4"></span>}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {isLocationModalOpen && (
-          <LocationModal data={countries} onClose={closeLocationModal} onCta={handleSetLocation} />
-        )}
+          </Lens>
+          <motion.div
+            animate={{
+              filter: hovering ? "blur(2px)" : "blur(0px)",
+            }}
+            className="py-4 relative z-20"
+          >
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="text-white text-2xl text-left font-bold mb-0">Upload short</h2>
+              <p className="text-primary">from 3 seconds</p>
+            </div>
+            <p className="text-neutral-200 text-left  mt-4">Upload vertical short-form video.</p>
+            <Link href="/create/short-form" className="btn text-base">
+              <VideoCameraIcon width={15} />
+              Create Now
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+      <div className="w-full relative rounded-3xl overflow-hidden max-w-md mx-auto bg-gradient-to-r from-[#1D2235] to-[#121318] p-8 my-10">
+        <Rays />
+        <Beams />
+        <div className="relative z-10">
+          <Lens hovering={hovering} setHovering={setHovering}>
+            <div className="w-full h-60">
+              <Image src="/ezgif-3-489a4dc383.gif" alt="image" width={500} height={500} className="rounded-2xl" />
+            </div>
+          </Lens>
+          <motion.div
+            animate={{
+              filter: hovering ? "blur(2px)" : "blur(0px)",
+            }}
+            className="py-4 relative z-20"
+          >
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="text-white text-2xl text-left font-bold mb-0">Upload video</h2>
+              <p className="text-primary">up to 15 mins</p>
+            </div>
+            <p className="text-neutral-200 text-left mt-4">Upload long-format video.</p>
+            <button className="btn text-base" disabled>
+              <VideoCameraIcon width={15} className="text-white" />
+              <span className="text-white">Coming soon</span>
+            </button>
+          </motion.div>
+        </div>
       </div>
     </div>
+  );
+};
+
+const Beams = () => {
+  return (
+    <svg
+      width="380"
+      height="315"
+      viewBox="0 0 380 315"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute top-0 left-1/2 -translate-x-1/2 w-full pointer-events-none"
+    >
+      <g filter="url(#filter0_f_120_7473)">
+        <circle cx="34" cy="52" r="114" fill="#6925E7" />
+      </g>
+      <g filter="url(#filter1_f_120_7473)">
+        <circle cx="332" cy="24" r="102" fill="#8A4BFF" />
+      </g>
+      <g filter="url(#filter2_f_120_7473)">
+        <circle cx="191" cy="53" r="102" fill="#802FE3" />
+      </g>
+      <defs>
+        <filter
+          id="filter0_f_120_7473"
+          x="-192"
+          y="-174"
+          width="452"
+          height="452"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="56" result="effect1_foregroundBlur_120_7473" />
+        </filter>
+        <filter
+          id="filter1_f_120_7473"
+          x="70"
+          y="-238"
+          width="524"
+          height="524"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_120_7473" />
+        </filter>
+        <filter
+          id="filter2_f_120_7473"
+          x="-71"
+          y="-209"
+          width="524"
+          height="524"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_120_7473" />
+        </filter>
+      </defs>
+    </svg>
+  );
+};
+
+const Rays = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      width="380"
+      height="397"
+      viewBox="0 0 380 397"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("absolute left-0 top-0  pointer-events-none z-[1]", className)}
+    >
+      <g filter="url(#filter0_f_120_7480)">
+        <path
+          d="M-37.4202 -76.0163L-18.6447 -90.7295L242.792 162.228L207.51 182.074L-37.4202 -76.0163Z"
+          fill="url(#paint0_linear_120_7480)"
+        />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} opacity="0.3" filter="url(#filter1_f_120_7480)">
+        <path
+          d="M-109.54 -36.9027L-84.2903 -58.0902L178.786 193.228L132.846 223.731L-109.54 -36.9027Z"
+          fill="url(#paint1_linear_120_7480)"
+        />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} opacity="0.86" filter="url(#filter2_f_120_7480)">
+        <path
+          d="M-100.647 -65.795L-69.7261 -92.654L194.786 157.229L139.51 197.068L-100.647 -65.795Z"
+          fill="url(#paint2_linear_120_7480)"
+        />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} opacity="0.31" filter="url(#filter3_f_120_7480)">
+        <path
+          d="M163.917 -89.0982C173.189 -72.1354 80.9618 2.11525 34.7334 30.1553C-11.495 58.1954 -106.505 97.514 -115.777 80.5512C-125.048 63.5885 -45.0708 -3.23233 1.15763 -31.2724C47.386 -59.3124 154.645 -106.061 163.917 -89.0982Z"
+          fill="#8A50FF"
+        />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} filter="url(#filter4_f_120_7480)">
+        <path d="M34.2031 13.2222L291.721 269.534" stroke="url(#paint3_linear_120_7480)" />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} filter="url(#filter5_f_120_7480)">
+        <path d="M41 -40.9331L298.518 215.378" stroke="url(#paint4_linear_120_7480)" />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} filter="url(#filter6_f_120_7480)">
+        <path d="M61.3691 3.8999L317.266 261.83" stroke="url(#paint5_linear_120_7480)" />
+      </g>
+      <g style={{ mixBlendMode: "plus-lighter" }} filter="url(#filter7_f_120_7480)">
+        <path d="M-1.46191 9.06348L129.458 145.868" stroke="url(#paint6_linear_120_7480)" strokeWidth="2" />
+      </g>
+      <defs>
+        <filter
+          id="filter0_f_120_7480"
+          x="-49.4199"
+          y="-102.729"
+          width="304.212"
+          height="296.803"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="6" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter1_f_120_7480"
+          x="-115.54"
+          y="-64.0903"
+          width="300.326"
+          height="293.822"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="3" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter2_f_120_7480"
+          x="-111.647"
+          y="-103.654"
+          width="317.434"
+          height="311.722"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="5.5" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter3_f_120_7480"
+          x="-212.518"
+          y="-188.71"
+          width="473.085"
+          height="369.366"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="48" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter4_f_120_7480"
+          x="25.8447"
+          y="4.84521"
+          width="274.234"
+          height="273.065"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter5_f_120_7480"
+          x="32.6416"
+          y="-49.3101"
+          width="274.234"
+          height="273.065"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter6_f_120_7480"
+          x="54.0078"
+          y="-3.47461"
+          width="270.619"
+          height="272.68"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="3.5" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <filter
+          id="filter7_f_120_7480"
+          x="-9.2002"
+          y="1.32812"
+          width="146.396"
+          height="152.275"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="3.5" result="effect1_foregroundBlur_120_7480" />
+        </filter>
+        <linearGradient
+          id="paint0_linear_120_7480"
+          x1="-57.5042"
+          y1="-134.741"
+          x2="403.147"
+          y2="351.523"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.214779" stopColor="#AF53FF" />
+          <stop offset="0.781583" stopColor="#B253FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_120_7480"
+          x1="-122.154"
+          y1="-103.098"
+          x2="342.232"
+          y2="379.765"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.214779" stopColor="#AF53FF" />
+          <stop offset="0.781583" stopColor="#9E53FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint2_linear_120_7480"
+          x1="-106.717"
+          y1="-138.534"
+          x2="359.545"
+          y2="342.58"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.214779" stopColor="#9D53FF" />
+          <stop offset="0.781583" stopColor="#A953FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint3_linear_120_7480"
+          x1="72.701"
+          y1="54.347"
+          x2="217.209"
+          y2="187.221"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#AF81FF" />
+          <stop offset="1" stopColor="#C081FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint4_linear_120_7480"
+          x1="79.4978"
+          y1="0.191681"
+          x2="224.006"
+          y2="133.065"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#AF81FF" />
+          <stop offset="1" stopColor="#C081FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint5_linear_120_7480"
+          x1="79.6568"
+          y1="21.8377"
+          x2="234.515"
+          y2="174.189"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#B981FF" />
+          <stop offset="1" stopColor="#CF81FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint6_linear_120_7480"
+          x1="16.119"
+          y1="27.6966"
+          x2="165.979"
+          y2="184.983"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#A981FF" />
+          <stop offset="1" stopColor="#CB81FF" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+    </svg>
   );
 };
 
