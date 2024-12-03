@@ -15,6 +15,7 @@ import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { Footer } from "~~/components/wildfire/Footer";
 import { Header } from "~~/components/wildfire/Header";
 import { cn } from "~~/utils/cn";
+import React from "react";
 
 const Landing: NextPage = () => {
   const router = useRouter();
@@ -23,6 +24,8 @@ const Landing: NextPage = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
   const [hovering, setHovering] = useState(false);
+
+  console.log(React.version);
 
   //TIP MODAL
   const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);
@@ -47,7 +50,7 @@ const Landing: NextPage = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="px-5 lg:mt-0 flex flex-col w-full items-center pb-0 pt-8 lg:pt-16">
             <h1 className="text-5xl font-bold">Open Video.</h1>
-            <h1 className="text-5xl font-bold">Freedom to Express.</h1>
+            <h1 className="text-5xl font-bold text-center">Freedom to Express.</h1>
             <h2 className="text-lg mt-5 mb-5">
               Earn <span className="text-blue-500 font-semibold">$ETH</span> &{" "}
               <span className="text-blue-500 font-semibold">$FUSE</span> rewards.
