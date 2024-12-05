@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import WildfireApp from "./wildfireLayout";
+import SparkApp from "./sparkLayout";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
@@ -40,7 +40,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       <body>
         <ThemeProvider>
           <ScaffoldEthAppWithProviders>
-            <WildfireApp>{children}</WildfireApp>
+            <SparkApp>{children}</SparkApp>
           </ScaffoldEthAppWithProviders>
         </ThemeProvider>
       </body>

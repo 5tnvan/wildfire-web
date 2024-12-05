@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,6 @@ import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { Footer } from "~~/components/wildfire/Footer";
 import { Header } from "~~/components/wildfire/Header";
 import { cn } from "~~/utils/cn";
-import React from "react";
 
 const Landing: NextPage = () => {
   const router = useRouter();
@@ -71,14 +71,8 @@ const Landing: NextPage = () => {
                 <Beams />
                 <div className="relative z-10">
                   <Lens hovering={hovering} setHovering={setHovering}>
-                    <div className="w-full h-60">
-                      <Image
-                        src="/premium_photo-1687989651281-d9dfee04ec74.png"
-                        alt="image"
-                        width={500}
-                        height={500}
-                        className="rounded-2xl"
-                      />
+                    <div className="w-full h-52 bg-red-400 bg-[url('/premium_photo-1687989651281-d9dfee04ec74.png')] bg-cover bg-center rounded-2xl">
+                      {/* Content inside the container */}
                     </div>
                   </Lens>
                   <motion.div
@@ -112,7 +106,7 @@ const Landing: NextPage = () => {
                 <Beams />
                 <div className="relative z-10">
                   <Lens hovering={hovering} setHovering={setHovering}>
-                    <div className="w-full h-60">
+                    <div className="w-full">
                       <Image
                         src="/ezgif-3-489a4dc383.gif"
                         alt="image"

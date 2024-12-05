@@ -11,14 +11,14 @@ import "~~/styles/width-height.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Wildpay App",
-  description: "Wildpay | Dare to get paid?",
+  title: "Spark App",
+  description: "Spark | Got 3 Second?",
 });
 /**
- * WILDPAY APP LAYOUT
+ * SPARK LAYOUT
  * Entry point to the app
  **/
-const WildfireApp = ({ children }: { children: React.ReactNode }) => {
+const SparkApp = ({ children }: { children: React.ReactNode }) => {
   /* PROVIDE CONTEXTS */
   const { loading: loadingAuth, isAuthenticated, user, refetch: refetchAuth } = useAuth(); //<AuthContext>
   const { loading: loadingAuthUser, profile, refetch: refetchAuthUser } = useUserProfile(); //<AuthUserContext>
@@ -42,4 +42,4 @@ const WildfireApp = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default WildfireApp;
+export default SparkApp;
