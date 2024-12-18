@@ -5,7 +5,7 @@ import { AuthUserContext } from "~~/app/context";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { isUsernameTaken, isUsernameUpdated, updateUsername } from "~~/utils/wildfire/changeUsername";
 
-const UsernameModal = ({ onClose } : any) => {
+const UsernameModal = ({ onClose }: any) => {
   const { profile, refetchAuthUser } = useContext(AuthUserContext);
 
   const [errorClient, setErrorClient] = useState<string | null>(null);
@@ -28,7 +28,7 @@ const UsernameModal = ({ onClose } : any) => {
       // Check if username exists and if it was updated recently
       const usernameTaken = await isUsernameTaken(newUsername);
       const lastUpdated = await isUsernameUpdated(profile.username);
-      
+
       const now = new Date();
       const daysDifference = lastUpdated ? Math.floor((now.getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24)) : 0;
 
@@ -38,7 +38,7 @@ const UsernameModal = ({ onClose } : any) => {
         setErrorClient("Username was updated recently. Ensure 29 days have passed.");
       } else {
         const res = await updateUsername(newUsername);
-        if(res) {
+        if (res) {
           setErrorClient("Something went wrong. Please try again.");
         } else {
           onClose();
@@ -82,7 +82,7 @@ const UsernameModal = ({ onClose } : any) => {
             pattern="^[a-z][a-z0-9_]{2,15}$"
             title="3-15 characters & only lowercase letters, numbers, and underscores."
             value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
+            onChange={e => setNewUsername(e.target.value)}
           />
           {errorClient && (
             <div
