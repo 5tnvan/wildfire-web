@@ -33,30 +33,35 @@ const Home: NextPage = () => {
   // Helper function to format text with hashtags and mentions
   const formatText = (text: string) => {
     return text.split("\n").map((line, i) => (
-      <React.Fragment key={i}>
+      <React.Fragment key={`line-${i}`}>
         {line
           .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
           .map((part, index) => {
             if (part.startsWith("#")) {
               return (
-                <Link href="/" key={index} className="text-primary">
+                <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
                   {part}
                 </Link>
               );
             } else if (part.startsWith("@")) {
               return (
-                <Link href={`/${part.substring(1)}`} key={index} className="text-primary">
+                <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
                   {part}
                 </Link>
               );
             } else {
-              return part;
+              return (
+                <span key={`text-${i}-${index}`}>
+                  {part}
+                </span>
+              );
             }
           })}
         <br />
       </React.Fragment>
     ));
   };
+  
 
   const renderActiveTabContent = () => {
     switch (activeTab) {

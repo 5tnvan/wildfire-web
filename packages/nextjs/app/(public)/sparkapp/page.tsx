@@ -1,14 +1,12 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "~~/app/context";
 import { useScroll, useTransform } from "framer-motion";
 import type { NextPage } from "next";
-import { useTheme } from "next-themes";
 import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
 import AndroidTestModal from "~~/components/wildfire/AndroidTestModal";
 import { TypewriterEffectSmooth } from "~~/components/ui/typewriter-effect";
