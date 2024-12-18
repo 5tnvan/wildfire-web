@@ -11,7 +11,14 @@ const ThumbCard = ({ index, data, onCta }: any) => {
       data-index={index}
       onClick={() => onCta(data.id)}
     >
-      <img src={data.thumbnail_url} className="thumbcard rounded-lg w-64" />
+      <Image
+        src={data.thumbnail_url}
+        width={200}
+        height={200}
+        alt="image"
+        className="thumbcard rounded-lg w-64"
+        style={{ width: "auto", height: "auto" }}
+      />
       <div className="absolute right-0 px-2 m-2 bg-white text-black flex flex-row gap-1 rounded-full">
         <EyeIcon width={20} />
         <span className="font-medium">

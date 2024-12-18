@@ -556,7 +556,7 @@ const Video: NextPage = () => {
                     {posterProfile?.avatar_url && (
                       <div className="avatar placeholder">
                         <div className="w-12 rounded-full">
-                          <img src={posterProfile?.avatar_url} />
+                        <Image src={posterProfile?.avatar_url} alt={""} width={80} height={80} />  
                         </div>
                       </div>
                     )}

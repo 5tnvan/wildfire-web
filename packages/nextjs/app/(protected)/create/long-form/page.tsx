@@ -14,6 +14,7 @@ import { useDailyPostLimitLongForm } from "~~/hooks/wildfire/useDailyPostLimitLo
 import { livepeerClient } from "~~/utils/livepeer/livepeer";
 import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/long_form";
 import Link from "next/link";
+import Image from "next/image";
 
 const CreateLong: NextPage = () => {
 
@@ -467,7 +468,7 @@ const CreateLong: NextPage = () => {
                           <>
                           <div className="text-sm font-medium mb-1">Thumbnail</div>
                           <div className="flex-col items-center grow">
-                            <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-40" />
+                            <Image src={thumbnailUrl} alt={""} width={200} height={200} className="rounded-lg w-40" /> 
                           </div>
                           </>
                         )}

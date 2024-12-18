@@ -14,6 +14,7 @@ import { useCountries } from "~~/hooks/wildfire/useCountries";
 import { useDailyPostLimit } from "~~/hooks/wildfire/useDailyPostLimit";
 import { livepeerClient } from "~~/utils/livepeer/livepeer";
 import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/3sec";
+import Image from "next/image";
 
 const CreateShort: NextPage = () => {
   const router = useRouter();
@@ -342,7 +343,7 @@ const CreateShort: NextPage = () => {
           <div className="flex flex-col md:flex-row items-center justify-between rounded-lg grow w-full">
             {thumbnailUrl && (
               <div className="hidden md:flex w-1/3 flex-col items-center grow">
-                <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-[70px] glow" />
+                <Image src={thumbnailUrl} alt={""} width={200} height={200} className="rounded-lg w-[70px] glow" />  
                 <span className="text-sm">Thumbnail</span>
               </div>
             )}

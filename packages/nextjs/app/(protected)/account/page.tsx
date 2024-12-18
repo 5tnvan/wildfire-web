@@ -17,8 +17,6 @@ const Account: NextPage = () => {
   const { loadingAuthUser, profile } = useContext(AuthUserContext);
   const { account } = useContext(AuthUserAccountContext);
 
-  console.log("profile", profile);
-
   const MyAccount = () => (
     <>
       {user && profile && (

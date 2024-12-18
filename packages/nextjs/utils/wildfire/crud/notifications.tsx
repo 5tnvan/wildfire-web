@@ -56,7 +56,6 @@ export async function updateReplyRead(notification_id: any) {
 }
 
 export async function updateTipRead(notification_id: any) {
-    console.log("im here", notification_id);
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -71,7 +70,6 @@ export async function updateTipRead(notification_id: any) {
 }
 
 export async function updateDirectTipRead(notification_id: any) {
-    console.log("im here", notification_id);
     const supabase = createClient();
 
     const { data, error } = await supabase
