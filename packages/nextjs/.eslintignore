@@ -1,6 +1,7 @@
 # folders
 .next
 node_modules/
+packages/nextjs/components/wildfire
 
 # files
 **/*.less
@@ -10,5 +11,7 @@ node_modules/
 **/*.png
 **/*.svg
 **/generated/**/*
+
+
 
 

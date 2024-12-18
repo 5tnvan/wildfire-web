@@ -146,26 +146,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     }
   };
 
-  // const handleLikeComment = async () => {
-  //   //incr like
-  //   const error = await insertLikeComment(data.id);
-  //   if (!error) {
-  //     setTemporaryLikedComment(true); // Set temporary like state
-  //     setLikedCommentCount((prevCount: any) => prevCount + 1); // Increment like count
-  //   } else {
-  //     console.log("You already liked this comment");
-  //     setToast("You already liked this comment");
-
-  //     // Set the toast back to null after 4 seconds
-  //     setTimeout(() => {
-  //       setToast(null);
-  //     }, 3000);
-  //   }
-  // };
-
-  // console.log("temporaryLikedComment", temporaryLikedComment);
-  // console.log("likedCommentCount", likedCommentCount);
-
   const toggleComment = () => {
     setShowCommentInput(!showCommentInput);
   };
