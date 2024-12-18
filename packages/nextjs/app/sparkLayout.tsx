@@ -12,7 +12,7 @@ import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
   title: "Spark App",
-  description: "Spark | Got 3 Second?",
+  description: "Spark | 3, 2, 1",
 });
 /**
  * SPARK LAYOUT

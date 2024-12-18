@@ -331,7 +331,7 @@ const Home: NextPage = () => {
                     visible={true}
                   />
                 </div>}
-            {videosFeed2?.slice(0, 3).map((video: any, index: number) => (
+            {videosFeed2?.slice(0, 3).map((video: any) => (
               <div
                 key={video} // Ideally use a unique property like video.id
                 className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2"
