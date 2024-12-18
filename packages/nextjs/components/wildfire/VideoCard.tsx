@@ -64,6 +64,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
 
       setCommentCount(totalCommentCount);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   //TIP MODAL
@@ -219,6 +220,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
         videoRef.current.pause();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   // Fetch playback info from playback_id
@@ -236,6 +238,7 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     if (data.playback_id) {
       fetchPlaybackInfo();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.playback_id]);
 
   return (
