@@ -324,7 +324,8 @@ const CreateLong: NextPage = () => {
   const handleSetLocation = (country_id: any, country_name: any) => {
     setIsLocationModalOpen(true);
     setCountryId(country_id);
-    setCountryName(country_name);
+    //setCountryName(country_name);
+    console.log(country_name);
   };
 
   const closeLocationModal = () => {
