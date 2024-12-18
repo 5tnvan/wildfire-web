@@ -44,7 +44,7 @@ import { incrementVideoViews } from "~~/utils/wildfire/incrementVideoViews";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
-export const livepeerClient = new Livepeer({
+const livepeerClient = new Livepeer({
   apiKey: process.env.NEXT_PUBLIC_LIVEPEER_API_KEY,
 });
 
