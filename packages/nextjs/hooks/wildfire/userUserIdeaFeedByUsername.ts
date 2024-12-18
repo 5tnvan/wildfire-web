@@ -47,8 +47,6 @@ export const useUserIdeaFeedByUsername = (username: any, range: number) => {
       const count = await fetchUserIdeaFeedAll(profile.id);
       const data = await fetchUserIdeaFeedWithRange(profile.id, from, to);
 
-      console.log("data", data);
-
       if (count) {
         setCount(count.length);
       }

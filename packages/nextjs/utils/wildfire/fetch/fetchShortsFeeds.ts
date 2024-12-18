@@ -88,8 +88,6 @@ export const fetchRandomFeed = async (limit: any) => {
     .neq("suppressed", true)
     .limit(limit);
 
-    console.log("data", data);
-
   return data;
 };
 

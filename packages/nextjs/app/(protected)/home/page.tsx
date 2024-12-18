@@ -67,9 +67,9 @@ const Home: NextPage = () => {
         return (
           <div className="mr-2 mb-1">
             <div className="grid grid-cols-3 gap-6 p-6">
-              {ideasFeed.map(idea => (
+              {ideasFeed.map((idea, index) => (
                 <div
-                  key={idea.id}
+                  key={index}
                   className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl shadow-2xl p-6 text-white h-full transform transition-transform duration-300 hover:-translate-y-2"
                 >
                   {/* Background overlay */}
@@ -138,8 +138,8 @@ const Home: NextPage = () => {
         return (
           <div className="grow mr-2 mb-1">
             <div className="grid grid-cols-3 gap-1">
-              {videosFeed.map(video => (
-                <div key={video.id} className="flex flex-col mt-1">
+              {videosFeed.map((video, index) => (
+                <div key={index} className="flex flex-col mt-1">
                   <video
                     width="100%"
                     height="auto"
@@ -202,9 +202,9 @@ const Home: NextPage = () => {
             {shortsFeed && shortsFeed.length > 0 && (
               <>
                 <div className="grid grid-cols-6 rounded-box">
-                  {shortsFeed.map((short: any) => (
+                  {shortsFeed.map((short: any, index: number) => (
                     <div
-                      key={short.id}
+                      key={index}
                       className="mr-1 flex flex-col mt-1 cursor-pointer"
                       onClick={() => router.replace(`/v/${short.id}`)}
                     >
@@ -286,8 +286,8 @@ const Home: NextPage = () => {
                     visible={true}
                   />
                 </div>}
-              {kinsFeed.map((kin: any) => (
-                <Link href={`/${kin.username}`} className="btn btn-sm text-sm" key={kin.id}>
+              {kinsFeed.map((kin: any, index: any) => (
+                <Link href={`/${kin.username}`} className="btn btn-sm text-sm" key={index}>
                   <Avatar profile={kin} width={5} height={5} />
                   @{kin.username}
                 </Link>
@@ -331,9 +331,9 @@ const Home: NextPage = () => {
                     visible={true}
                   />
                 </div>}
-            {videosFeed2?.slice(0, 3).map((video: any) => (
+            {videosFeed2?.slice(0, 3).map((video: any, index: number) => (
               <div
-                key={video} // Ideally use a unique property like video.id
+                key={index} // Ideally use a unique property like video.id
                 className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2"
               >
                 {/* Video Title */}

@@ -51,7 +51,6 @@ export const useIdeasFeed = (filter: any, limit: number, range: number) => {
       }
 
       if (data) {
-        console.log("data", data);
         // Append new data to the existing feed
         setFeed(prevFeed => [...prevFeed, ...data]);
       }

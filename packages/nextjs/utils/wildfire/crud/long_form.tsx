@@ -63,6 +63,5 @@ export async function updateView(id: any, view: number) {
     return false;
   }
 
-  console.log("data", data);
   return true;
 }

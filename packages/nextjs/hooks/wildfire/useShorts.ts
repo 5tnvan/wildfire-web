@@ -36,10 +36,8 @@ export const useShorts = (video_id: any) => {
     let data: any[] | null = null;
     if (page == 0) {
       data = await fetchVideoAndRandomFeed(video_id, range);
-      console.log("data", data);
     } else if (page > 0) {
       data = await fetchRandomFeed(range);
-      console.log("data", data);
     }
     if (data) {
       // Check if each post is liked by the user

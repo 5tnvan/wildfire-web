@@ -17,7 +17,6 @@ import { insertDirectTip } from "~~/utils/wildfire/crud/direct_tips";
 
 const TipModal = ({ data, short_id, onClose }: any) => {
   console.log("short_id", short_id);
-  console.log("data", data);
   const router = useRouter();
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
   const fusePrice = useGlobalState(state => state.fuseCurrency.price);
