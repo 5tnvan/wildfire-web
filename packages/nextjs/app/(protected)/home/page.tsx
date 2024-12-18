@@ -31,33 +31,36 @@ const Home: NextPage = () => {
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
   // Helper function to format text with hashtags and mentions
-  // eslint-disable-next-line react/jsx-key
   const formatText = (text: string) => {
     return text.split("\n").map((line, i) => (
-      <React.Fragment key={i}>
+      <div key={`line-${i}`}>
         {line
           .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
           .map((part, index) => {
             if (part.startsWith("#")) {
               return (
-                <Link href="/" key={index} className="text-primary">
+                <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
                   {part}
                 </Link>
               );
             } else if (part.startsWith("@")) {
               return (
-                <Link href={`/${part.substring(1)}`} key={index} className="text-primary">
+                <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
                   {part}
                 </Link>
               );
             } else {
-              return part;
+              // Wrap plain text in a span with a key
+              return (
+                <span key={`text-${i}-${index}`}>{part}</span>
+              );
             }
           })}
-        <br />
-      </React.Fragment>
+        <br key={`br-${i}`} />
+      </div>
     ));
   };
+  
   
 
   const renderActiveTabContent = () => {
