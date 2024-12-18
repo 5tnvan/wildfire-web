@@ -10,6 +10,5 @@ node_modules/
 **/*.png
 **/*.svg
 **/generated/**/*
-packages/nextjs/components/wildfire/VideoModal.tsx
 
 
