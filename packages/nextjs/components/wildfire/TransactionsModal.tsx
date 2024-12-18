@@ -42,6 +42,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
     allTransactions.forEach(tx => {
       fetchProfile(tx.sender);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomingRes]);
 
   const renderTransactions = (transactions: any, price: number) => {
