@@ -34,7 +34,7 @@ const Home: NextPage = () => {
     return text.split("\n").map((line, i) => (
       <div key={`line-${i}`}>
         {line
-          .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
+          .split(/(#\w+|@\w+)/g)
           .map((part, index) => {
             if (part.startsWith("#")) {
               return (
