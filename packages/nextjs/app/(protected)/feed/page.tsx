@@ -28,7 +28,6 @@ const Feed: NextPage = () => {
   const { loading: loadingUserShortsFeed, feed: userShortsFeed, fetchMore: fetchMoreShorts } = useUserFollowingShortsFeed(6);
 
   //STATES
-  const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("sparks");
 
     // Helper function to format text with hashtags and mentions
