@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useOutsideClick } from "~~/hooks/scaffold-eth/useOutsideClick";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const IdeaModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
   const router = useRouter();

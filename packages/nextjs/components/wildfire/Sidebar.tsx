@@ -4,9 +4,7 @@ import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import IdeaModal from "./IdeaModal";
-import { useTheme } from "next-themes";
 import {
-  ChatBubbleLeftEllipsisIcon,
   CircleStackIcon,
   DevicePhoneMobileIcon,
   Square2StackIcon,

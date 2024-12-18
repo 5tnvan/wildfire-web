@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useContext, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import * as tus from "tus-js-client";
 import { XCircleIcon } from "@heroicons/react/20/solid";
@@ -17,7 +16,6 @@ import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/long_form";
 import Link from "next/link";
 
 const CreateLong: NextPage = () => {
-  const router = useRouter();
 
   //CONSUME PROVIDER
   const { user } = useContext(AuthContext);
@@ -29,9 +27,9 @@ const CreateLong: NextPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [countryId, setCountryId] = useState<string | null>(null);
-  const [countryName, setCountryName] = useState<string | null>(null);
+  //const [countryName, setCountryName] = useState<string | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
-  const [customThumbnailUrl, setCustomThumbnailUrl] = useState<string | null>(null);
+  //const [customThumbnailUrl, setCustomThumbnailUrl] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [titleInput, setTitleInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
@@ -83,54 +81,54 @@ const CreateLong: NextPage = () => {
     event.preventDefault();
   };
 
-  const handleCustomThumbUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-  const errors: string[] = [];
+  // const handleCustomThumbUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
+  // const errors: string[] = [];
   
-  if (files && files[0] && files[0].type.includes("image")) {
-    const imageFile = files[0];
-    const fileSizeMB = imageFile.size / (1024 * 1024); // Convert bytes to MB
+  // if (files && files[0] && files[0].type.includes("image")) {
+  //   const imageFile = files[0];
+  //   const fileSizeMB = imageFile.size / (1024 * 1024); // Convert bytes to MB
 
-    // Check file type (PNG/JPG)
-    const validTypes = ["image/png", "image/jpeg"];
-    if (!validTypes.includes(imageFile.type)) {
-      errors.push("Only PNG or JPG files are allowed.");
-    }
+  //   // Check file type (PNG/JPG)
+  //   const validTypes = ["image/png", "image/jpeg"];
+  //   if (!validTypes.includes(imageFile.type)) {
+  //     errors.push("Only PNG or JPG files are allowed.");
+  //   }
 
-    // Check file size (under 10 MB)
-    if (fileSizeMB > 10) {
-      errors.push("File size must be under 10 MB.");
-    }
+  //   // Check file size (under 10 MB)
+  //   if (fileSizeMB > 10) {
+  //     errors.push("File size must be under 10 MB.");
+  //   }
 
-    // Check aspect ratio (16:9)
-    const checkAspectRatio = (file: File): Promise<boolean> =>
-      new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const aspectRatio = img.width / img.height;
-          resolve(Math.abs(aspectRatio - 16 / 9) < 0.01); // Allow small margin for error
-        };
-        img.src = URL.createObjectURL(file);
-      });
+  //   // Check aspect ratio (16:9)
+  //   const checkAspectRatio = (file: File): Promise<boolean> =>
+  //     new Promise((resolve) => {
+  //       const img = new Image();
+  //       img.onload = () => {
+  //         const aspectRatio = img.width / img.height;
+  //         resolve(Math.abs(aspectRatio - 16 / 9) < 0.01); // Allow small margin for error
+  //       };
+  //       img.src = URL.createObjectURL(file);
+  //     });
 
-    const isValidAspectRatio = await checkAspectRatio(imageFile);
-    if (!isValidAspectRatio) {
-      errors.push("Image must have a 16:9 aspect ratio.");
-    }
+  //   const isValidAspectRatio = await checkAspectRatio(imageFile);
+  //   if (!isValidAspectRatio) {
+  //     errors.push("Image must have a 16:9 aspect ratio.");
+  //   }
 
-    // If any errors, show them and exit
-    if (errors.length > 0) {
-      alert(errors.join("\n"));
-      return;
-    }
+  //   // If any errors, show them and exit
+  //   if (errors.length > 0) {
+  //     alert(errors.join("\n"));
+  //     return;
+  //   }
 
-    // Set the thumbnail URL if validation passes
-    const customThumb = URL.createObjectURL(imageFile);
-    setCustomThumbnailUrl(customThumb);
-  } else {
-    alert("Please upload a valid image file.");
-  }
-  };
+  //   // Set the thumbnail URL if validation passes
+  //   const customThumb = URL.createObjectURL(imageFile);
+  //   setCustomThumbnailUrl(customThumb);
+  // } else {
+  //   alert("Please upload a valid image file.");
+  // }
+  // };
 
   const handleSubmitPost = async () => {
     if (limit === true) {

@@ -5,7 +5,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext, AuthUserFollowsContext } from "~~/app/context";
+import { AuthContext } from "~~/app/context";
 import { useScroll, useTransform } from "framer-motion";
 import type { NextPage } from "next";
 import { useTheme } from "next-themes";
@@ -34,8 +34,6 @@ const Landing: NextPage = () => {
         },
     ];
     const router = useRouter();
-    const { resolvedTheme } = useTheme(); // Get the current theme
-    const { isAuthenticated } = useContext(AuthContext);
 
     //TIP MODAL
     const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);

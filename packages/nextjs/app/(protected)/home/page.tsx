@@ -19,14 +19,14 @@ import { useKins } from "~~/hooks/wildfire/useKins";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [toast, setToast] = useState<any>(null);
+  //const [toast, setToast] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("videos");
   
   //FETCH DIRECTLY
-  const { loading: loadingTags, feed: tagsFeed, refetch: refetchTags } = useTags(3);
+  const { feed: tagsFeed, refetch: refetchTags } = useTags(3);
   const { loading: loadingKins, feed: kinsFeed, refetch: refetchKins } = useKins(2);
-  const { loading: loadingVideoFeed, feed: videosFeed, fetchMore: fetchMoreVideos, refetch: refetchVideos } = useVideosFeed("random", 6, 6);
-  const { loading: loadingVideoFeed2, feed: videosFeed2, fetchMore: fetchMoreVideos2, refetch: refetchVideos2 } = useVideosFeed("mostViewed", 3, 3);
+  const { loading: loadingVideoFeed, feed: videosFeed, fetchMore: fetchMoreVideos } = useVideosFeed("random", 6, 6);
+  const { loading: loadingVideoFeed2, feed: videosFeed2, refetch: refetchVideos2 } = useVideosFeed("mostViewed", 3, 3);
   const { loading: loadingShortsFeed, feed: shortsFeed, fetchMore: fetchMoreShorts } = useShortsFeed("default", 6);
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
@@ -380,13 +380,13 @@ const Home: NextPage = () => {
         </div>
 
         {/* TOASTS */}
-        {toast && (
+        {/* {toast && (
           <div className="toast z-20">
             <div className="alert alert-info">
               <span>{toast}</span>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

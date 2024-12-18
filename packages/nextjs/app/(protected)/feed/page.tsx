@@ -21,7 +21,7 @@ const Feed: NextPage = () => {
   const router = useRouter();
 
   //CONSUME PROVIDERS
-  const { loadingFollows, following } = useContext(AuthUserFollowsContext);
+  const { following } = useContext(AuthUserFollowsContext);
 
   //FETCH DIRECTLY
   const { loading: loadingUserSparksFeed, feed: userSparksFeed, fetchMore: fetchMoreSparks } = useUserFollowingSparksFeed(6);
@@ -33,26 +33,11 @@ const Feed: NextPage = () => {
   //STATES
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isMuted, setIsMuted] = useState(true);
   const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("sparks");
 
   const closeModal = () => {
     setIsVideoModalOpen(false);
     setSelectedVideo(null);
-  };
-
-  const renderShortsContent = () => {
-    // if (!loadingFollows && following && following.length === 0) {
-    //   return (
-    //     <div className="flex flex-row justify-center items-center grow">
-    //       <Link className="btn btn-base-100" href={"/creators"}>
-    //         🥳 Connect with someone to see content
-    //       </Link>
-    //     </div>
-    //   );
-    // }
-
-    return null; // Fallback if no state matches
   };
 
     // Helper function to format text with hashtags and mentions

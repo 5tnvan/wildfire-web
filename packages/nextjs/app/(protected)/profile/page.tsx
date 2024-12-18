@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowDownCircleIcon, CheckBadgeIcon, PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
@@ -26,7 +26,6 @@ import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
 import { Avatar } from "~~/components/Avatar";
-import { useVideosFeed } from "~~/hooks/wildfire/useVideosFeed";
 
 const Profile: NextPage = () => {
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
@@ -37,7 +36,7 @@ const Profile: NextPage = () => {
 
   //CONSUME PROVIDERS
   const { isAuthenticated, user } = useContext(AuthContext);
-  const { loading: loadingProfile, profile: posterProfile } = useContext(AuthUserContext);
+  const { profile: posterProfile } = useContext(AuthUserContext);
   const {
     loading: loadingFollows,
     followers,

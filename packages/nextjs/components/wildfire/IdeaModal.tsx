@@ -26,6 +26,13 @@ const IdeaModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
     try {
       setLoading(true);
       const cleanUpText = convertToPlainText(textInput);
+
+      // Check if text exceeds 280 characters
+      if (cleanUpText.length > 280) {
+        alert("Your post exceeds the 280-character limit. Please shorten it.");
+        return;
+      }
+
       const hashtags = extractHashtags(cleanUpText);
       const newIdea = await insertIdea(cleanUpText);
 
