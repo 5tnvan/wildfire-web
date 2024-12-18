@@ -31,35 +31,35 @@ const Home: NextPage = () => {
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
   // Helper function to format text with hashtags and mentions
-  // const formatText = (text: string) => {
-  //   return text.split("\n").map((line, i) => (
-  //     <div key={`line-${i}`}>
-  //       {line
-  //         .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
-  //         .map((part, index) => {
-  //           if (part.startsWith("#")) {
-  //             return (
-  //               <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
-  //                 {part}
-  //               </Link>
-  //             );
-  //           } else if (part.startsWith("@")) {
-  //             return (
-  //               <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
-  //                 {part}
-  //               </Link>
-  //             );
-  //           } else {
-  //             // Wrap plain text in a span with a key
-  //             return (
-  //               <span key={`text-${i}-${index}`}>{part}</span>
-  //             );
-  //           }
-  //         })}
-  //       <br key={`br-${i}`} />
-  //     </div>
-  //   ));
-  // };
+  const formatText = (text: string) => {
+    return text.split("\n").map((line, i) => (
+      <div key={`line-${i}`}>
+        {line
+          .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
+          .map((part, index) => {
+            if (part.startsWith("#")) {
+              return (
+                <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
+                  {part}
+                </Link>
+              );
+            } else if (part.startsWith("@")) {
+              return (
+                <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
+                  {part}
+                </Link>
+              );
+            } else {
+              // Wrap plain text in a span with a key
+              return (
+                <span key={`text-${i}-${index}`}>{part}</span>
+              );
+            }
+          })}
+        <br key={`br-${i}`} />
+      </div>
+    ));
+  };
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -90,7 +90,7 @@ const Home: NextPage = () => {
                     </div>
 
                     {/* Tweet text */}
-                    <div className="line-clamp-5 text-lg text-opacity-90 mb-4">{idea.text}</div>
+                    <div className="line-clamp-5 text-lg text-opacity-90 mb-4">{formatText(idea.text)}</div>
 
                     {/* Footer */}
                     <div className="mt-auto flex flex-row items-center space-x-2">
@@ -302,7 +302,7 @@ const Home: NextPage = () => {
               <span onClick={() => refetchTags()} className="cursor-pointer"><ArrowPathIcon width={15} height={15} /></span>
             </div>
             {tagsFeed && tagsFeed.map((tag: any) => (
-              <div className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2">
+              <div key={tag.tag_name} className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2">
                 <div className="text-primary text-base font-bold">
                   #{tag.tag_name}
                 </div>
@@ -333,7 +333,7 @@ const Home: NextPage = () => {
                 </div>}
             {videosFeed2?.slice(0, 3).map((video: any, index: number) => (
               <div
-                key={index} // Ideally use a unique property like video.id
+                key={video} // Ideally use a unique property like video.id
                 className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2"
               >
                 {/* Video Title */}
