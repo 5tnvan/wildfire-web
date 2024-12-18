@@ -5,7 +5,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Livepeer } from "livepeer";
 import { NextPage } from "next";
 import ConfettiExplosion from "react-confetti-explosion";
 import { Hearts, RotatingSquare } from "react-loader-spinner";
