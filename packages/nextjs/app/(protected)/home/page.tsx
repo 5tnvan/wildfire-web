@@ -31,35 +31,35 @@ const Home: NextPage = () => {
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
   // Helper function to format text with hashtags and mentions
-  const formatText = (text: string) => {
-    return text.split("\n").map((line, i) => (
-      <div key={`line-${i}`}>
-        {line
-          .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
-          .map((part, index) => {
-            if (part.startsWith("#")) {
-              return (
-                <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
-                  {part}
-                </Link>
-              );
-            } else if (part.startsWith("@")) {
-              return (
-                <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
-                  {part}
-                </Link>
-              );
-            } else {
-              // Wrap plain text in a span with a key
-              return (
-                <span key={`text-${i}-${index}`}>{part}</span>
-              );
-            }
-          })}
-        <br key={`br-${i}`} />
-      </div>
-    ));
-  };
+  // const formatText = (text: string) => {
+  //   return text.split("\n").map((line, i) => (
+  //     <div key={`line-${i}`}>
+  //       {line
+  //         .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
+  //         .map((part, index) => {
+  //           if (part.startsWith("#")) {
+  //             return (
+  //               <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
+  //                 {part}
+  //               </Link>
+  //             );
+  //           } else if (part.startsWith("@")) {
+  //             return (
+  //               <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
+  //                 {part}
+  //               </Link>
+  //             );
+  //           } else {
+  //             // Wrap plain text in a span with a key
+  //             return (
+  //               <span key={`text-${i}-${index}`}>{part}</span>
+  //             );
+  //           }
+  //         })}
+  //       <br key={`br-${i}`} />
+  //     </div>
+  //   ));
+  // };
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -90,7 +90,7 @@ const Home: NextPage = () => {
                     </div>
 
                     {/* Tweet text */}
-                    <div className="line-clamp-5 text-lg text-opacity-90 mb-4">{formatText(idea.text)}</div>
+                    <div className="line-clamp-5 text-lg text-opacity-90 mb-4">{idea.text}</div>
 
                     {/* Footer */}
                     <div className="mt-auto flex flex-row items-center space-x-2">
