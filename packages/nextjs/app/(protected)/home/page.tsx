@@ -30,7 +30,6 @@ const Home: NextPage = () => {
   const { loading: loadingShortsFeed, feed: shortsFeed, fetchMore: fetchMoreShorts } = useShortsFeed("default", 6);
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
-  // Helper function to format text with hashtags and mentions
   const formatText = (text: string) => {
     return text.split("\n").map((line, i) => (
       <div key={`line-${i}`}>
