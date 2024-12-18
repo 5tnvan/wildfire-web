@@ -39,10 +39,6 @@ import { insertLike } from "~~/utils/wildfire/crud/idea_fires";
 import { insertReply } from "~~/utils/wildfire/crud/idea_replies";
 import { incrementSparkViews } from "~~/utils/wildfire/incrementSparkViews";
 
-export const livepeerClient = new Livepeer({
-  apiKey: process.env.NEXT_PUBLIC_LIVEPEER_API_KEY, // Your API key
-});
-
 const Video: NextPage = () => {
   const { spark_id } = useParams();
   const { loading: loadingIdea, idea, posterProfile, followers, following, followed, likedByUser } = useIdea(spark_id);
