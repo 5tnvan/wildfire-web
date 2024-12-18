@@ -2690,19 +2690,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-compose-refs@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@radix-ui/react-compose-refs@npm:1.1.1"
-  peerDependencies:
-    "@types/react": "*"
-    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 1be82f9f7fab96cc10f167a2e4f976e0135a63d473334f664c06f02af13bc5ea1994cb0505f89ed190d756cb65d57506721c030908af07e49b9e3cfd36044f33
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-context@npm:1.1.0":
   version: 1.1.0
   resolution: "@radix-ui/react-context@npm:1.1.0"
@@ -2846,25 +2833,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-label@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@radix-ui/react-label@npm:2.1.1"
-  dependencies:
-    "@radix-ui/react-primitive": 2.0.1
-  peerDependencies:
-    "@types/react": "*"
-    "@types/react-dom": "*"
-    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    "@types/react-dom":
-      optional: true
-  checksum: 40525096bf6fb5a1cfbf5c87aa46fd13d1329155fa62a42e35b4b55db5559d42081b97e77bf5f7ac45064fdae947ee6f78abb1f55b18821760a5712492243e6d
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-popover@npm:^1.0.7":
   version: 1.1.2
   resolution: "@radix-ui/react-popover@npm:1.1.2"
@@ -2985,25 +2953,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-primitive@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@radix-ui/react-primitive@npm:2.0.1"
-  dependencies:
-    "@radix-ui/react-slot": 1.1.1
-  peerDependencies:
-    "@types/react": "*"
-    "@types/react-dom": "*"
-    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    "@types/react-dom":
-      optional: true
-  checksum: d75882209101155f20babcff9475b887929db6473cd8e5b56d0c24d24d0042202e0fa785e6d6c6b322a96d9777cd0ef7610def9e11ea69839c6b204f1c99cf16
-  languageName: node
-  linkType: hard
-
 "@radix-ui/react-select@npm:^2.0.0":
   version: 2.1.2
   resolution: "@radix-ui/react-select@npm:2.1.2"
@@ -3084,21 +3033,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 3c9cd90aabf08f541e20dbecb581744be01c552a0cd16e90d7c218381bcc5307aa8a6013d045864e692ba89d3d8c17bfae08df18ed18be6d223d9330ab0302fa
-  languageName: node
-  linkType: hard
-
-"@radix-ui/react-slot@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@radix-ui/react-slot@npm:1.1.1"
-  dependencies:
-    "@radix-ui/react-compose-refs": 1.1.1
-  peerDependencies:
-    "@types/react": "*"
-    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: ac391b921dcde1a71db8307247b36cd6908e0886d7a7b0babeb25158292bc29b61ccfb3f83279bfad11fe1f0f90e3e2f3de93b1174f36d107d77b073fe1a652a
   languageName: node
   linkType: hard
 
@@ -3866,24 +3800,6 @@ __metadata:
     "@swc/counter": ^0.1.3
     tslib: ^2.4.0
   checksum: d4f207b191e54b29460804ddf2984ba6ece1d679a0b2f6a9c765dcf27bba92c5769e7965668a4546fb9f1021eaf0ff9be4bf5c235ce12adcd65acdfe77187d11
-  languageName: node
-  linkType: hard
-
-"@tabler/icons-react@npm:^3.26.0":
-  version: 3.26.0
-  resolution: "@tabler/icons-react@npm:3.26.0"
-  dependencies:
-    "@tabler/icons": 3.26.0
-  peerDependencies:
-    react: ">= 16"
-  checksum: 358cfa01b5a11f304bfc171a0377e4e3b401f6b02a78c67bf74dcc55f5ba8d9941168d37271d1ed19d7de4c604ab91ee5a758c56a6bbd5d24e7ea1d194067363
-  languageName: node
-  linkType: hard
-
-"@tabler/icons@npm:3.26.0":
-  version: 3.26.0
-  resolution: "@tabler/icons@npm:3.26.0"
-  checksum: 38225efe8d7f04ee8f2a83848d219a147593971cdf8f2095f94cae5d3354956e8e60b42e3878459214315bc49694b48bac9ff357e78d62c572861d719bcd8c53
   languageName: node
   linkType: hard
 
@@ -15056,10 +14972,8 @@ __metadata:
     "@apollo/client": ^3.10.5
     "@ffmpeg/ffmpeg": ^0.12.10
     "@livepeer/react": ^4.2.9
-    "@radix-ui/react-label": ^2.1.1
     "@supabase/ssr": ^0.3.0
     "@supabase/supabase-js": ^2.43.4
-    "@tabler/icons-react": ^3.26.0
     clsx: ^2.1.1
     emoji-picker-react: ^4.12.0
     framer-motion: ^11.2.10

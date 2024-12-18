@@ -62,7 +62,6 @@ export const fetchRepliesNotifications = async (user_id: any) => {
       .select("*, replier:reply_by(id, username, avatar_url)")
       .eq("user_id", user_id)
       .order("created_at", { ascending: false });
-      console.log("heyyyy", data);
     return data;
   } catch (error) {
     console.error("Error fetching notifications:", error);
@@ -101,8 +100,6 @@ export const fetchDirectTipsNotifications = async (user_id: any) => {
       .filter("direct_tips.tipped.id", "eq", user_id); // Apply filter on wallet_id_to
 
     if (error) throw error;
-
-    console.log("juuu", data);
 
     return data;
   } catch (error) {
