@@ -1,7 +1,6 @@
 "use server";
 
 import { User } from "@supabase/supabase-js";
-import { fetchUser } from "./fetchUser";
 import { createClient } from "~~/utils/supabase/server";
 
 /**

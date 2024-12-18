@@ -2,11 +2,10 @@
 
 import { useContext } from "react";
 import { NextPage } from "next";
-import { ArrowDownCircleIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "~~/app/context";
 import { Avatar } from "~~/components/Avatar";
 import { useCreators } from "~~/hooks/wildfire/useCreators";
-import { useGlobalState } from "~~/services/store/store";
 import { insertFollow } from "~~/utils/wildfire/crud/followers";
 
 const Creators: NextPage = () => {

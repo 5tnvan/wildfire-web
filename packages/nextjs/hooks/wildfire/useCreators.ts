@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { fetchFollowed } from "~~/utils/wildfire/fetch/fetchFollows";
 import { fetchProfilesWithRange, fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 

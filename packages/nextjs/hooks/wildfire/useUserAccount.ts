@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { fetchRequestAccountDelete } from "~~/utils/wildfire/fetch/fetchAccount";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
