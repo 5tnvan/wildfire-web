@@ -25,8 +25,6 @@ const Landing: NextPage = () => {
   const { refetchAuthUserFollows } = useContext(AuthUserFollowsContext);
   const [hovering, setHovering] = useState(false);
 
-  console.log(React.version);
-
   //TIP MODAL
   const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);
 
@@ -56,7 +54,7 @@ const Landing: NextPage = () => {
               <span className="text-blue-500 font-semibold">$FUSE</span> rewards.
             </h2>
             {isAuthenticated && (
-              <Link href="/feed" className="btn btn-primary text-base">
+              <Link href="/home" className="btn btn-primary text-base">
                 Launch App
               </Link>
             )}
@@ -89,7 +87,7 @@ const Landing: NextPage = () => {
                       Capture a moment a day and let your story unleash.
                     </p>
                     {isAuthenticated && (
-                      <Link href="/feed" className="btn text-base">
+                      <Link href="/home" className="btn text-base">
                         Launch App
                       </Link>
                     )}
@@ -128,7 +126,7 @@ const Landing: NextPage = () => {
                     </div>
                     <p className="text-neutral-200 text-left mt-4">From an idea to a revolution. Speak your passion.</p>
                     {isAuthenticated && (
-                      <Link href="/feed" className="btn text-base">
+                      <Link href="/home" className="btn text-base">
                         Launch App
                       </Link>
                     )}

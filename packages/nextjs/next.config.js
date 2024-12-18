@@ -22,7 +22,17 @@ const nextConfig = {
       "wildfire.b-cdn.net",
       "images.unsplash.com",
       "api.producthunt.com",
+      "aceternity.com",
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
+    ];
   },
 };
 

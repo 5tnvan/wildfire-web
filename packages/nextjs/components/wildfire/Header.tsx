@@ -36,12 +36,26 @@ export const Header = () => {
           />
         </Link>
 
-        <div className=" lg:flex lg:flex-nowrap ">
+        <div className=" lg:flex w-full max-w-fit">
           {isAuthenticated == true && profile && <UserMenu launchApp={true} wildpay={false} />}
           {isAuthenticated == false && (
-            <Link href="/login" className="btn btn-outline btn-small mx-2">
+            <>
+            {/* <Link href="/login" className="btn btn-outline btn-small mx-2">
               Login
-            </Link>
+            </Link> */}
+              <Link href="/login"  className="flex flex-row px-3 py-3 h-fit font-semibold justify-center items-center w-fit rounded-xl bg-white text-black border border-neutral-900 text-sm">
+                <div className="mr-2 flex flex-row justify-center items-center">
+                  <Image
+                    src={`/spark/spark-logo.png`}
+                    alt="spark logo"
+                    height={120}
+                    width={120}
+                    className="w-4 h-auto"
+                    draggable={false}
+                  />
+                </div>
+                Login
+              </Link></>
           )}
         </div>
       </div>

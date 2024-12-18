@@ -6,7 +6,7 @@ import SparkApp from "./sparkLayout";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
-import { fetchVideo } from "~~/utils/wildfire/fetch/fetchVideo";
+import { fetchShort } from "~~/utils/wildfire/fetch/fetch3Sec";
 
 /**
  * SE-2 APP LAYOUT
@@ -17,7 +17,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const [videoMetadata, setVideoMetadata] = useState<any>();
 
   const init = async () => {
-    const res = await fetchVideo(video_id);
+    const res = await fetchShort(video_id);
     setVideoMetadata(res);
   };
 

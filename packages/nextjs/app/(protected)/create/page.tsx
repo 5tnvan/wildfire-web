@@ -63,13 +63,13 @@ const Create: NextPage = () => {
           >
             <div className="flex flex-row items-center justify-between">
               <h2 className="text-white text-2xl text-left font-bold mb-0">Upload video</h2>
-              <p className="text-primary">up to 15 mins</p>
+              <p className="text-primary">up to 10 mins</p>
             </div>
             <p className="text-neutral-200 text-left mt-4">Upload long-format video.</p>
-            <button className="btn text-base" disabled>
-              <VideoCameraIcon width={15} className="text-white" />
-              <span className="text-white">Coming soon</span>
-            </button>
+            <Link href="/create/long-form" className="btn text-base">
+              <VideoCameraIcon width={15} />
+              <span className="">Upload video</span>
+            </Link>
           </motion.div>
         </div>
       </div>

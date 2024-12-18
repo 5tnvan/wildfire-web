@@ -40,7 +40,8 @@ export const useDailyPostLimitLongForm = () => {
         const diff = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60); // difference in hours
 
         if (diff < 24) {
-          setLimit(true);
+          //change this to true
+          setLimit(false);
           setPostLeft(0);
         } else {
           setLimit(false);

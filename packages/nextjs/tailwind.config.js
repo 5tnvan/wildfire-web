@@ -12,7 +12,7 @@ module.exports = {
           primary: "#FFAA00", // orange
           "primary-content": "#030712", //grey 950
           secondary: "#F10849", // red-pinkish
-          "secondary-content": "#1f2937", //grey 800
+          "secondary-content": "#e5e7eb", //grey 800
           accent: "#FFAA00", //orange
           "accent-content": "#030712", //grey 950
           neutral: "#4b5563", // grey 600

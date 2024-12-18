@@ -30,8 +30,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
   const fusePrice = useGlobalState(state => state.fuseCurrency.price);
   const [playbackInfo, setPlaybackInfo] = useState<any>(null);
 
-  console.log("data", data);
-
   //CONSUME PROVIDERS
   const { isAuthenticated } = useContext(AuthContext);
   const { profile } = useContext(AuthUserContext);

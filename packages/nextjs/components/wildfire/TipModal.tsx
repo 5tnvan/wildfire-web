@@ -13,9 +13,11 @@ import { useOutsideClick, useScaffoldWriteContract, useTargetNetwork } from "~~/
 import { useGlobalState } from "~~/services/store/store";
 import { convertUsdToEth } from "~~/utils/wildfire/convertUsdToEth";
 import { insertTip } from "~~/utils/wildfire/crud/3sec_tips";
+import { insertDirectTip } from "~~/utils/wildfire/crud/direct_tips";
 
-const TipModal = ({ data, video_id, onClose }: any) => {
-  console.log("video_id", video_id);
+const TipModal = ({ data, short_id, onClose }: any) => {
+  console.log("short_id", short_id);
+  console.log("data", data);
   const router = useRouter();
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
   const fusePrice = useGlobalState(state => state.fuseCurrency.price);
@@ -95,7 +97,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
   const saveTransaction = (hash: any) => {
     console.log(
       "saveTransaction",
-      video_id,
+      short_id,
       targetNetwork.id,
       hash,
       tokenAmountWithFee,
@@ -103,7 +105,9 @@ const TipModal = ({ data, video_id, onClose }: any) => {
       message,
       connectedAddress,
     );
-    insertTip(video_id, targetNetwork.id, hash, tokenAmountWithFee, "currency", message, connectedAddress);
+    {short_id && insertTip(short_id, targetNetwork.id, hash, tokenAmountWithFee, "currency", message, connectedAddress)}
+    {!short_id && insertDirectTip(targetNetwork.id, hash, tokenAmountWithFee, message, connectedAddress, data.wallet_id)}
+    
     setSuccessHash(hash);
   };
 
@@ -111,7 +115,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
    * ACTION: Pay
    **/
   const handlePay = async () => {
-    const constructedMessage = video_id ? `${video_id} ${message}` : message;
+    const constructedMessage = short_id ? `${short_id} ${message}` : message;
 
     try {
       await pay(
@@ -144,7 +148,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
 
   const handleClose = () => {
     if (successHash) {
-      router.push("/v/" + video_id);
+      router.push("/v/" + short_id);
     } else {
       onClose();
     }
@@ -156,7 +160,7 @@ const TipModal = ({ data, video_id, onClose }: any) => {
         <ChevronLeftIcon width={20} color="black" />
         Back
       </div>
-      <div ref={insideRef} id="wildui-fastpay" className="bg-base-300 rounded-lg p-5">
+      <div ref={insideRef} id="wildui-fastpay" className="glow bg-base-300 rounded-lg p-5">
         {data && data.wallet_id && !successHash && (
           <>
             {/* AVATAR */}

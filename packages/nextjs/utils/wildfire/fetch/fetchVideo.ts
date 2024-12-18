@@ -3,7 +3,7 @@
 import { createClient } from "~~/utils/supabase/server";
 
 /**
- * FETCH: fetchRandomFeed()
+ * FETCH: fetchVideo()
  * DB: supabase
  * TABLE: "3sec"
  **/
@@ -11,9 +11,9 @@ import { createClient } from "~~/utils/supabase/server";
 export const fetchVideo = async (video_id: any) => {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("3sec")
+    .from("long_form")
     .select(
-      "id, thumbnail_url, profile:user_id(username), country:country_id(id, name)"
+      `*, profile:user_id(username), long_form_views(*), long_form_fires(*), long_form_comments(*, profile:user_id(*), long_form_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .eq("id", video_id)
     .single();
@@ -25,4 +25,3 @@ export const fetchVideo = async (video_id: any) => {
 
   return data;
 };
-

@@ -88,6 +88,8 @@ export const fetchRandomFeed = async (limit: any) => {
     .neq("suppressed", true)
     .limit(limit);
 
+    console.log("data", data);
+
   return data;
 };
 
@@ -251,34 +253,24 @@ export const fetchMostViewed = async (limit: any) => {
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchUserFeedAll = async (user_id: any) => {
+export const fetchUserShortsFeedAll = async (user_id: any) => {
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec")
-    .select(
-      `id, thumbnail_url, 
-      video_url, created_at, country:country_id(name), 
-      profile:user_id(id, username, avatar_url, wallet_id), 
-      3sec_views(view_count), 3sec_fires(count), 
-      3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
-    )
+    .select('id', { count: 'exact'})
     .eq("user_id", user_id)
-    .limit(3)
-    .order("created_at", { ascending: false });
-
-  console.log("fetchUserFeedAll", user_id, data);
 
   return data;
 };
 
 /**
- * FETCH: fetchUserFeedWithRange()
+ * FETCH: fetchUserShortsFeedWithRange()
  * DB: supabase
  * TABLE: "3sec_desc_view"
  **/
 
-export const fetchUserFeedWithRange = async (user_id: string, from: any, to: any) => {
-  console.log("fetchUserFeedWithRange", user_id, from, to);
+export const fetchUserShortsFeedWithRange = async (user_id: string, from: any, to: any) => {
+  console.log("fetchUserShortsFeedWithRange", user_id, from, to);
   const supabase = createClient();
   const { data } = await supabase
     .from("3sec")

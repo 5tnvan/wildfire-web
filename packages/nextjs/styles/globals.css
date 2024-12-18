@@ -48,9 +48,9 @@ p {
   box-sizing: border-box;
 }
 
-*::-webkit-scrollbar {
-  display: none;
-}
+/* *::-webkit-scrollbar {
+  
+} */
 
 /* override */
 .stat {
@@ -116,13 +116,24 @@ img {
 }
 
 /* Remove outline on focus for comment textarea input */
-.textarea:focus {
+textarea {
+  resize: none;
+}
+textarea:focus {
   outline: none;
   outline-width: 0;
 }
 input:focus {
   outline: none;
   outline-width: 0;
+}
+
+.border-b-2 {
+  border-bottom-width: 1px;
+}
+
+.border-1 {
+  border-width: 1px;
 }
 
 /* STEPS */
@@ -133,7 +144,14 @@ input:focus {
 @media (max-width: 640px) {
   .h-screen-custom {
     height: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .h-screen-custom {
+    height: auto !important;
   } 
+  .long_form {display: none}
 }
 
 @media (min-width: 768px) { 

@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { NextPage } from "next";
 import VideoCard from "~~/components/wildfire/VideoCard";
-import { useVideo } from "~~/hooks/wildfire/useVideo";
+import { useShorts } from "~~/hooks/wildfire/useShorts";
 
 const Video: NextPage = () => {
   const { video_id } = useParams();
-  const { loading: loadingFeed, feed, fetchMore } = useVideo(video_id);
+  const { loading: loadingFeed, feed, fetchMore } = useShorts(video_id);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  console.log("feed", feed);
 
   // Toggle mute state
   const handleOnCtaMute = (mute: any) => {

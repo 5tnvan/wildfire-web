@@ -4,6 +4,28 @@ import { fetchLiked } from "./fetchLikes";
 import { createClient } from "~~/utils/supabase/server";
 
 /**
+ * FETCH: fetchShort()
+ * DB: supabase
+ * TABLE: "3sec"
+ **/
+
+export const fetchShort = async (video_id: any) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("3sec")
+    .select("id, thumbnail_url, profile:user_id(username), country:country_id(id, name)")
+    .eq("id", video_id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching short:", error);
+    return null;
+  }
+
+  return data;
+};
+
+/**
  * FETCH: fetch3Sec()
  * DB: supabase
  * TABLE: "3sec"

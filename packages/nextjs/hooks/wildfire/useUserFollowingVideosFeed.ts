@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchUserFeedFromArrayOfFollowing } from "../../utils/wildfire/fetch/fetchFeeds";
 import { fetchUser } from "../../utils/wildfire/fetch/fetchUser";
 import { fetchFollowing } from "~~/utils/wildfire/fetch/fetchFollows";
 import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
+import { fetchUserFeedFromArrayOfFollowing } from "~~/utils/wildfire/fetch/fetchVideoFeeds";
 
 const getRange = (page: number, range: number) => {
   const from = page * range;
@@ -16,8 +16,7 @@ const getRange = (page: number, range: number) => {
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useUserFollowedFeed = () => {
-  const range = 3;
+export const useUserFollowingVideosFeed = (range: any) => {
 
   const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);

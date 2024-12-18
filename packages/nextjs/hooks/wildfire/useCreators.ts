@@ -57,8 +57,7 @@ const fetchTransactionData = async (address: string, client: ApolloClient<any>) 
   }
 };
 
-export const useCreators = () => {
-  const range = 20;
+export const useCreators = (range: number) => {
 
   const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);

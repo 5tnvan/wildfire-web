@@ -13,7 +13,7 @@ import { insertFollow } from "~~/utils/wildfire/crud/followers";
 
 const Creators: NextPage = () => {
   const { user } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, refetch } = useCreators();
+  const { loading: loadingFeed, feed, refetch } = useCreators(20);
   const price = useGlobalState(state => state.nativeCurrency.price);
 
   const handleFollow = async (profile_id: any, event: any) => {
@@ -62,12 +62,12 @@ const Creators: NextPage = () => {
                 <div className="">
                   {profile.isFollowed ? (
                     <a href={`/${profile.username}`} className="btn btn-primary relative w-1/2">
-                      <span>Following</span>
+                      <span>Connected</span>
                       {/* <CheckCircleIcon width={18} className="absolute right-3" /> */}
                     </a>
                   ) : (
                     <div className="btn btn-outline w-1/2" onClick={event => handleFollow(profile.id, event)}>
-                      Follow
+                      Connect
                     </div>
                   )}
                   {(profile.ethereumData?.paymentChanges?.length > 0 ||

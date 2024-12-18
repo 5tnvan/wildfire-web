@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { AuthContext } from "../context";
 import { Sidebar } from "~~/components/wildfire/Sidebar";
 import { Topbar } from "~~/components/wildfire/Topbar";
@@ -12,7 +12,10 @@ import { Topbar } from "~~/components/wildfire/Topbar";
  **/
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { username, video_id } = useParams();
+  /* CHECK ROUTES */
+  const pathname = usePathname();
+  const home = pathname === "/home";
+  const { username, video_id, spark_id } = useParams();
 
   /* CONSUME CONTEXT */
   const { isAuthenticated } = useContext(AuthContext);
@@ -22,7 +25,11 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
    * Redirect to login, if not authenticated
    */
   useEffect(() => {
-    if (isAuthenticated == false && !(username || video_id)) {
+    if (
+      isAuthenticated == false 
+      && !(username || video_id || spark_id)
+      && !home
+    ) {
       router.push("/login");
     }
   }, [isAuthenticated, username, video_id, router]);

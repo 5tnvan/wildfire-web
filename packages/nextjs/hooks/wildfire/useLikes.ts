@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchAllApproved } from "../../utils/wildfire/fetch/fetchFeeds";
+import { fetchAllApproved } from "../../utils/wildfire/fetch/fetchShortsFeeds";
 import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 

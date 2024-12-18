@@ -90,7 +90,7 @@ const TransactionsModal = ({ data, onClose }: any) => {
       <div
         ref={insideRef}
         id="wildui-fastpay"
-        className="content p-5 rounded-lg bg-base-200 w-full md:w-1/2 h-2/3 overflow-hidden relative"
+        className="glow content p-5 rounded-lg bg-base-200 w-full md:w-1/2 h-2/3 overflow-hidden relative"
       >
         <div className="flex flex-col items-center mb-2">
           <div className="font-semibold items-center">@{data.username}</div>

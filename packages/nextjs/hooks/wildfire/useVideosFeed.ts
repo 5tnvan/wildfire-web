@@ -1,22 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  fetchLatestTipped,
-  fetchMostViewed,
-  fetchRandomFeed,
-  fetchWithin48Hrs,
-} from "~~/utils/wildfire/fetch/fetchFeeds";
-import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
-import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
+import { fetchLastestFeed, fetchMostViewedFeed, fetchRandomFeed } from "~~/utils/wildfire/fetch/fetchVideoFeeds";
+
+const getRange = (page: number, range: number) => {
+  const from = page * range;
+  const to = from + range - 1;
+  return { from, to };
+};
 
 /**
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useFeed = (filter: any) => {
-  const range = 3;
-
+export const useVideosFeed = (filter: any, limit: number, range: number) => {
   const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);
   const [page, setPage] = useState(0);
@@ -37,36 +34,26 @@ export const useFeed = (filter: any) => {
   const fetchFeed = async () => {
     try {
       setLoading(true);
-      const user = await fetchUser();
+      const { from, to } = getRange(page, range);
 
       let data;
 
       // Use switch for better readability
       switch (filter) {
-        case "within48hrs":
-          data = await fetchWithin48Hrs(range);
-          break;
-        case "latestTipped":
-          data = await fetchLatestTipped(range);
+        case "latest":
+          data = await fetchLastestFeed(from, to);
           break;
         case "mostViewed":
-          data = await fetchMostViewed(range);
+          data = await fetchMostViewedFeed(from, to);
           break;
         default:
-          data = await fetchRandomFeed(range);
+          data = await fetchRandomFeed(limit);
       }
 
-      if (data && user) {
-        // Check if each post is liked by the user
-        const likedPostsPromises = data.map(async (post: any) => {
-          return fetchLikes(post, user.user?.id);
-        });
-
-        // Wait for all promises to resolve
-        const masterData = await Promise.all(likedPostsPromises);
-
-        // Update the feed state with the new data
-        setFeed(existingFeed => [...existingFeed, ...masterData]);
+      if (data) {
+        console.log("data", data);
+        // Append new data to the existing feed
+        setFeed(prevFeed => [...prevFeed, ...data]);
       }
     } catch (error) {
       console.error("Error fetching feed:", error);

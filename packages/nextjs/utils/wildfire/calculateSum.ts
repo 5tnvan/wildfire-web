@@ -8,11 +8,8 @@ export const calculateSum = (transactions: any) => {
       return sum + BigInt(paymentChange.value);
     }, BigInt(0)) || BigInt(0);
 
-  console.log("totalSum (wei)", totalSum.toString());
-
   // Convert the BigInt total sum from wei to Ether
   const totalSumEth = Number(formatEther(totalSum.toString())); // Convert to string for formatEther
-  console.log("totalSumEth", totalSumEth);
 
   return totalSumEth;
 };

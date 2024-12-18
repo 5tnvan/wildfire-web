@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchUserFeedWithRange } from "../../utils/wildfire/fetch/fetchFeeds";
 import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
+import { fetchUserShortsFeedWithRange } from "../../utils/wildfire/fetch/fetchShortsFeeds";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 const getRange = (page: number, range: number) => {
@@ -43,7 +43,7 @@ export const useProfileFeed = () => {
     const { from, to } = getRange(page, range);
     const user = await fetchUser();
     if (user.user) {
-      const data = await fetchUserFeedWithRange(user.user.id, from, to);
+      const data = await fetchUserShortsFeedWithRange(user.user.id, from, to);
 
       if (data) {
         // Check if each post is liked by the user

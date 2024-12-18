@@ -29,7 +29,7 @@ const Login: NextPage = () => {
       await refetchAuthUser();
       await refetchAuthUserFollows();
       await refetchAuthUserAccount();
-      router.push("/feed");
+      router.push("/home");
     } catch (error) {
       setError("Login failed. Please try again.");
       setIsProcessing(false);
@@ -39,12 +39,25 @@ const Login: NextPage = () => {
   return (
     <>
       {/* CONTENT */}
-      <div className="flex flex-col justify-center items-center px-5 grow">
-        <h1 className="text-3xl my-5">
-          Welcome back
-          <div className="tooltip tooltip-top ml-2" data-tip="Sign in using your Kinnect Wallet credentials.">
+      <div className="flex flex-col justify-center items-center px-5 grow transform transition-transform duration-300 hover:-translate-y-2">
+        <div className="bg-base-200 px-8 py-12 rounded-xl">
+        
+        
+        <h1 className=" my-5 flex flex-row justify-center items-center">
+        <div className="mr-3">
+                      <Image
+                        src={`/spark/spark-logo.png`}
+                        alt="spark logo"
+                        height={120}
+                        width={120}
+                        className="w-6 h-auto"
+                        draggable={false}
+                      />
+                    </div>
+          <div className="text-3xl font-medium opacity-85">Welcome back</div>
+          <div className="tooltip tooltip-top ml-2 mt-1" data-tip="Sign in using your Kinnect Wallet credentials.">
             <button className="ml-1">
-              <InformationCircleIcon width={14} />
+              <InformationCircleIcon width={20} />
             </button>
           </div>
         </h1>
@@ -130,6 +143,9 @@ const Login: NextPage = () => {
             </Link>
           </div> */}
         </div>
+
+        </div>
+        
       </div>
     </>
   );

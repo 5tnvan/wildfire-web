@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchUserFeedWithRange } from "../../utils/wildfire/fetch/fetchFeeds";
-import { fetchLikes } from "../../utils/wildfire/fetch/fetchLikes";
-import { fetchProfileByUsername } from "~~/utils/wildfire/fetch/fetchProfile";
+import { fetchUser } from "../../utils/wildfire/fetch/fetchUser";
+import { fetchFollowing } from "~~/utils/wildfire/fetch/fetchFollows";
+import { fetchLikes } from "~~/utils/wildfire/fetch/fetchLikes";
+import { fetchUserFeedFromArrayOfFollowing } from "~~/utils/wildfire/fetch/fetchIdeaFeeds";
 
 const getRange = (page: number, range: number) => {
   const from = page * range;
@@ -15,8 +16,7 @@ const getRange = (page: number, range: number) => {
  * useFeed HOOK
  * Use this to get feed of videos
  **/
-export const useUserFeedByUsername = (username: any) => {
-  const range = 3;
+export const useUserFollowingSparksFeed = (range: any) => {
 
   const [loading, setLoading] = useState(false);
   const [feed, setFeed] = useState<any[]>([]);
@@ -41,22 +41,33 @@ export const useUserFeedByUsername = (username: any) => {
   const fetchFeed = async () => {
     setLoading(true);
     const { from, to } = getRange(page, range);
-    const profile = await fetchProfileByUsername(username);
-    if (profile) {
-      const data = await fetchUserFeedWithRange(profile.id, from, to);
+
+    // Get list of auth's user following
+    const user = await fetchUser();
+    const following = await fetchFollowing(user.user?.id);
+
+    if (following) {
+      const followingArray = following.map((f: any) => f.following.id); // Create an array of IDs from following
+
+      const { data } = await fetchUserFeedFromArrayOfFollowing(followingArray, from, to);
 
       if (data) {
-        // Check if each post is liked by the user
         const likedPostsPromises = data.map(async (post: any) => {
-          return fetchLikes(post, profile.id);
+          const { liked } = await fetchLikes(post, user.user?.id);
+          return { ...post, liked: !!liked }; // Add a property 'liked' to each post indicating whether it's liked by the user
         });
 
-        const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
-        if (data.length < range) setHasMore(false); // No more data to fetch
+        // Wait for all promises to resolve
+        const masterData = await Promise.all(likedPostsPromises);
+
+        if (data.length < range) {
+          setHasMore(false); // No more data to fetch
+        }
+
         setFeed(existingFeed => [...existingFeed, ...masterData]);
       }
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

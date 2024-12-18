@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "~~/utils/supabase/client";
-import { fetchCommentsNotifications, fetchFiresNotifications, fetchFollowersNotifications, fetchTipsNotifications } from "~~/utils/wildfire/fetch/fetchNotifications";
+import { fetchCommentsNotifications, fetchDirectTipsNotifications, fetchFiresNotifications, fetchFollowersNotifications, fetchRepliesNotifications, fetchTipsNotifications } from "~~/utils/wildfire/fetch/fetchNotifications";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 /**
@@ -15,7 +15,9 @@ export const useNotifications = () => {
   const [followersNotifications, setFollowersNotifications] = useState<any>();
   const [firesNotifications, setFiresNotifications] = useState<any>();
   const [commentsNotifications, setCommentsNotifications] = useState<any>();
+  const [repliesNotifications, setRepliesNotifications] = useState<any>();
   const [tipsNotifications, setTipsNotifications] = useState<any>();
+  const [directTipsNotifications, setDirectTipsNotifications] = useState<any>();
   const [triggerRefetch, setTriggerRefetch] = useState(false);
   const supabase = createClient();
 
@@ -31,11 +33,15 @@ export const useNotifications = () => {
       const followersNotificationsRes = await fetchFollowersNotifications(user?.user?.id);
       const firesNotificationsRes = await fetchFiresNotifications(user?.user?.id);
       const commentsNotificationsRes = await fetchCommentsNotifications(user?.user?.id);
+      const repliesNotificationsRes = await fetchRepliesNotifications(user?.user?.id);
       const tipsNotificationsRes = await fetchTipsNotifications(user?.user?.id);
+      const directTipsNotificationsRes = await fetchDirectTipsNotifications(user?.user?.id);
       setFollowersNotifications(followersNotificationsRes);
       setFiresNotifications(firesNotificationsRes);
       setCommentsNotifications(commentsNotificationsRes);
+      setRepliesNotifications(repliesNotificationsRes);
       setTipsNotifications(tipsNotificationsRes);
+      setDirectTipsNotifications(directTipsNotificationsRes);
     }
     setIsLoading(false);
   };
@@ -53,7 +59,15 @@ export const useNotifications = () => {
     console.log("Change received!", payload);
     refetch();
   };
+  const handleRepliesChange = (payload: any) => {
+    console.log("Change received!", payload);
+    refetch();
+  };
   const handleTipsChange = (payload: any) => {
+    console.log("Change received!", payload);
+    refetch();
+  };
+  const handleDirectTipsChange = (payload: any) => {
     console.log("Change received!", payload);
     refetch();
   };
@@ -78,8 +92,18 @@ export const useNotifications = () => {
     )
     .on(
       "postgres_changes",
+      { event: "*", schema: "public", table: "notifications_replies", filter: `user_id=eq.${user?.user?.id}` },
+      handleRepliesChange,
+    )
+    .on(
+      "postgres_changes",
       { event: "*", schema: "public", table: "notifications_tips", filter: `user_id=eq.${user?.user?.id}` },
       handleTipsChange,
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "notifications_direct_tips", filter: `user_id=eq.${user?.user?.id}` },
+      handleDirectTipsChange,
     )
     .subscribe();
 
@@ -87,5 +111,5 @@ export const useNotifications = () => {
     init();
   }, [triggerRefetch]);
 
-  return { isLoading, followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch };
+  return { isLoading, followersNotifications, firesNotifications, commentsNotifications, repliesNotifications, tipsNotifications, directTipsNotifications, refetch };
 };

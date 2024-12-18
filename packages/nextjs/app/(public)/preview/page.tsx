@@ -5,16 +5,14 @@ import Link from "next/link";
 import { NextPage } from "next";
 import { AuthContext } from "~~/app/context";
 import VideoCard from "~~/components/wildfire/VideoCard";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
+import { useShortsFeed } from "~~/hooks/wildfire/useShortsFeed";
 
 const Preview: NextPage = () => {
   const { isAuthenticated } = useContext(AuthContext);
-  const { loading: loadingFeed, feed, fetchMore } = useFeed("default");
+  const { loading: loadingFeed, feed, fetchMore } = useShortsFeed("default", 3);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true); // New state for mute toggle
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  console.log(feed);
 
   // Callback function for Intersection Observer
   const callback = (entries: any) => {
@@ -53,7 +51,7 @@ const Preview: NextPage = () => {
     return (
       <>
         <div className="flex grow justify-center items-center">
-          <Link className="btn btn-primary" href="/watch">
+          <Link className="btn btn-primary" href="/shorts">
             Go to the App
           </Link>
         </div>

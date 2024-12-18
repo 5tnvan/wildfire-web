@@ -6,6 +6,7 @@ import { Search } from "./Search";
 import { UserMenu } from "./UserMenu";
 import { Notification } from "./UserNotification";
 import { AuthContext } from "~~/app/context";
+import Image from "next/image";
 
 export const Topbar = () => {
   /* CONSUME CONTEXT */
@@ -18,9 +19,19 @@ export const Topbar = () => {
         {isAuthenticated && <Notification />}
         {isAuthenticated && <UserMenu launchApp={false} wildpay={true} />}
         {!isAuthenticated && (
-          <Link href="/login" className="btn btn-outline btn-small mx-2">
-            Login
-          </Link>
+          <Link href="/login"  className="flex flex-row font-semibold justify-center items-center w-fit px-3 py-3 h-fit rounded-xl bg-white text-black border border-neutral-900 text-sm">
+          <div className="mr-2 flex flex-row justify-center items-center">
+            <Image
+              src={`/spark/spark-logo.png`}
+              alt="spark logo"
+              height={120}
+              width={120}
+              className="w-4 h-auto"
+              draggable={false}
+            />
+          </div>
+          Login
+        </Link>
         )}
       </div>
     </>

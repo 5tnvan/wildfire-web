@@ -58,7 +58,7 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
               </Link>
             </li>
             {wildpay && (
-              <li className="bg-blue-600 rounded-full">
+              <li className="bg-black rounded-full">
                 <Link
                   href={"https://www.kinnectwallet.com/" + profile.username}
                   target="new"
@@ -77,8 +77,8 @@ export const UserMenu = ({ launchApp, wildpay }: any) => {
             )}
             {launchApp && (
               <li className="bg-base-200 rounded-full">
-                <Link href={"/feed"} className="flex flex-row justify-between">
-                  <Image alt="wildpay" src="/fire-icon-36-36.png" width={18} height={18} />
+                <Link href={"/home"} className="flex flex-row justify-between">
+                  <Image alt="wildpay" src="/spark/spark-logo.png" width={18} height={18} />
                   <span>Launch App</span>
                   <span className="-mr-3">
                     <ChevronRightIcon width={20} />

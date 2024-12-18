@@ -11,18 +11,18 @@ import { useGlobalState } from "~~/services/store/store";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import {
   updateCommentRead,
+  updateDirectTipRead,
   updateFireRead,
   updateFollowerRead,
+  updateReplyRead,
   updateTipRead,
 } from "~~/utils/wildfire/crud/notifications";
 
 const Notifications: NextPage = () => {
-  const { followersNotifications, firesNotifications, commentsNotifications, tipsNotifications, refetch } =
+  const { followersNotifications, firesNotifications, commentsNotifications, repliesNotifications, tipsNotifications, directTipsNotifications, refetch } =
     useNotifications();
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
   const fusePrice = useGlobalState(state => state.fuseCurrency.price);
-
-  console.log("notif", firesNotifications);
 
   // Dropdown
   const dropdownRef = useRef<HTMLDetailsElement>(null);
@@ -49,9 +49,19 @@ const Notifications: NextPage = () => {
       type: "comment",
       isUnread: !notif.read,
     })),
+    ...(repliesNotifications ?? []).map((notif: any) => ({
+      ...notif,
+      type: "reply",
+      isUnread: !notif.read,
+    })),
     ...(tipsNotifications ?? []).map((notif: any) => ({
       ...notif,
       type: "tip",
+      isUnread: !notif.read,
+    })),
+    ...(directTipsNotifications ?? []).map((notif: any) => ({
+      ...notif,
+      type: "direct_tip",
       isUnread: !notif.read,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -71,9 +81,15 @@ const Notifications: NextPage = () => {
         case "comment":
           await updateCommentRead(notif.id);
           break;
+        case "reply":
+          await updateReplyRead(notif.id);
+          break;
         case "tip":
           await updateTipRead(notif.id);
           break;
+          case "direct_tip":
+            await updateDirectTipRead(notif.id);
+            break;
         default:
           break;
       }
@@ -156,6 +172,24 @@ const Notifications: NextPage = () => {
               </div>
             </Link>
           );
+        } else if (notif.type === "reply") {
+          message = (
+            <Link
+              href={"/v/" + notif.post_id}
+              onClick={() => handleNotificationClick(notif)}
+              className={`flex items-center p-4 rounded-md ${notif.isUnread && "bg-base-200"}`}
+            >
+              <div className="flex flex-row justify-between w-full items-center">
+                <div className="flex flex-row gap-1 items-center">
+                  <Avatar profile={notif.replier} width={6} height={6} />
+                  <span className="font-semibold">{notif.replier.username}</span> replied to you on a post.
+                </div>
+                <div className="text-xs opacity-75">
+                  <TimeAgo timestamp={notif.created_at} />
+                </div>
+              </div>
+            </Link>
+          );
         } else if (notif.type === "tip") {
           message = (
             <Link
@@ -172,6 +206,40 @@ const Notifications: NextPage = () => {
                     {convertEthToUsd(
                       notif["3sec_tips"].amount,
                       notif["3sec_tips"].network === 122 ? fusePrice : ethPrice,
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs opacity-75">
+                  <TimeAgo timestamp={notif.created_at} />
+                </div>
+              </div>
+            </Link>
+          );
+        }
+        else if (notif.type === "direct_tip") {
+          message = (
+            <Link
+            href={`https://www.kinnectwallet.com/transaction/payment/${
+              notif.direct_tips.network === 84532 || notif.direct_tips.network === 8453
+                ? "base"
+                : notif.direct_tips.network === 11155111 || notif.direct_tips.network === 1
+                ? "ethereum"
+                : notif.direct_tips.network === 122
+                ? "fuse"
+                : ""
+            }/${notif.direct_tips.transaction_hash}`}
+              onClick={() => handleNotificationClick(notif)}
+              className={`flex items-center p-4 rounded-md ${notif.isUnread && "bg-base-200"}`}
+            >
+              <div className="flex flex-row justify-between w-full items-center">
+                <div className="flex flex-row gap-1 items-center">
+                  <Avatar profile={notif.direct_tips.tipper} width={6} height={6} />
+                  <span className="font-semibold">{notif.direct_tips.tipper.username}</span> sent you love{" "}
+                  <div className="badge badge-primary">
+                    $
+                    {convertEthToUsd(
+                      notif.direct_tips.amount,
+                      notif.direct_tips.network === 122 ? fusePrice : ethPrice,
                     )}
                   </div>
                 </div>

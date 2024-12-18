@@ -5,7 +5,7 @@ import Image from "next/image";
 import { NextPage } from "next";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import VideoCard from "~~/components/wildfire/VideoCard";
-import { useFeed } from "~~/hooks/wildfire/useFeed";
+import { useShortsFeed } from "~~/hooks/wildfire/useShortsFeed";
 
 const Watch: NextPage = () => {
   // Track filter state
@@ -13,7 +13,7 @@ const Watch: NextPage = () => {
   const [filterUI, setFilterUI] = useState(true);
 
   // Pass the filter state to useFeed hook
-  const { loading: loadingFeed, feed, fetchMore, refetch } = useFeed(filter);
+  const { loading: loadingFeed, feed, fetchMore, refetch } = useShortsFeed(filter, 3);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);

@@ -4,8 +4,8 @@ import React, { useContext, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
 import * as tus from "tus-js-client";
-import { MapPinIcon, XCircleIcon } from "@heroicons/react/20/solid";
-import { CheckCircleIcon, ChevronRightIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon } from "@heroicons/react/20/solid";
+import { CheckCircleIcon, VideoCameraIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext } from "~~/app/context";
 import LocationModal from "~~/components/wildfire/LocationModal";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
@@ -14,6 +14,7 @@ import { useCountries } from "~~/hooks/wildfire/useCountries";
 import { useDailyPostLimitLongForm } from "~~/hooks/wildfire/useDailyPostLimitLongForm";
 import { livepeerClient } from "~~/utils/livepeer/livepeer";
 import { insertVideo, upsertVideo } from "~~/utils/wildfire/crud/long_form";
+import Link from "next/link";
 
 const CreateLong: NextPage = () => {
   const router = useRouter();
@@ -30,9 +31,16 @@ const CreateLong: NextPage = () => {
   const [countryId, setCountryId] = useState<string | null>(null);
   const [countryName, setCountryName] = useState<string | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
+  const [customThumbnailUrl, setCustomThumbnailUrl] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [titleInput, setTitleInput] = useState("");
+  const [descriptionInput, setDescriptionInput] = useState("");
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [postProcessing, setPostProcessing] = useState<boolean>(false);
   const { countries } = useCountries();
+  const [uploadingText, setUploadingText] = useState("");
+  const [videoId, setVideoId] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -75,9 +83,62 @@ const CreateLong: NextPage = () => {
     event.preventDefault();
   };
 
+  const handleCustomThumbUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+  const errors: string[] = [];
+  
+  if (files && files[0] && files[0].type.includes("image")) {
+    const imageFile = files[0];
+    const fileSizeMB = imageFile.size / (1024 * 1024); // Convert bytes to MB
+
+    // Check file type (PNG/JPG)
+    const validTypes = ["image/png", "image/jpeg"];
+    if (!validTypes.includes(imageFile.type)) {
+      errors.push("Only PNG or JPG files are allowed.");
+    }
+
+    // Check file size (under 10 MB)
+    if (fileSizeMB > 10) {
+      errors.push("File size must be under 10 MB.");
+    }
+
+    // Check aspect ratio (16:9)
+    const checkAspectRatio = (file: File): Promise<boolean> =>
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const aspectRatio = img.width / img.height;
+          resolve(Math.abs(aspectRatio - 16 / 9) < 0.01); // Allow small margin for error
+        };
+        img.src = URL.createObjectURL(file);
+      });
+
+    const isValidAspectRatio = await checkAspectRatio(imageFile);
+    if (!isValidAspectRatio) {
+      errors.push("Image must have a 16:9 aspect ratio.");
+    }
+
+    // If any errors, show them and exit
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+      return;
+    }
+
+    // Set the thumbnail URL if validation passes
+    const customThumb = URL.createObjectURL(imageFile);
+    setCustomThumbnailUrl(customThumb);
+  } else {
+    alert("Please upload a valid image file.");
+  }
+  };
+
   const handleSubmitPost = async () => {
     if (limit === true) {
       alert("You've reached your 24hrs posting limit. Try again later.");
+      return;
+    }
+    if (!titleInput || titleInput.trim().length === 0) {
+      alert("Please provide a title for your video.");
       return;
     }
     if (limit === false && videoUrl.length > 0 && thumbnailUrl.length > 0 && file) {
@@ -96,11 +157,12 @@ const CreateLong: NextPage = () => {
         const thumbnailPath = await uploadToBunny(thumbnailBlob, "thumbnail");
         console.log("thumbnailPath", thumbnailPath);
 
-        // Insert record into '3sec' table
+        // Insert record into 'LONG_FORM' table
         if (videoPath && thumbnailPath) {
-          const res = await insertVideo(videoPath, thumbnailPath, countryId);
+          const res = await insertVideo(titleInput, descriptionInput, videoPath, thumbnailPath, countryId);
           if (Array.isArray(res) && res.length > 0) {
             const videoId = res[0].id;
+            setVideoId(videoId);
             await uploadToLivepeer(file, videoId);
           }
         }
@@ -127,15 +189,22 @@ const CreateLong: NextPage = () => {
             console.error("Failed because: " + error);
           },
           onProgress: (bytesUploaded, bytesTotal) => {
-            console.log("bytesUploaded", bytesUploaded), console.log("bytesTotal", bytesTotal);
+            const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+        setUploadingText(
+          `Uploading... (${(bytesUploaded / (1024 * 1024)).toFixed(2)}MB/${(bytesTotal / (1024 * 1024)).toFixed(
+            2,
+          )}MB) ${parseInt(percentage)}%`,
+        );
+        console.log(bytesUploaded, bytesTotal, percentage + "%");
           },
           onSuccess: async () => {
             console.log("Download %s from %s", assetData.name, upload.url);
             if (upload.url != null) {
-              // Insert record into '3sec' table
+              // Upsert record into 'long_form' table
               const error = await upsertVideo(video_id, response.data?.asset.playbackId, user?.id);
               if (!error) {
-                router.push("/" + profile.username);
+                setPostProcessing(true);
+                //router.push("/" + profile.username);
               } else {
                 console.log("error", error);
               }
@@ -203,11 +272,11 @@ const CreateLong: NextPage = () => {
 
     return new Promise<{ valid: boolean; errors: string[] }>(resolve => {
       video.onloadedmetadata = () => {
-        // Check duration (between 3 and 20 minutes)
-        const duration = video.duration;
-        if (duration < 3 * 60 || duration > 20 * 60) {
-          errors.push("Video duration must be between 3 and 20 minutes.");
-        }
+        // Check duration (between 1 and 15 minutes)
+        const duration = video.duration; // duration in seconds
+        if (duration < 15 || duration > 10 * 60) {
+          errors.push("Video duration must be between 15 seconds and 10 minutes.");
+        }        
 
         // Check aspect ratio (16:9)
         const aspectRatioValid = video.videoWidth / video.videoHeight === 16 / 9;
@@ -264,6 +333,14 @@ const CreateLong: NextPage = () => {
     setIsLocationModalOpen(false);
   };
 
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText("https://3seconds.me/video/" + videoId);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1500); // Reset the copied state after 1.5 seconds
+  };
+
   return (
     <div className="flex flex-col md:flex-row p-2 pt-0 h-screen-custom">
       <div className="flex flex-col">
@@ -318,8 +395,7 @@ const CreateLong: NextPage = () => {
       </div>
 
       {/* PREVIEW */}
-      <div className="flex flex-col items-center bg-base-100 rounded-lg p-4 grow md:ml-2 relative mt-2 md:mt-0">
-        <div className="flex font-semibold mb-2">Preview</div>
+      <div className="relative flex flex-col bg-base-100 rounded-lg grow md:ml-2 mt-2 md:mt-0">
         {!videoUrl && (
           <div className="flex flex-col justify-center items-center rounded-lg grow">
             <div className="flex flex-col justify-center items-center h-[360px] w-[640px] bg-neutral rounded-lg">
@@ -329,46 +405,144 @@ const CreateLong: NextPage = () => {
               </label>
               <label className="label cursor-pointer">
                 <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">up to 30 mins</span>
+                <span className="label-text text-white dark:text-black ml-1">up to 10 mins</span>
               </label>
               <label className="label cursor-pointer">
                 <input type="checkbox" defaultChecked className="checkbox checkbox-primary" />
-                <span className="label-text text-white dark:text-black ml-1">under 2GB</span>
+                <span className="label-text text-white dark:text-black ml-1">under 1GB</span>
               </label>
             </div>
           </div>
         )}
         {videoUrl && (
-          <div className="flex flex-col md:flex-row items-center justify-between rounded-lg grow w-full">
-            {thumbnailUrl && (
-              <div className="hidden md:flex w-1/3 flex-col items-center grow">
-                <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-[140px] glow" />
-                <span className="text-sm">Thumbnail</span>
+          !postProcessing ? 
+          <>
+            <div className="flex flex-col justify-between items-center h-full grow">
+              {/* POST FORM - STEP 1 */}
+              <div className="flex flex-row rounded-lg grow w-full gap-4 p-4">
+                  <div className="w-full grow">
+                    <div className="text-xl font-semibold mb-4">Details</div>
+                    {/* TITLE */}
+                    <div className="flex flex-col bg-slate-200 dark:bg-slate-700 w-full border-1 border-slate-300 dark:border-slate-500 px-2 py-4 rounded-md mb-2">
+                      <h2 className="text-sm text-slate-600 dark:text-slate-300">Title</h2>
+                      <input
+                        type="text"
+                        className="w-full bg-slate-200 dark:bg-slate-700 placeholder:text-slate-400 text-base"
+                        placeholder="Add a title of your video"
+                        value={titleInput}
+                        onChange={e => setTitleInput(e.target.value)}
+                        maxLength={1000}
+                        required
+                      />
+                    </div>
+
+                    {/* DESCRIPTION */}
+                    <div className="flex flex-col bg-slate-200 dark:bg-slate-700 w-full border-1 border-slate-300 dark:border-slate-500 px-2 py-4 rounded-md mb-4">
+                      <h2 className="text-sm text-slate-600 dark:text-slate-300">Description <span className="opacity-50 text-xs">(Optional)</span></h2>
+                      <textarea
+                        className="w-full bg-slate-200 dark:bg-slate-700 placeholder:text-slate-400 text-base"
+                        placeholder="Add a title of your video"
+                        value={descriptionInput}
+                        onChange={e => setDescriptionInput(e.target.value)}
+                        maxLength={3000}
+                      />
+                    </div>
+
+                    {/* <div className="max-w-sm mb-4">
+                      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a video category</label>
+                      <select id="countries" className="bg-slate-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Choose a category</option>
+                        <option value="US">News</option>
+                        <option value="CA">Humour</option>
+                        <option value="FR">Learning</option>
+                        <option value="DE">Conversations</option>
+                        <option value="DE">Repost</option>
+                      </select>
+                    </div> */}
+
+                    {/* THUMBNAIL */}
+                    <div className="grid grid-cols-2 gap-4 rounded-md p-4 border-1 border-slate-300 dark:border-slate-500 mt-4">
+                      {/* SHOW THUMBS */}
+                      <div className="max-w-sm">
+                        {thumbnailUrl && (
+                          <>
+                          <div className="text-sm font-medium mb-1">Thumbnail</div>
+                          <div className="flex-col items-center grow">
+                            <img src={thumbnailUrl} alt="thumb" className="rounded-lg w-40" />
+                          </div>
+                          </>
+                        )}
+                        
+                      </div>
+                    </div>
+                    
+                  </div>
+                  {/* VIDEO */}
+                  <div className="w-[320px] h-[180px] rounded-lg">
+                    <video
+                      ref={videoRef}
+                      src={videoUrl}
+                      controls
+                      className="h-full w-full object-cover rounded-lg"
+                      autoPlay
+                    />
+                  </div>
+                </div>
+              {/* POST BUTTON */}
+              <div className="p-4 w-full">
+                {limit == false && (
+                  <>
+                  <div className="mb-2 text-center w-full grow text-secondary">{uploadingText}</div>
+                  <div className="w-full">
+                    <div className="relative btn btn-primary w-full grow" onClick={handleSubmitPost}>
+                      Post Now
+                      {loading && <span className="loading loading-ring loading-md ml-1"></span>}
+                    </div>
+                  </div>
+                  </>
+                )}
               </div>
-            )}
-            <div className="flex flex-col justify-center items-center h-[360px] w-[640px] bg-neutral rounded-lg text-white dark:text-black">
-              <video
-                ref={videoRef}
-                src={videoUrl}
-                controls
-                className="h-full w-full object-cover rounded-lg"
-                autoPlay
-                loop
-              />
             </div>
-            {limit == false && (
-              <div className="flex flex-col w-full ml-0 mt-3 md:mt-0 md:w-1/3 md:ml-3 gap-2">
-                <div className="btn btn-outline m-auto w-full md:w-auto" onClick={() => setIsLocationModalOpen(true)}>
+          </>
+          :
+          <>
+              <div className="flex flex-col items-center justify-center w-full grow">
+                <div className="font-semibold text-3xl pt-10">{"Success 🎉."}</div>
+                <div className="join mt-5">
+                  <input
+                    className="input input-bordered join-item md:min-w-[350px]"
+                    readOnly
+                    value={"https://www.3seconds.me/video/" + videoId}
+                  />
+                  <button
+                    className="btn join-item rounded-r-full"
+                    onClick={handleCopyToClipboard}
+                  >
+                    {copied ? "Link Copied!" : "Share video"}
+                  </button>
+                </div>
+                  <Link href={"/video/" + videoId} className="btn btn-primary mt-5">Watch video</Link>
+                {/* LOCATION */}
+                {/* <div className="btn btn-sm grow" onClick={() => setIsLocationModalOpen(true)}>
                   <MapPinIcon width={14} />
                   {countryName ? countryName : "Set Location"} <ChevronRightIcon width={14} />
-                </div>
-                <div className="relative btn btn-primary m-auto px-12 w-full md:w-auto" onClick={handleSubmitPost}>
-                  Post Now
-                  {loading && <span className="absolute loading loading-ring loading-md ml-1 right-4"></span>}
-                </div>
+                </div> */}
+
+                {/* TAGS */}
+                {/* <div className="ml-2 btn btn-sm grow" onClick={() => setIsLocationModalOpen(true)}>
+                  <HashtagIcon width={14} />
+                  {countryName ? countryName : "Add tags"} <ChevronRightIcon width={14} />
+                </div> */}
+
+                {/* UPLOAD CUSTOM THUMBNAIL */}
+                {/* <div className="ml-2 btn btn-sm grow" onClick={() => setIsLocationModalOpen(true)}>
+                  <HashtagIcon width={14} />
+                  Upload custom thumbnail <ChevronRightIcon width={14} />
+                </div> */}
+
               </div>
-            )}
-          </div>
+            
+          </> 
         )}
         {isLocationModalOpen && (
           <LocationModal data={countries} onClose={closeLocationModal} onCta={handleSetLocation} />
