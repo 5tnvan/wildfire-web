@@ -18,14 +18,15 @@ export const useUserProfile = () => {
   };
 
   const init = async () => {
-    setLoading(true); // Set loading to true when starting data fetch
+    setLoading(true);
 
-    const userData = await fetchUser();
-    if (userData?.user) {
-      const profileData = await fetchSuperProfile();
+    const res = await fetchUser();
+
+    if (res.user) {
+      const profileData = await fetchSuperProfile(res.user);
       setProfile(profileData);
     }
-    setLoading(false); // Set loading to false when fetch is complete
+    setLoading(false);
   };
 
   useEffect(() => {

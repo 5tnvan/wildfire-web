@@ -20,18 +20,19 @@ export const useUserFollows = () => {
   };
 
   const init = async () => {
-    setLoading(true); // Set loading to true when starting data fetch
+    setLoading(true);
 
-    const userData = await fetchUser();
-    if (userData?.user) {
-      const followers = await fetchFollowers(userData?.user.id);
-      const following = await fetchFollowing(userData?.user.id);
-      const followed = await fetchFollowed(userData?.user.id, userData?.user.id);
+    const res = await fetchUser();
+
+    if (res.user) {
+      const followers = await fetchFollowers(res.user.id);
+      const following = await fetchFollowing(res.user.id);
+      const followed = await fetchFollowed(res.user.id, res.user.id);
       setFollowers(followers);
       setFollowing(following);
       setFollowed(followed);
     }
-    setLoading(false); // Set loading to false when fetch is complete
+    setLoading(false);
   };
 
   useEffect(() => {

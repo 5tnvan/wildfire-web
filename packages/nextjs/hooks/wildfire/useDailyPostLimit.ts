@@ -1,37 +1,35 @@
 "use client";
 
+import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { fetchLastVideoPosts, fetchLevel } from "~~/utils/wildfire/fetch/fetch3Sec";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 /**
- * useFeed HOOK
+ * useDailyPostLimit HOOK
  * Use this to check daily posting limit
  **/
-export const useDailyPostLimit = () => {
-  // State variables to manage loading state, post limit, remaining posts, and fetched posts
+export const useDailyPostLimit = (user: User) => {
   const [isLoading, setIsLoading] = useState(true);
   const [limit, setLimit] = useState<boolean | null>(null);
   const [postLeft, setPostLeft] = useState<number | null>(null);
   const [posts, setPosts] = useState<any>([]);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  // Function to toggle triggerRefetch, causing a refetch of data
   const refetch = () => {
     setTriggerRefetch(prev => !prev);
   };
 
-  // Function to initialize and fetch data
   const init = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     const now = new Date();
-    const user = await fetchUser();
+    const res = await fetchUser();
 
     // Fetch last video posts
-    const posts = await fetchLastVideoPosts(user.user?.id);
+    const posts = await fetchLastVideoPosts(res.user?.id);
     setPosts(posts);
-    const levelData = await fetchLevel(user.user?.id);
+    const levelData = await fetchLevel(res.user?.id);
 
     if (!levelData) {
       if (posts && posts.length > 0) {
@@ -88,11 +86,9 @@ export const useDailyPostLimit = () => {
     setIsLoading(false); // Stop loading
   };
 
-  // useEffect to initialize data fetching when component mounts or triggerRefetch changes
   useEffect(() => {
     init();
   }, [triggerRefetch]);
 
-  // Return the loading state, post limit, posts, remaining posts, and refetch function
   return { isLoading, limit, posts, postLeft, refetch };
 };

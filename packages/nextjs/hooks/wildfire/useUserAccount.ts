@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { fetchRequestAccountDelete } from "~~/utils/wildfire/fetch/fetchAccount";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
@@ -18,13 +19,13 @@ export const useUserAccount = () => {
   };
 
   const init = async () => {
-    setLoading(true); // Set loading to true when starting data fetch
-    const userData = await fetchUser();
-    if (userData?.user) {
-      const res = await fetchRequestAccountDelete(userData?.user.id);
-      setAccount(res);
+    setLoading(true);
+    const res = await fetchUser();
+    if (res.user) {
+      const res2 = await fetchRequestAccountDelete(res.user.id);
+      setAccount(res2);
     }
-    setLoading(false); // Set loading to false when fetch is complete
+    setLoading(false);
   };
 
   useEffect(() => {

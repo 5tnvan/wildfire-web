@@ -6,33 +6,30 @@ import { fetchLastLongFormVideoPosts } from "~~/utils/wildfire/fetch/fetchLongFo
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 /**
- * useFeed HOOK
+ * useDailyPostLimitLongForm HOOK
  * Use this to check daily posting limit
  **/
 export const useDailyPostLimitLongForm = () => {
-  // State variables to manage loading state, post limit, remaining posts, and fetched posts
   const [isLoading, setIsLoading] = useState(true);
   const [limit, setLimit] = useState<boolean | null>(null);
   const [postLeft, setPostLeft] = useState<number | null>(null);
   const [posts, setPosts] = useState<any>([]);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  // Function to toggle triggerRefetch, causing a refetch of data
   const refetch = () => {
     setTriggerRefetch(prev => !prev);
   };
 
-  // Function to initialize and fetch data
   const init = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     const now = new Date();
-    const user = await fetchUser();
+    const res = await fetchUser();
 
     // Fetch last video posts
-    const posts = await fetchLastLongFormVideoPosts(user.user?.id);
+    const posts = await fetchLastLongFormVideoPosts(res.user?.id);
     setPosts(posts);
-    const levelData = await fetchLevel(user.user?.id);
+    const levelData = await fetchLevel(res.user?.id);
 
     if (!levelData) {
       if (posts && posts.length > 0) {
@@ -87,14 +84,12 @@ export const useDailyPostLimitLongForm = () => {
       }
     }
 
-    setIsLoading(false); // Stop loading
+    setIsLoading(false);
   };
 
-  // useEffect to initialize data fetching when component mounts or triggerRefetch changes
   useEffect(() => {
     init();
   }, [triggerRefetch]);
 
-  // Return the loading state, post limit, posts, remaining posts, and refetch function
   return { isLoading, limit, posts, postLeft, refetch };
 };
