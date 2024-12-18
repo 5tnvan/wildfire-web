@@ -144,7 +144,6 @@ const IdeaModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
               suppressContentEditableWarning
               onInput={handleInput}
               onKeyUp={applyFormatting}
-              placeholder="What's on your mind?"
               style={{ whiteSpace: "pre-wrap" }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
