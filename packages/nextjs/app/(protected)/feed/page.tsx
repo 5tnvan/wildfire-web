@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { NextPage } from "next";
 import { AuthUserFollowsContext } from "~~/app/context";
-import VideoModal from "~~/components/wildfire/VideoModal";
 import { useUserFollowingShortsFeed } from "~~/hooks/wildfire/useUserFollowingShortsFeed";
 import { useRouter } from "next/navigation";
 import FormatNumber from "~~/components/wildfire/FormatNumber";
@@ -29,14 +28,8 @@ const Feed: NextPage = () => {
   const { loading: loadingUserShortsFeed, feed: userShortsFeed, fetchMore: fetchMoreShorts } = useUserFollowingShortsFeed(6);
 
   //STATES
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("sparks");
-
-  const closeModal = () => {
-    setIsVideoModalOpen(false);
-    setSelectedVideo(null);
-  };
 
     // Helper function to format text with hashtags and mentions
     const formatText = (text: string) => {
@@ -316,11 +309,6 @@ const Feed: NextPage = () => {
           </div>
           <div>{renderActiveTabContent()}</div>
         </div>
-
-        
-
-        {/* MODAL */}
-        {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeModal} />}
       </div>
     </>
   );

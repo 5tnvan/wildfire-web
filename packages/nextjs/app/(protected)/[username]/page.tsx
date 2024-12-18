@@ -14,7 +14,6 @@ import KinsModal from "~~/components/wildfire/KinsModal";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
 import TipModal from "~~/components/wildfire/TipModal";
 import TransactionsModal from "~~/components/wildfire/TransactionsModal";
-import VideoModal from "~~/components/wildfire/VideoModal";
 import { useIncomingTransactions } from "~~/hooks/wildfire/useIncomingTransactions";
 import { useUserFollowsByUsername } from "~~/hooks/wildfire/useUserFollowsByUsername";
 import { useUserProfileByUsername } from "~~/hooks/wildfire/useUserProfileByUsername";
@@ -117,15 +116,6 @@ const Profile: NextPage = () => {
         closeKinsModal();
       }
     }
-  };
-
-  //VID MODAL
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-
-  const closeVideoModal = () => {
-    setIsVideoModalOpen(false);
-    setSelectedVideo(null);
   };
 
   //TIP MODAL
@@ -373,7 +363,6 @@ const Profile: NextPage = () => {
     return (
       <div className="h-screen-custom overflow-scroll">
         {/* MODALS */}
-        {isVideoModalOpen && selectedVideo && <VideoModal data={selectedVideo} onClose={closeVideoModal} />}
         {isTipModalOpen && <TipModal data={posterProfile} onClose={closeTipModal} />}
         {isTransactionsModalOpen && <TransactionsModal data={posterProfile} onClose={closeTransactionsModal} />}
         {isKinsModalOpen && (
