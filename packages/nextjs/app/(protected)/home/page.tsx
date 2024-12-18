@@ -50,10 +50,9 @@ const Home: NextPage = () => {
                 </Link>
               );
             } else {
+              // Wrap plain text in a span with a key
               return (
-                <span key={`text-${i}-${index}`}>
-                  {part}
-                </span>
+                <span key={`text-${i}-${index}`}>{part}</span>
               );
             }
           })}

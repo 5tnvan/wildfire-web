@@ -28,8 +28,6 @@ const Feed: NextPage = () => {
   const { loading: loadingUserVideosFeed, feed: userVideosFeed, fetchMore: fetchMoreVideos } = useUserFollowingVideosFeed(6);
   const { loading: loadingUserShortsFeed, feed: userShortsFeed, fetchMore: fetchMoreShorts } = useUserFollowingShortsFeed(6);
 
-  console.log("userSparksFeed", userSparksFeed);
-
   //STATES
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
