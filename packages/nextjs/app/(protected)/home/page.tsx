@@ -60,8 +60,6 @@ const Home: NextPage = () => {
       </div>
     ));
   };
-  
-  
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
