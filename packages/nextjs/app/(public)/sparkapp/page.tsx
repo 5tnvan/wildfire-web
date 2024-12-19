@@ -178,7 +178,7 @@ const Landing: NextPage = () => {
                     <h2 className="text-lg text-neutral-100 font-sans">
                         Ecosystem
                     </h2>
-                    <div className="flex flex-col flex-wrap md:flex-row justify-center items-center gap-10 ">
+                    <div className="grid grid-cols-2 grid-rows-3 justify-center items-center gap-10 ">
                         <Link href="https://www.livepeer.org/" target="_blank" className=" self-center">
                             <Image
                                 src={"/livepeer/Livepeer-Logo-Full-Light.svg"}
@@ -201,7 +201,7 @@ const Landing: NextPage = () => {
                                 style={{ width: "200px", height: "auto" }}
                             />
                         </Link>
-                        <Link href="https://www.fuse.io/" target="_blank" className=" self-center">
+                        <Link href="https://thegraph.com/" target="_blank" className=" self-center">
                             <Image
                                 src={"/thegraph/TheGraph-Logo-Light.svg"}
                                 alt="hero"
@@ -210,6 +210,28 @@ const Landing: NextPage = () => {
                                 className=""
                                 draggable={false}
                                 style={{ width: "200px", height: "auto" }}
+                            />
+                        </Link>
+                        <Link href="https://base.org/" target="_blank" className=" self-center">
+                            <Image
+                                src={"/base/Base_Wordmark_White.svg"}
+                                alt="hero"
+                                height={600}
+                                width={200}
+                                className=""
+                                draggable={false}
+                                style={{ width: "140px", height: "auto" }}
+                            />
+                        </Link>
+                        <Link href="https://ethereum.org/" target="_blank" className=" self-center">
+                            <Image
+                                src={"/ethereum/ethereum-logo-landscape-purple.png"}
+                                alt="hero"
+                                height={600}
+                                width={200}
+                                className=""
+                                draggable={false}
+                                style={{ width: "180px", height: "auto" }}
                             />
                         </Link>
                     </div>
