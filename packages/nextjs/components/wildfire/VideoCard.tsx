@@ -199,7 +199,6 @@ const VideoCard = ({ index, data, isPlaying, isMuted, feedLength, getVideos, onC
     }, 0) || 0;
 
   //fetch more at last video
-  console.log("loadNewVidsAt", loadNewVidsAt);
   if (isPlaying) {
     if (loadNewVidsAt === index) {
       setloadNewVidsAt((prev: any) => prev + 2);
