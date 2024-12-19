@@ -50,14 +50,8 @@ export const useUserShortsFeedByUsername = (username: any, range: number) => {
       }
 
       if (data) {
-        // Check if each post is liked by the user
-        const likedPostsPromises = data.map(async (post: any) => {
-          return fetchLikes(post, profile.id);
-        });
-
-        const masterData = await Promise.all(likedPostsPromises); // Wait for all promises to resolve
         if (data.length < range) setHasMore(false); // No more data to fetch
-        setFeed(existingFeed => [...existingFeed, ...masterData]);
+        setFeed(existingFeed => [...existingFeed, ...data]);
       }
       setLoading(false);
     }
