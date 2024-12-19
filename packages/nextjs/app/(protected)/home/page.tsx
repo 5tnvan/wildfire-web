@@ -30,25 +30,23 @@ const Home: NextPage = () => {
   const { loading: loadingShortsFeed, feed: shortsFeed, fetchMore: fetchMoreShorts } = useShortsFeed("default", 6);
   const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
 
-  console.log("ideasFeed", ideasFeed);
-
   const formatText = (text: string) => {
     return text.split("\n").map((line, i) => (
       <div key={`line-${i}`}>
         {line
-          .split(/(#\w+|@\w+)/g)
+          .split(/(#\w+|@\w+)/g) // Split text into parts with hashtags/mentions
           .map((part, index) => {
             if (part.startsWith("#")) {
               return (
-                <Link href="/" key={`hash-${i}-${index}`} className="text-primary">
+                <div key={`hash-${i}-${index}`} className="text-primary">
                   {part}
-                </Link>
+                </div>
               );
             } else if (part.startsWith("@")) {
               return (
-                <Link href={`/${part.substring(1)}`} key={`mention-${i}-${index}`} className="text-primary">
+                <div key={`mention-${i}-${index}`} className="text-primary" onClick={() => router.push(`/${part.substring(1)}`)}>
                   {part}
-                </Link>
+                </div>
               );
             } else {
               // Wrap plain text in a span with a key
@@ -96,9 +94,9 @@ const Home: NextPage = () => {
                     {/* Footer */}
                     <div className="mt-auto flex flex-row items-center space-x-2">
                       <Avatar profile={idea.profile} width={10} height={10} />
-                      <Link href={`/${idea.profile.username}`} className="text-sm">
+                      <div className="text-sm">
                         @{idea.profile.username}
-                      </Link>
+                      </div>
                       <span className="text-xs text-gray-300">
                         <TimeAgo timestamp={idea.created_at} />
                       </span>
@@ -119,9 +117,9 @@ const Home: NextPage = () => {
             {!loadingIdeaFeed && ideasFeed && ideasFeed.length == 0 ? (
               <div className="flex flex-col justify-center items-center w-full md:h-screen-custom grow my-10">
                 <Image src="/dark_800x800.png" alt={""} width={80} height={80} />
-                <Link className="mt-5 md:mt-0" href={"/ideas"}>
+                <div className="mt-5 md:mt-0">
                   No sparks found.
-                </Link>
+                </div>
               </div>
             ) : (
               <>
@@ -183,9 +181,9 @@ const Home: NextPage = () => {
             {!loadingVideoFeed && videosFeed && videosFeed.length == 0 ? (
               <div className="flex flex-col justify-center items-center w-full md:h-screen-custom grow my-10">
                 <Image src="/dark_800x800.png" alt={""} width={80} height={80} />
-                <Link className="mt-5 md:mt-0" href={"/shorts"}>
+                <div className="mt-5 md:mt-0">
                   No videos found.
-                </Link>
+                </div>
               </div>
             ) : (
               <div
@@ -244,9 +242,9 @@ const Home: NextPage = () => {
             {!loadingShortsFeed && shortsFeed && shortsFeed.length == 0 ? (
               <div className="flex flex-col justify-center items-center w-full md:h-screen-custom grow my-10">
                 <Image src="/dark_800x800.png" alt={""} width={80} height={80} />
-                <Link className="mt-5 md:mt-0" href={"/shorts"}>
+                <div className="mt-5 md:mt-0">
                   No shorts found.
-                </Link>
+                </div>
               </div>
             ) : (
               <div
