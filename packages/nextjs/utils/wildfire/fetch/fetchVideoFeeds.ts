@@ -59,8 +59,6 @@ export const fetchMostViewedFeed = async (from: any, to: any) => {
     return null;
   }
 
-  console.log("fetchMostViewedFeed", fetchMostViewedFeed);
-
   return data;
 };
 
