@@ -52,19 +52,12 @@ export const useUserFollowingSparksFeed = (range: any) => {
       const { data } = await fetchUserFeedFromArrayOfFollowing(followingArray, from, to);
 
       if (data) {
-        const likedPostsPromises = data.map(async (post: any) => {
-          const { liked } = await fetchLikes(post, user.user?.id);
-          return { ...post, liked: !!liked }; // Add a property 'liked' to each post indicating whether it's liked by the user
-        });
-
-        // Wait for all promises to resolve
-        const masterData = await Promise.all(likedPostsPromises);
 
         if (data.length < range) {
           setHasMore(false); // No more data to fetch
         }
 
-        setFeed(existingFeed => [...existingFeed, ...masterData]);
+        setFeed(existingFeed => [...existingFeed, ...data]);
       }
     }
     setLoading(false);
