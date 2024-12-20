@@ -16,7 +16,7 @@ const Sparks: NextPage = () => {
   const [filter, setFilter] = useState("latest");
 
   // FETCH DIRECTLY
-  const { loading: loadingFeed, feed, fetchMore, refetch } = useIdeasFeed(filter, 6, 3);
+  const { loading: loadingFeed, feed, fetchMore, refetch } = useIdeasFeed(filter, 6, 9);
 
   // Helper function to format text with hashtags and mentions
   const formatText = (text: string) => {
@@ -98,7 +98,7 @@ const Sparks: NextPage = () => {
         </div>
 
         {/* GRID FEED */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {feed.map((idea: any, index: any) => (
             <div
               key={index}

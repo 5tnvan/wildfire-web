@@ -80,10 +80,10 @@ const Landing: NextPage = () => {
                         </p>
                         <TypewriterEffectSmooth words={words2} className={undefined} cursorClassName={undefined} />
                         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
-                            <button className="w-40 h-10 font-semibold rounded-xl bg-black border dark:border-white border-transparent text-white text-sm transform transition-transform duration-300 hover:-translate-y-2" onClick={() => router.push("/login")}>
+                            <button className="w-40 h-10 font-semibold rounded-xl bg-black border dark:border-white border-transparent text-white text-base transform transition-transform duration-300 hover:-translate-y-2" onClick={() => router.push("/login")}>
                                 Join now
                             </button>
-                            <Link href="/home" className="flex flex-row font-semibold justify-center items-center w-40 h-10 rounded-xl bg-white text-black border border-black text-sm transform transition-transform duration-300 hover:-translate-y-2">
+                            <Link href="/home" className="flex flex-row font-semibold justify-center items-center w-40 h-10 rounded-xl bg-white text-black border border-black text-base transform transition-transform duration-300 hover:-translate-y-2">
                                 <div className="mr-2 flex flex-row justify-center items-center">
                                     <Image
                                         src={`/spark/spark-logo.png`}
@@ -98,7 +98,7 @@ const Landing: NextPage = () => {
                             </Link>
                             
                         </div>
-                        <Link href="https://t.me/sparkarevolution" className="flex flex-row  mt-4 justify-center items-center w-40 h-10 rounded-xl bg-transparent border border-blue-500 text-sm hover:opacity-85">
+                        <Link href="https://t.me/sparkarevolution" className="flex flex-row px-2 mt-4 justify-center items-center w-40 h-10 rounded-xl bg-transparent border border-blue-500 text-base hover:opacity-85">
                                 <div className="mr-2 flex flex-row justify-center items-center">
                                     <Image
                                         src={`/tele/Logo.svg`}

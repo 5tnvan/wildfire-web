@@ -8,7 +8,7 @@ import { DevicePhoneMobileIcon, VideoCameraIcon } from "@heroicons/react/24/soli
 
 const Create: NextPage = () => {
   return (
-    <div className="flex flex-row gap-5 justify-center items-center grow">
+    <div className="flex flex-col lg:flex-row gap-5 justify-center items-center grow">
       <div className="card glass w-96">
           <figure>
             <Image

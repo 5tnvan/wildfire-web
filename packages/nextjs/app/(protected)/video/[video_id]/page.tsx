@@ -792,7 +792,7 @@ const Video: NextPage = () => {
                     </div>
                   )}
                   {isAuthenticated == false && (
-                    <Link href="/login" className="btn btn-primary w-full">
+                    <Link href="/login" className="btn btn-secondary w-full">
                       Send Love
                       <div className="">
                       <Hearts

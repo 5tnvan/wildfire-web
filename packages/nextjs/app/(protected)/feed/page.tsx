@@ -66,7 +66,7 @@ const Feed: NextPage = () => {
       case "sparks":
         return (
           <div className="mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-6 p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
               {userSparksFeed.map((idea: any, index: number) => (
                 <div
                   key={index}
@@ -137,7 +137,7 @@ const Feed: NextPage = () => {
       case "videos":
         return (
           <div className="grow mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
               {userVideosFeed?.map((video: any, index: number) => (
                 <div key={index} className="flex flex-col mt-1">
                   <video
@@ -199,7 +199,7 @@ const Feed: NextPage = () => {
       case "shorts":
         return (
           <div className="grow mt-2 mr-2 mb-1">
-            <div className="grid grid-cols-6 rounded-box">
+            <div className="grid grid-cols-3 lg:grid-cols-6 rounded-box">
               {userShortsFeed && userShortsFeed?.length > 0 && userShortsFeed?.map((short: any, index: any) => (
                 <div
                   key={index}
@@ -261,21 +261,21 @@ const Feed: NextPage = () => {
 
         {/* FOLLOWING */}
 
-        <div className="flex flex-col min-w-min gap-2 md:gap-3 pl-2 md:pl-0 pr-2 overflow-scroll">
+        <div className="flex flex-col min-w-min gap-2 md:gap-3 pl-2 md:pl-0 pr-4 lg:pr-2 overflow-scroll">
           {following?.map((following: any, index: number) => (
             <Link key={index} href={"/" + following.following.username} className="">
               <div className="">
                 {following.following.avatar_url && (
                   <div className="avatar">
-                    <div className="w-10 md:w-12 rounded-full">
+                    <div className="w-10 rounded-full">
                       <Image src={following.following.avatar_url} alt="avatar" width={20} height={20} priority />
                     </div>
                   </div>
                 )}
                 {!following.following.avatar_url && (
                   <div className="avatar placeholder">
-                    <div className="bg-base-100 text-primary-content rounded-full w-10 md:w-12">
-                      <span className="text-3xl">{following.following.username.charAt(0).toUpperCase()}</span>
+                    <div className="bg-base-100 text-primary-content rounded-full w-10">
+                      <span className="text-xl">{following.following.username.charAt(0).toUpperCase()}</span>
                     </div>
                   </div>
                 )}

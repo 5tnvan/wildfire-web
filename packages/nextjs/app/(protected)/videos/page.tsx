@@ -64,7 +64,7 @@ const Watch: NextPage = () => {
         </div>
 
         {/* GRID FEED */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           {feed.map((video, index) => (
             <div key={index} className="flex flex-col mt-1">
               <video

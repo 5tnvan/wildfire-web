@@ -65,7 +65,7 @@ const Home: NextPage = () => {
       case "sparks":
         return (
           <div className="mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-6 p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
               {ideasFeed.map((idea, index) => (
                 <div
                   key={index}
@@ -136,7 +136,7 @@ const Home: NextPage = () => {
       case "videos":
         return (
           <div className="grow mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
               {videosFeed.map((video, index) => (
                 <div key={index} className="flex flex-col mt-1">
                   <video
@@ -200,7 +200,7 @@ const Home: NextPage = () => {
           <div className="grow mt-2 mr-2 mb-1">
             {shortsFeed && shortsFeed.length > 0 && (
               <>
-                <div className="grid grid-cols-6 rounded-box">
+                <div className="grid grid-cols-3 lg:grid-cols-6 rounded-box">
                   {shortsFeed.map((short: any, index: number) => (
                     <div
                       key={index}
@@ -269,7 +269,7 @@ const Home: NextPage = () => {
 
           {/* COMMUNITY */}
           <div className="stats shadow flex flex-col grow w-full h-full py-5 mb-2">
-            <div className="flex flex-row justify-between items-center stat-value text-lg px-5 mt-2"><span>Community</span>
+            <div className="flex flex-row justify-between items-center stat-value text-sm lg:text-lg px-5 mt-2"><span>Community</span>
               <span onClick={() => refetchKins()} className="cursor-pointer"><ArrowPathIcon width={15} height={15} /></span>
             </div>
             <div className="grid grid-flow-row gap-1 px-4 pt-2">
@@ -287,8 +287,8 @@ const Home: NextPage = () => {
                 </div>}
               {kinsFeed.map((kin: any, index: any) => (
                 <Link href={`/${kin.username}`} className="btn btn-sm text-sm" key={index}>
-                  <Avatar profile={kin} width={5} height={5} />
-                  @{kin.username}
+                  <div><Avatar profile={kin} width={5} height={5} /></div>
+                  <span className="hidden lg:flex">@{kin.username}</span>
                 </Link>
               ))}
             </div>
@@ -296,13 +296,13 @@ const Home: NextPage = () => {
 
           {/* WHATS HAPENNING */}
           <div className="stats shadow flex flex-col grow w-full h-full py-5 mb-2">
-            <div className="flex flex-row justify-between items-center stat-value text-lg px-5 mt-2">
-              <span>What's happening</span>
+            <div className="flex flex-row justify-between items-center stat-value text-sm lg:text-lg px-5 mt-2">
+              <span className="line-clamp-1 overflow-hidden text-ellipsis">What's happening</span>
               <span onClick={() => refetchTags()} className="cursor-pointer"><ArrowPathIcon width={15} height={15} /></span>
             </div>
-            {tagsFeed && tagsFeed.map((tag: any) => (
-              <div key={tag.tag_name} className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2">
-                <div className="text-primary text-base font-bold">
+            {tagsFeed && tagsFeed.map((tag: any, index: number) => (
+              <div key={index} className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2">
+                <div className="text-primary text-sm lg:text-base font-bold line-clamp-1 overflow-hidden text-ellipsis">
                   #{tag.tag_name}
                 </div>
                 <div className="stat-desc"><FormatNumber number={Math.floor(Math.random() * (1800 - 756 + 1)) + 756} /></div>
@@ -312,8 +312,8 @@ const Home: NextPage = () => {
 
           {/* TRENDING */}
           <div className="stats shadow flex flex-col grow w-full h-full py-5 mb-2">
-            <div className="flex flex-row justify-between items-center stat-value text-lg px-5 mt-2">
-              <span>Trending</span>
+            <div className="flex flex-row justify-between items-center stat-value text-sm lg:text-lg px-5 mt-2">
+              <span className="line-clamp-1 overflow-hidden text-ellipsis">Trending</span>
               <span onClick={() => refetchVideos2()} className="cursor-pointer">
                 <ArrowPathIcon width={15} height={15} />
               </span>
@@ -332,11 +332,11 @@ const Home: NextPage = () => {
                 </div>}
             {videosFeed2?.slice(0, 3).map((video: any, index: number) => (
               <div
-                key={index} // Ideally use a unique property like video.id
+                key={index}
                 className="flex flex-row items-center justify-between stat cursor-pointer hover:opacity-85 py-2"
               >
                 {/* Video Title */}
-                <a href={`/video/${video.long_form.id}`} className="text-primary text-base font-bold line-clamp-1 overflow-hidden text-ellipsis">
+                <a href={`/video/${video.long_form.id}`} className="text-primary text-sm lg:text-base font-bold line-clamp-1 overflow-hidden text-ellipsis">
                   {video.long_form.title || "Untitled Video"}
                 </a>
 

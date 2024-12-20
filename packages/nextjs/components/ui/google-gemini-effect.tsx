@@ -3,6 +3,7 @@ import { cn } from "~~/utils/cn";
 import { motion } from "framer-motion";
 import React from "react";
 import Image from "next/image";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 const transition = {
   duration: 0,
@@ -35,19 +36,19 @@ export const GoogleGeminiEffect = ({
                                     />
                                 </div>
       <p
-        className="text-lg md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
+        className="text-4xl lg:text-7xl font-semibold pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
         {title || ``}
       </p>
       <p
-        className="text-xs md:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
+        className="text-lg lg:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
         {description ||
           ``}
       </p>
       <div
-        className="w-full h-[890px] -top-32 md:-top-32  flex items-center justify-center bg-red-transparent absolute ">
+        className="w-full h-[890px] -top-56 md:-top-32  flex items-center justify-center bg-red-transparent absolute ">
         <button
-          className="font-bold bg-white rounded-full md:px-4 md:py-2 px-2 py-1 md:mt-24 mt-8 z-30 md:text-base text-black text-xs  w-fit mx-auto ">
-          Scroll down to begin
+          className="flex flex-row gap-1 justify-center items-center font-bold bg-white rounded-full md:px-4 md:py-2 px-2 py-1 md:mt-24 mt-8 z-30 md:text-base text-black text-xs  w-fit mx-auto ">
+          Scroll down to begin <ChevronDownIcon width={15} height={15} />
         </button>
       </div>
       <svg
