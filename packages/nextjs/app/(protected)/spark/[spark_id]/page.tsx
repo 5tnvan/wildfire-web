@@ -250,7 +250,7 @@ const Video: NextPage = () => {
 
   return (
     <>
-      <div className="h-screen-custom overflow-scroll px-2 flex flex-row">
+      <div className="h-screen-custom overflow-scroll px-2 flex flex-col lg:flex-row">
         {isKinsModalOpen && (
           <KinsModal data={{ posterProfile, followers, following, followed }} onClose={closeKinsModal} />
         )}
@@ -536,7 +536,7 @@ const Video: NextPage = () => {
           </div>
         )}
 
-        <div className="idea lg:flex flex-col gap-2">
+        <div className="idea flex flex-col gap-2">
         {loadingIdea &&
             <div>
               <RotatingSquare
@@ -551,7 +551,7 @@ const Video: NextPage = () => {
             </div>}
           {posterProfile && (
             <>
-              <div className="stats shadow flex flex-col lg:w-[350px] py-5 ml-2 h-fit">
+              <div className="stats shadow flex flex-col lg:w-[350px] py-5 ml-0 lg:ml-2 h-fit">
                 <Link href={"/" + posterProfile.username} className="stat cursor-pointer hover:opacity-85 py-2">
                   <div className="stat-figure text-secondary">
                     {posterProfile?.avatar_url && (
@@ -655,7 +655,7 @@ const Video: NextPage = () => {
                   )}
                 </div>
               </div>
-              <div className="stats shadow flex flex-col lg:w-[350px] py-5 ml-2 h-fit">
+              <div className="stats shadow flex flex-col lg:w-[350px] py-5 ml-0 lg:ml-2 mb-2 h-fit">
                 <div className="stat hover:opacity-85 py-2">
                   <div className="stat-figure text-primary">
                     <EyeIcon width={30} />

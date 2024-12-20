@@ -150,8 +150,7 @@ input:focus {
 @media (max-width: 768px) {
   .h-screen-custom {
     height: auto !important;
-  } 
-  .long_form {display: none}
+  }
 }
 
 @media (min-width: 768px) { 
