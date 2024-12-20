@@ -173,7 +173,7 @@ const Profile: NextPage = () => {
       case "sparks":
         return (
           <div className="mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-6 p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
               {ideasFeed.map((idea: any, index: number) => (
                 <div
                   key={index}
@@ -244,7 +244,7 @@ const Profile: NextPage = () => {
       case "videos":
         return (
           <div className="grow mr-2 mb-1">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-1">
               {videosFeed.map((video: any, index: number) => (
                 <div key={index} className="flex flex-col mt-1">
                   <video
@@ -298,7 +298,7 @@ const Profile: NextPage = () => {
           <div className="grow mt-2 mr-2 mb-1">
             {shortsFeed && shortsFeed.length > 0 && (
               <>
-                <div className="grid grid-cols-6 rounded-box">
+                <div className="grid grid-cols-3 lg:grid-cols-6 rounded-box">
                   {shortsFeed.map((short: any, index: number) => (
                     <div
                       key={index}
@@ -373,7 +373,7 @@ const Profile: NextPage = () => {
         {/* CONTENT */}
         <div className="content m-2 mt-0">
           {/* PROFILE */}
-          <div className="profile flex flex-row justify-center items-center gap-2">
+          <div className="profile flex flex-col md:flex-row justify-center items-center gap-2">
             {/* KINS */}
             <div className="stats shadow flex flex-col grow w-full max-w-sm h-full py-5 mb-2">
               <div className="stat cursor-pointer hover:opacity-85 py-2" onClick={() => setKinsModalOpen(true)}>
