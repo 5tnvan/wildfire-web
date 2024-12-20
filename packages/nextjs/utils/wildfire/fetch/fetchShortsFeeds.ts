@@ -24,6 +24,7 @@ export const fetchAll = async (from: number, to: number) => {
        3sec_comments(*, profile:user_id(id, username, avatar_url))`,
       { count: "exact" },
     )
+    .neq("archived", true)
     .range(from, to);
 
   if (error) {
@@ -56,6 +57,7 @@ export const fetchAllApproved = async (from: number, to: number) => {
       { count: "exact" },
     )
     .eq("suppressed", false)
+    .neq("archived", true)
     .range(from, to);
 
   if (error) {
@@ -86,6 +88,7 @@ export const fetchRandomFeed = async (limit: any) => {
       { count: "exact" },
     )
     .neq("suppressed", true)
+    .neq("archived", true)
     .limit(limit);
 
   return data;
@@ -120,6 +123,7 @@ export const fetchVideoAndRandomFeed = async (video_id: any, limit: any) => {
       3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .neq("suppressed", true)
+    .neq("archived", true)
     .neq("id", video_id)
     .limit(limit - 1);
 
@@ -155,7 +159,8 @@ export const fetchWithin48Hrs = async (limit: any) => {
       3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
-    .neq("suppressed", true) // Exclude suppressed posts
+    .neq("suppressed", true)
+    .neq("archived", true)
     .gte("created_at", past48Hrs) // Fetch posts created within the last 48 hours
     .limit(limit);
 
@@ -192,7 +197,8 @@ export const fetchLatestTipped = async (limit: any) => {
       3sec_views(view_count), 3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
       { count: "exact" },
     )
-    .neq("suppressed", true) // Exclude suppressed posts
+    .neq("suppressed", true)
+    .neq("archived", true)
     .not("3sec_tips", "is", null) // Ensure tips are present
     //.gte("3sec_tips.created_at", pastWeek) // Filter tips created within the last 7 days
     .limit(limit);
@@ -226,6 +232,7 @@ export const fetchMostViewed = async (limit: any) => {
       { count: "exact" },
     )
     .neq("suppressed", true) // Exclude suppressed posts
+    .neq("archived", true)
     .gte("3sec_views.view_count", 1000) // Fetch posts with views >= 1,000
     .limit(limit);
 
@@ -257,6 +264,7 @@ export const fetchUserShortsFeedAll = async (user_id: any) => {
     .from("3sec")
     .select('id', { count: 'exact'})
     .eq("user_id", user_id)
+    .neq("archived", true);
 
   return data;
 };
@@ -281,6 +289,7 @@ export const fetchUserShortsFeedWithRange = async (user_id: string, from: any, t
       3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .eq("user_id", user_id)
+    .neq("archived", true)
     .order("created_at", { ascending: false })
     .range(from, to);
 
@@ -305,6 +314,7 @@ export const fetchUserFeedFromArrayOfFollowing = async (followingArray: any, fro
       3sec_fires(count), 3sec_comments(*, profile:user_id(id, username, avatar_url), 3sec_replies:id(*, profile:user_id(id, username, avatar_url)))`,
     )
     .in("user_id", followingArray)
+    .neq("archived", true)
     .range(from, to);
 
   return { data };

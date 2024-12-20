@@ -10,7 +10,7 @@ import { createClient } from "~~/utils/supabase/server";
  **/
 export const fetchUserIdeaFeedAll = async (user_id: any) => {
   const supabase = createClient();
-  const { data } = await supabase.from("idea").select("id", { count: "exact" }).eq("user_id", user_id);
+  const { data } = await supabase.from("idea").select("id", { count: "exact" }).eq("user_id", user_id).neq("archived", true);
 
   return data;
 };
@@ -28,7 +28,8 @@ export const fetchUserIdeaFeedWithRange = async (user_id: string, from: any, to:
     .select("*")
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })
-    .range(from, to);
+    .range(from, to)
+    .neq("archived", true);
 
   return data;
 };
@@ -41,7 +42,7 @@ export const fetchUserIdeaFeedWithRange = async (user_id: string, from: any, to:
 
 export const fetchRandomIdeaFeed = async (limit: any) => {
   const supabase = createClient();
-  const { data } = await supabase.from("idea_random_view").select(`*, profile:user_id(*), idea_views(*)`).limit(limit);
+  const { data } = await supabase.from("idea_random_view").select(`*, profile:user_id(*), idea_views(*)`).limit(limit).neq("archived", true);
 
   return data;
 };
@@ -58,7 +59,8 @@ export const fetchLastestIdeaFeed = async (from: any, to: any) => {
     .from("idea_desc_view")
     .select(`*, profile:user_id(*), idea_views(*)`)
     .order("created_at", { ascending: false })
-    .range(from, to);
+    .range(from, to)
+    .neq("archived", true);
 
   if (error) {
     console.error("fetchLastestIdeaFeed", error);
@@ -101,7 +103,8 @@ export const fetchUserFeedFromArrayOfFollowing = async (followingArray: any, fro
     .from("idea_desc_view")
     .select(`*, profile:user_id(*), idea_views(*)`)
     .in("user_id", followingArray)
-    .range(from, to);
+    .range(from, to)
+    .neq("archived", true);
 
   return { data };
 };

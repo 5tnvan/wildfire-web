@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { NextPage } from "next";
-import { CheckCircleIcon, CircleStackIcon, UserIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, CircleStackIcon, EllipsisVerticalIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowDownCircleIcon, CheckBadgeIcon, PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { AuthContext, AuthUserContext, AuthUserFollowsContext } from "~~/app/context";
 import AvatarModal from "~~/components/wildfire/AvatarModal";
@@ -25,6 +25,8 @@ import { calculateSum } from "~~/utils/wildfire/calculateSum";
 import { convertEthToUsd } from "~~/utils/wildfire/convertEthToUsd";
 import { deleteFollow, insertFollow } from "~~/utils/wildfire/crud/followers";
 import { Avatar } from "~~/components/Avatar";
+import { updateIdeaArchived } from "~~/utils/wildfire/crud/idea";
+import { updateShortArchived } from "~~/utils/wildfire/crud/3sec";
 
 const Profile: NextPage = () => {
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
@@ -56,12 +58,14 @@ const Profile: NextPage = () => {
     feed: shortsFeed,
     count: shortsCount,
     fetchMore: fetchMoreShorts,
+    refetch: refetchShorts,
   } = useUserShortsFeedByUsername(posterProfile?.username, 6);
   const {
     loading: loadingIdeaFeed,
     feed: ideasFeed,
     count: ideasCount,
     fetchMore: fetchMoreIdeas,
+    refetch: refetchIdeas,
   } = useUserIdeaFeedByUsername(posterProfile?.username, 6);
   const incomingRes = useIncomingTransactions(posterProfile?.wallet_id);
 
@@ -178,6 +182,45 @@ const Profile: NextPage = () => {
     ));
   };
 
+  const [selectedIdeaId, setSelectedIdeaId] = useState(null);
+  const [selectedShortId, setSelectedShortId] = useState(null);
+  const [showSparkMenu, setShowSparkMenu] = useState(false);
+  const [showShortMenu, setShowShortMenu] = useState(false);
+
+  const showSparkDetails = (idea: any) => {
+    if (selectedIdeaId === idea.id) {
+      setShowSparkMenu(!showSparkMenu);
+    } else {
+      setSelectedIdeaId(idea.id);
+      setShowSparkMenu(true);
+    }
+  };
+
+  const showShortDetails = (short: any) => {
+    if (selectedShortId === short.id) {
+      setShowShortMenu(!showShortMenu);
+    } else {
+      setSelectedShortId(short.id);
+      setShowShortMenu(true);
+    }
+  };
+
+  const archiveSpark = async (idea_id: string) => {
+    setSelectedIdeaId(null);
+    const error = await updateIdeaArchived(idea_id);
+    if(!error) {
+      refetchIdeas();
+    }
+  };
+
+  const archiveShort = async (short_id: string) => {
+    setSelectedShortId(null);
+    const error = await updateShortArchived(short_id);
+    if(!error) {
+      refetchShorts();
+    }
+  };
+
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case "sparks":
@@ -192,10 +235,28 @@ const Profile: NextPage = () => {
                   {/* Background overlay */}
                   <div className="absolute top-0 left-0 w-full h-full bg-white opacity-10 transform -skew-x-12"></div>
 
+                  <div className="absolute right-3 cursor-pointer z-20" onClick={() => showSparkDetails(idea)}><EllipsisVerticalIcon width={20} height={20} /></div>
+
+                  {/* Dropdown menu */}
+                  {showSparkMenu && selectedIdeaId === idea.id && (
+                    <>
+                      <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10"></div>
+                      <div className="absolute cursor-pointer top-12 right-4 w-fit bg-white hover:bg-gray-100 rounded-md p-4 z-20" onClick={() => archiveSpark(idea.id)}>
+                        {/* <div className="block text-black text-xs" onClick={() => router.push(`/spark/${idea.id}`)}>
+                        View Spark
+                      </div> */}
+                        <div className="block text-black text-xs">
+                          Archive Spark
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {/* Card content */}
-                  <Link className="relative z-10 flex flex-col h-full" href={`/spark/${idea.id}`}>
+                  <div className="relative z-10 flex flex-col h-full">
+
                     {/* Logo */}
-                    <div className="mb-4">
+                    <div className="mb-4 flex flex-row justify-between items-center">
                       <Image
                         src={`/spark/spark-logo.png`}
                         alt="spark logo"
@@ -219,7 +280,7 @@ const Profile: NextPage = () => {
                         <TimeAgo timestamp={idea.created_at} />
                       </span>
                     </div>
-                  </Link>
+                  </div>
                 </div>
               ))}
             </div>
@@ -313,7 +374,6 @@ const Profile: NextPage = () => {
                     <div
                       key={index}
                       className="mr-1 flex flex-col mt-1 cursor-pointer"
-                      onClick={() => router.replace(`/v/${short.id}`)}
                     >
                       <video
                         width="100%"
@@ -323,16 +383,32 @@ const Profile: NextPage = () => {
                         poster={short.thumbnail_url} // Use thumbnail as a poster
                         onMouseEnter={e => e.currentTarget.play()} // Autoplay on hover
                         onMouseLeave={e => e.currentTarget.pause()} // Stop on mouse leave
+                        onClick={() => router.replace(`/v/${short.id}`)}
                       >
                         <source src={short.video_url} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
-                      <span className="text-sm font-medium">
-                        {<FormatNumber number={short["3sec_views"][0].view_count} />} views
-                      </span>
-                      <a href={`/${short.profile.username}`} className="text-sm">
-                        @{short.profile.username}
-                      </a>
+                      <div className="flex flex-row items-start justify-between mt-2 relative">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {<FormatNumber number={short["3sec_views"][0].view_count} />} views
+                          </span>
+                          <a href={`/${short.profile.username}`} className="text-sm">
+                            @{short.profile.username}
+                          </a>
+                        </div>
+                        <div className="cursor-pointer" onClick={() => showShortDetails(short)}><EllipsisVerticalIcon width={20} height={20} /></div>
+                        {/* Dropdown menu */}
+                      {showShortMenu && selectedShortId === short.id && (
+                        <>
+                          <div className="absolute cursor-pointer top-0 right-4 w-fit bg-gray-200 hover:bg-gray-300 rounded-md p-4 z-20" onClick={() => archiveShort(short.id)}>
+                            <div className="block text-black text-xs">
+                              Archive Short
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -397,7 +473,7 @@ const Profile: NextPage = () => {
                   <span className="loading loading-ring loading-sm"></span>
                 ) : (
                   <>{(followers && following) ? <span>{followers.length + following.length}</span> : <span>0</span>}</>
-                  
+
                 )}
               </div>
               <div className="stat-desc">See kins</div>
@@ -515,25 +591,22 @@ const Profile: NextPage = () => {
           <div className="flex gap-20 border-b border-gray-300 mb-4">
             <button
               onClick={() => setActiveTab("sparks")}
-              className={`flex-1 py-2 text-center ${
-                activeTab === "sparks" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
-              }`}
+              className={`flex-1 py-2 text-center ${activeTab === "sparks" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
+                }`}
             >
               Sparks ({ideasCount})
             </button>
             <button
               onClick={() => setActiveTab("videos")}
-              className={`flex-1 py-2 text-center ${
-                activeTab === "videos" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
-              }`}
+              className={`flex-1 py-2 text-center ${activeTab === "videos" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
+                }`}
             >
               Videos ({videosCount})
             </button>
             <button
               onClick={() => setActiveTab("shorts")}
-              className={`flex-1 py-2 text-center ${
-                activeTab === "shorts" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
-              }`}
+              className={`flex-1 py-2 text-center ${activeTab === "shorts" ? "border-b-2 border-secondary font-bold" : "text-gray-500"
+                }`}
             >
               Shorts ({shortsCount})
             </button>

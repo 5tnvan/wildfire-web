@@ -53,7 +53,7 @@ export async function updateApprove(id: any) {
 export async function updateView(id: any, view: number) {
   console.log("id, view", id, view);
   const supabase = createClient();
-  const { data, error } = await supabase.from("3sec_views").update({ view_count: view }).eq("video_id", id);
+  const { error } = await supabase.from("3sec_views").update({ view_count: view }).eq("video_id", id);
 
   if (error) {
     console.log("updateView", error);
@@ -61,4 +61,20 @@ export async function updateView(id: any, view: number) {
   }
 
   return true;
+}
+
+export async function updateShortArchived(short_id: any) {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("3sec")
+    .update({
+      archived: true,
+    })
+    .eq("id", short_id)
+    .select();
+
+    if(error) console.log("updateArchive", error);
+
+    return error;
 }
