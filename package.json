@@ -57,6 +57,7 @@
     "react-confetti-explosion": "^2.1.2",
     "react-dropzone": "^14.2.3",
     "react-loader-spinner": "^6.1.6",
+    "simplex-noise": "^4.0.3",
     "tailwind-merge": "^2.3.0",
     "tus-js-client": "^4.2.3",
     "zod": "^3.23.8"

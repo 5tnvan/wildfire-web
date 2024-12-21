@@ -14984,6 +14984,7 @@ __metadata:
     react-confetti-explosion: ^2.1.2
     react-dropzone: ^14.2.3
     react-loader-spinner: ^6.1.6
+    simplex-noise: ^4.0.3
     tailwind-merge: ^2.3.0
     tus-js-client: ^4.2.3
     zod: ^3.23.8
@@ -15210,6 +15211,13 @@ __metadata:
   version: 4.1.0
   resolution: "signal-exit@npm:4.1.0"
   checksum: 64c757b498cb8629ffa5f75485340594d2f8189e9b08700e69199069c8e3070fb3e255f7ab873c05dc0b3cec412aea7402e10a5990cb6a050bd33ba062a6c549
+  languageName: node
+  linkType: hard
+
+"simplex-noise@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "simplex-noise@npm:4.0.3"
+  checksum: b47720a540695947cd60b0571b4427b68392b1c75e76e27278e3c1b7ea13301d46d60fe9a81ff6a42b1048f2548c9c6687630b984ec0b59d7ab4e79969052462
   languageName: node
   linkType: hard
 

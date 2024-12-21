@@ -19,7 +19,7 @@ import {
 } from "~~/utils/wildfire/crud/notifications";
 
 export const Notification = () => {
-  const { followersNotifications, firesNotifications, commentsNotifications, repliesNotifications, tipsNotifications, directTipsNotifications, refetch } =
+  const { followersNotifications, shortFiresNotifications, shortCommentsNotifications, shortRepliesNotifications, shortTipsNotifications, directTipsNotifications, refetch } =
     useNotifications();
   const ethPrice = useGlobalState(state => state.nativeCurrency.price);
   const fusePrice = useGlobalState(state => state.fuseCurrency.price);
@@ -32,24 +32,24 @@ export const Notification = () => {
       created_at: notif.follower_created_at, // Use follower_created_at for sorting
       isUnread: !notif.follower_read,
     })),
-    ...(firesNotifications ?? []).map((notif: any) => ({
+    ...(shortFiresNotifications ?? []).map((notif: any) => ({
       ...notif,
-      type: "like",
+      type: "short_like",
       isUnread: !notif.read,
     })),
-    ...(commentsNotifications ?? []).map((notif: any) => ({
+    ...(shortCommentsNotifications ?? []).map((notif: any) => ({
       ...notif,
-      type: "comment",
+      type: "short_comment",
       isUnread: !notif.read,
     })),
-    ...(repliesNotifications ?? []).map((notif: any) => ({
+    ...(shortRepliesNotifications ?? []).map((notif: any) => ({
       ...notif,
-      type: "reply",
+      type: "short_reply",
       isUnread: !notif.read,
     })),
-    ...(tipsNotifications ?? []).map((notif: any) => ({
+    ...(shortTipsNotifications ?? []).map((notif: any) => ({
       ...notif,
-      type: "tip",
+      type: "short_tip",
       isUnread: !notif.read,
     })),
     ...(directTipsNotifications ?? []).map((notif: any) => ({
@@ -83,16 +83,16 @@ export const Notification = () => {
         case "follow":
           await updateFollowerRead(notif.id);
           break;
-        case "like":
+        case "short_like":
           await updateFireRead(notif.id);
           break;
-        case "comment":
+        case "short_comment":
           await updateCommentRead(notif.id);
           break;
-        case "reply":
+        case "short_reply":
           await updateReplyRead(notif.id);
           break;
-        case "tip":
+        case "short_tip":
           await updateTipRead(notif.id);
           break;
           case "direct_tip":
@@ -138,7 +138,7 @@ export const Notification = () => {
                     </div>
                   </Link>
                 );
-              } else if (notif.type === "like") {
+              } else if (notif.type === "short_like") {
                 message = (
                   <Link
                     href={"/v/" + notif.post_id}
@@ -148,7 +148,7 @@ export const Notification = () => {
                     <div className="flex flex-row justify-between w-full items-center">
                       <div className="flex flex-row gap-1 items-center">
                         <Avatar profile={notif.liker} width={6} height={6} />
-                        <span className="font-semibold">{notif.liker.username}</span> liked your post.
+                        <span className="font-semibold">{notif.liker.username}</span> liked your short.
                       </div>
                       <div className="text-xs opacity-75">
                         <TimeAgo timestamp={notif.created_at} />
@@ -156,7 +156,7 @@ export const Notification = () => {
                     </div>
                   </Link>
                 );
-              } else if (notif.type === "comment") {
+              } else if (notif.type === "short_comment") {
                 message = (
                   <Link
                     href={"/v/" + notif.post_id}
@@ -166,7 +166,7 @@ export const Notification = () => {
                     <div className="flex flex-row justify-between w-full items-center">
                       <div className="flex flex-row gap-1 items-center">
                         <Avatar profile={notif.commenter} width={6} height={6} />
-                        <span className="font-semibold">{notif.commenter.username}</span> commented on your post.
+                        <span className="font-semibold">{notif.commenter.username}</span> commented on your short.
                       </div>
                       <div className="text-xs opacity-75">
                         <TimeAgo timestamp={notif.created_at} />
@@ -174,17 +174,17 @@ export const Notification = () => {
                     </div>
                   </Link>
                 );
-              } else if (notif.type === "reply") {
+              } else if (notif.type === "short_reply") {
                 message = (
                   <Link
                     href={"/v/" + notif.post_id}
                     onClick={() => handleNotificationClick(notif)}
-                    className={`flex items-center p-4 rounded-md ${notif.isUnread && "bg-base-200"}`}
+                    className={`flex items-center p-2 rounded-md ${notif.isUnread && "bg-base-200"}`}
                   >
                     <div className="flex flex-row justify-between w-full items-center">
                       <div className="flex flex-row gap-1 items-center">
                         <Avatar profile={notif.replier} width={6} height={6} />
-                        <span className="font-semibold">{notif.replier.username}</span> replied to you on a post.
+                        <span className="font-semibold">{notif.replier.username}</span> replied to you on a short.
                       </div>
                       <div className="text-xs opacity-75">
                         <TimeAgo timestamp={notif.created_at} />
@@ -192,7 +192,7 @@ export const Notification = () => {
                     </div>
                   </Link>
                 );
-              } else if (notif.type === "tip") {
+              } else if (notif.type === "short_tip") {
                 message = (
                   <Link
                     href={"/v/" + notif["3sec_tips"].video_id}
@@ -230,7 +230,7 @@ export const Notification = () => {
                       : ""
                   }/${notif.direct_tips.transaction_hash}`}
                     onClick={() => handleNotificationClick(notif)}
-                    className={`flex items-center p-4 rounded-md ${notif.isUnread && "bg-base-200"}`}
+                    className={`flex items-center p-2 rounded-md ${notif.isUnread && "bg-base-200"}`}
                   >
                     <div className="flex flex-row justify-between w-full items-center">
                       <div className="flex flex-row gap-1 items-center">

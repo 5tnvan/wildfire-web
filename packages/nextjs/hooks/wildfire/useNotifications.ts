@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "~~/utils/supabase/client";
-import { fetchCommentsNotifications, fetchDirectTipsNotifications, fetchFiresNotifications, fetchFollowersNotifications, fetchRepliesNotifications, fetchTipsNotifications } from "~~/utils/wildfire/fetch/fetchNotifications";
+import { fetchDirectTipsNotifications, fetchFollowersNotifications } from "~~/utils/wildfire/fetch/fetchNotifications";
+import { fetchCommentsNotifications, fetchFiresNotifications, fetchRepliesNotifications, fetchTipsNotifications } from "~~/utils/wildfire/fetch/fetchShortsNotifications";
 import { fetchUser } from "~~/utils/wildfire/fetch/fetchUser";
 
 /**
@@ -13,11 +14,11 @@ export const useNotifications = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>();
   const [followersNotifications, setFollowersNotifications] = useState<any>();
-  const [firesNotifications, setFiresNotifications] = useState<any>();
-  const [commentsNotifications, setCommentsNotifications] = useState<any>();
-  const [repliesNotifications, setRepliesNotifications] = useState<any>();
-  const [tipsNotifications, setTipsNotifications] = useState<any>();
   const [directTipsNotifications, setDirectTipsNotifications] = useState<any>();
+  const [shortFiresNotifications, setShortFiresNotifications] = useState<any>();
+  const [shortCommentsNotifications, setShortCommentsNotifications] = useState<any>();
+  const [shortRepliesNotifications, setShortRepliesNotifications] = useState<any>();
+  const [shortTipsNotifications, setTipsNotifications] = useState<any>();
   const [triggerRefetch, setTriggerRefetch] = useState(false);
   const supabase = createClient();
 
@@ -37,9 +38,9 @@ export const useNotifications = () => {
       const tipsNotificationsRes = await fetchTipsNotifications(user?.user?.id);
       const directTipsNotificationsRes = await fetchDirectTipsNotifications(user?.user?.id);
       setFollowersNotifications(followersNotificationsRes);
-      setFiresNotifications(firesNotificationsRes);
-      setCommentsNotifications(commentsNotificationsRes);
-      setRepliesNotifications(repliesNotificationsRes);
+      setShortFiresNotifications(firesNotificationsRes);
+      setShortCommentsNotifications(commentsNotificationsRes);
+      setShortRepliesNotifications(repliesNotificationsRes);
       setTipsNotifications(tipsNotificationsRes);
       setDirectTipsNotifications(directTipsNotificationsRes);
     }
@@ -111,5 +112,5 @@ export const useNotifications = () => {
     init();
   }, [triggerRefetch]);
 
-  return { isLoading, followersNotifications, firesNotifications, commentsNotifications, repliesNotifications, tipsNotifications, directTipsNotifications, refetch };
+  return { isLoading, followersNotifications, shortFiresNotifications, shortCommentsNotifications, shortRepliesNotifications, shortTipsNotifications, directTipsNotifications, refetch };
 };

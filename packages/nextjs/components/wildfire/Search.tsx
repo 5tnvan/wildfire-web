@@ -16,9 +16,13 @@ export const Search = () => {
   const searchRef = useRef<any>(null);
 
   useOutsideClick(searchRef, () => {
+    resetSearch();
+  });
+
+  const resetSearch = () => {
     setSearchValue("");
     setSearchRes(null);
-  });
+  }
 
   //fetch profile on search
   useEffect(() => {
@@ -68,6 +72,7 @@ export const Search = () => {
                 key={searchProfile.username} // Add a unique key for each result
                 href={`/${searchProfile.username}`}
                 className="result flex items-center"
+                onClick={() => resetSearch()}
               >
                 <Avatar profile={searchProfile} width={8} height={8} />
                 <div className="ml-2">@{searchProfile.username}</div>

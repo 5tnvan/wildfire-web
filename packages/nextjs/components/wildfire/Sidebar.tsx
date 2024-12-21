@@ -167,6 +167,19 @@ export const Sidebar = () => {
                 </div>
                 Support Spark
               </Link>
+              <Link href="/sparkl" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
+                <div className="mr-2 flex flex-row justify-center items-center">
+                  <Image
+                    src={`/spark/spark-logo.png`}
+                    alt="spark logo"
+                    height={120}
+                    width={120}
+                    className="w-4 h-auto"
+                    draggable={false}
+                  />
+                </div>
+                Become a media creator
+              </Link>
             </div>
             <div onClick={closeMenu}>
               <SwitchTheme className={`pointer-events-auto`} />
@@ -236,7 +249,7 @@ export const Sidebar = () => {
                 <NewspaperIcon width={23} /> News
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <FaceSmileIcon width={23} /> Humour
               </Link>
@@ -246,19 +259,19 @@ export const Sidebar = () => {
                 <LightBulbIcon width={23} />
                 Learning
               </Link>
-            </li>
+            </li> */}
             {/* <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <ChatBubbleLeftEllipsisIcon width={23} />
                 Conversations
               </Link>
             </li> */}
-            <li>
+            {/* <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <CircleStackIcon width={23} />
                 Finance
               </Link>
-            </li>
+            </li> */}
           </ul>
           <Link href="/sparkapp" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
             <div className="mr-2 flex flex-row justify-center items-center">
@@ -273,6 +286,19 @@ export const Sidebar = () => {
             </div>
             Support Spark
           </Link>
+          <Link href="/sparkl" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
+                <div className="mr-2 flex flex-row justify-center items-center">
+                  <Image
+                    src={`/spark/spark-logo.png`}
+                    alt="spark logo"
+                    height={120}
+                    width={120}
+                    className="w-4 h-auto"
+                    draggable={false}
+                  />
+                </div>
+                Become a media creator
+              </Link>
         </div>
 
         <div className="absolute bottom-2 w-full px-4">
