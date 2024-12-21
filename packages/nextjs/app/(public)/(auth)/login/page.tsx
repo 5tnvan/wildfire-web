@@ -146,18 +146,31 @@ const Login: NextPage = () => {
 
         </div>
         <Link href="/sparkapp" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
-                <div className="mr-2 flex flex-row justify-center items-center">
-                  <Image
-                    src={`/spark/spark-logo.png`}
-                    alt="spark logo"
-                    height={120}
-                    width={120}
-                    className="w-4 h-auto"
-                    draggable={false}
-                  />
-                </div>
-                Support Spark
-              </Link>
+          <div className="mr-2 flex flex-row justify-center items-center">
+            <Image
+              src={`/spark/spark-logo.png`}
+              alt="spark logo"
+              height={120}
+              width={120}
+              className="w-4 h-auto"
+              draggable={false}
+            />
+          </div>
+          Support Spark
+        </Link>
+        <Link href="/sparkl" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
+          <div className="mr-2 flex flex-row justify-center items-center">
+            <Image
+              src={`/spark/spark-logo.png`}
+              alt="spark logo"
+              height={120}
+              width={120}
+              className="w-4 h-auto"
+              draggable={false}
+            />
+          </div>
+          Become a media creator
+        </Link>
         
       </div>
     </>

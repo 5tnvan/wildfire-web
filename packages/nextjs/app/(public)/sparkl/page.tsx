@@ -96,8 +96,10 @@ const Landing: NextPage = () => {
             className="flex items-center flex-col justify-center px-4 md:px-10 py-4 w-full h-full"
           >
             <div className="h-[40rem] flex flex-col items-center justify-center">
-              <TextHoverEffect text="JOIN" duration={undefined} />
+              <TextHoverEffect text="ARE" duration={undefined} />
+              <TextHoverEffect text="YOU A" duration={undefined} />
               <TextHoverEffect text="SPARKL" duration={undefined} />
+              <TextHoverEffect text="?" duration={undefined} />
             </div>
           </Vortex>
         </div>

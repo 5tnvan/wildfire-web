@@ -5,11 +5,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NextPage } from "next";
-import { ArrowDownCircleIcon } from "@heroicons/react/24/solid";
+import { ArrowDownCircleIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { TimeAgo } from "~~/components/wildfire/TimeAgo";
 import { useIdeasFeed } from "~~/hooks/wildfire/useIdeaFeeds";
 import { Avatar } from "~~/components/Avatar";
 import { useRouter } from "next/navigation";
+import FormatNumber from "~~/components/wildfire/FormatNumber";
 
 const Sparks: NextPage = () => {
   const router = useRouter();
@@ -125,15 +126,21 @@ const Sparks: NextPage = () => {
                 <div className="line-clamp-5 text-lg text-opacity-90 mb-4">{formatText(idea.text)}</div>
 
                 {/* Footer */}
-                <div className="mt-auto flex flex-row items-center space-x-2">
-                  <Avatar profile={idea.profile} width={10} height={10} />
-                  <div className="text-sm hover:underline">
-                    @{idea.profile.username}
-                  </div>
-                  <span className="text-xs text-gray-300">
-                    <TimeAgo timestamp={idea.created_at} />
-                  </span>
-                </div>
+                <div className="mt-auto flex flex-row items-center justify-between ">
+                      <div className="flex flex-row items-center space-x-2">
+                        <Avatar profile={idea.profile} width={10} height={10} />
+                        <div className="text-sm">
+                          @{idea.profile.username}
+                        </div>
+                        <span className="text-xs text-gray-300">
+                          <TimeAgo timestamp={idea.created_at} />
+                        </span>
+                      </div>
+                      <span className="flex flex-row items-center gap-1 text-xs text-gray-100">
+                        <EyeIcon width={18} height={18} />
+                        <FormatNumber number={idea.idea_views[0].view_count} />
+                      </span>
+                    </div>
               </Link>
             </div>
           ))}

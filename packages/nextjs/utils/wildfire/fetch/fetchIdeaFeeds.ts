@@ -25,7 +25,7 @@ export const fetchUserIdeaFeedWithRange = async (user_id: string, from: any, to:
   const supabase = createClient();
   const { data } = await supabase
     .from("idea_desc_view")
-    .select("*")
+    .select("*, idea_views(*)")
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })
     .range(from, to)
