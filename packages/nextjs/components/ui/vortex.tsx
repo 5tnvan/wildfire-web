@@ -185,6 +185,7 @@ const hue = particleProps[i9];
 
   const resize = (
     canvas: HTMLCanvasElement,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ctx?: CanvasRenderingContext2D
   ) => {
     const { innerWidth, innerHeight } = window;
