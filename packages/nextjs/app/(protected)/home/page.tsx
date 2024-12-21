@@ -20,7 +20,9 @@ import { useKins } from "~~/hooks/wildfire/useKins";
 const Home: NextPage = () => {
   const router = useRouter();
   //const [toast, setToast] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("videos");
+  const tabs: Array<"sparks" | "videos" | "shorts"> = ["sparks", "videos", "shorts"];
+  const getRandomTab = () => tabs[Math.floor(Math.random() * tabs.length)];
+  const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">(getRandomTab());
   
   //FETCH DIRECTLY
   const { feed: tagsFeed, refetch: refetchTags } = useTags(3);

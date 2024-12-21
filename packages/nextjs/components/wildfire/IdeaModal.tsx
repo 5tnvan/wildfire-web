@@ -160,7 +160,7 @@ const IdeaModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
             <div></div>
             <div className="btn btn-primary" onClick={handlePost}>
               Post Now
-              {loading ? <span className="absolute loading loading-ring loading-md ml-1 right-4"></span> : <SparklesIcon width={15} height={15} />}
+              {loading ? <span className="loading loading-ring loading-md ml-1"></span> : <SparklesIcon width={15} height={15} />}
             </div>
           </div>
         </div>
