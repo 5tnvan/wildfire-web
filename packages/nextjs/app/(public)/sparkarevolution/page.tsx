@@ -96,10 +96,9 @@ const Landing: NextPage = () => {
             className="flex items-center flex-col justify-center px-4 md:px-10 py-4 w-full h-full"
           >
             <div className="h-[40rem] flex flex-col items-center justify-center">
-              <TextHoverEffect text="ARE" duration={undefined} />
-              <TextHoverEffect text="YOU A" duration={undefined} />
-              <TextHoverEffect text="SPARKL" duration={undefined} />
-              <TextHoverEffect text="?" duration={undefined} />
+              <TextHoverEffect text="SPARK" duration={undefined} />
+              <TextHoverEffect text="A" duration={undefined} />
+              <TextHoverEffect text="REVOLUTION" duration={undefined} />
             </div>
           </Vortex>
         </div>
@@ -109,7 +108,7 @@ const Landing: NextPage = () => {
           
           <div className="flex flex-col items-center justify-center h-[30rem]">
             <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base">
-              Join the 'sparkl' program.
+              Join the program now.
             </p>
             <TypewriterEffectSmooth words={words2} className={undefined} cursorClassName={undefined} />
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">

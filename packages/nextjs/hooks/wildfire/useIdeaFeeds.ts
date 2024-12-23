@@ -46,7 +46,7 @@ export const useIdeasFeed = (filter: any, limit: number, range: number) => {
         case "mostViewed":
           data = await fetchMostViewedIdeaFeed(from, to);
           break;
-        default:
+        case "random":
           data = await fetchRandomIdeaFeed(limit);
       }
 

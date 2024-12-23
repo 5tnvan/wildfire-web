@@ -167,7 +167,7 @@ export const Sidebar = () => {
                 </div>
                 Support Spark
               </Link>
-              <Link href="/sparkl" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
+              <Link href="/sparkarevolution" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
                 <div className="mr-2 flex flex-row justify-center items-center">
                   <Image
                     src={`/spark/spark-logo.png`}
@@ -178,7 +178,7 @@ export const Sidebar = () => {
                     draggable={false}
                   />
                 </div>
-                Become a media creator
+                Spark a revolution
               </Link>
             </div>
             <div onClick={closeMenu}>
@@ -286,7 +286,7 @@ export const Sidebar = () => {
             </div>
             Support Spark
           </Link>
-          <Link href="/sparkl" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
+          <Link href="/sparkarevolution" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
                 <div className="mr-2 flex flex-row justify-center items-center">
                   <Image
                     src={`/spark/spark-logo.png`}
@@ -297,7 +297,7 @@ export const Sidebar = () => {
                     draggable={false}
                   />
                 </div>
-                Become a media creator
+                Spark a revolution
               </Link>
         </div>
 

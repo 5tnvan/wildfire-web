@@ -36,11 +36,11 @@ export const GoogleGeminiEffect = ({
                                     />
                                 </div>
       <p
-        className="text-4xl lg:text-7xl font-semibold pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
+        className="mx-4 text-4xl lg:text-7xl font-semibold pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
         {title || ``}
       </p>
       <p
-        className="text-lg lg:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
+        className="px-4 text-lg lg:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
         {description ||
           ``}
       </p>

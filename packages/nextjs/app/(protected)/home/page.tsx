@@ -30,7 +30,7 @@ const Home: NextPage = () => {
   const { loading: loadingVideoFeed, feed: videosFeed, fetchMore: fetchMoreVideos } = useVideosFeed("random", 6, 6);
   const { loading: loadingVideoFeed2, feed: videosFeed2, refetch: refetchVideos2 } = useVideosFeed("mostViewed", 3, 3);
   const { loading: loadingShortsFeed, feed: shortsFeed, fetchMore: fetchMoreShorts } = useShortsFeed("default", 6);
-  const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("latest", 6, 6);
+  const { loading: loadingIdeaFeed, feed: ideasFeed, fetchMore: fetchMoreIdeas } = useIdeasFeed("random", 6, 6);
 
   const formatText = (text: string) => {
     return text.split("\n").map((line, i) => (
@@ -319,7 +319,7 @@ const Home: NextPage = () => {
           </div>
 
           {/* TRENDING */}
-          <div className="stats shadow flex flex-col grow w-full h-full py-5 mb-2">
+          <div className="stats shadow hidden md:flex flex-col grow w-full h-full py-5 mb-2">
             <div className="flex flex-row justify-between items-center stat-value text-sm lg:text-lg px-5 mt-2">
               <span className="line-clamp-1 overflow-hidden text-ellipsis">Trending</span>
               <span onClick={() => refetchVideos2()} className="cursor-pointer">
@@ -358,7 +358,7 @@ const Home: NextPage = () => {
 
         </div>
 
-        <div className="mt-4 mb-4">
+        <div className="mt-4 mb-4" suppressHydrationWarning>
           <div className="flex gap-20 border-b border-gray-300 mb-4">
             <button
               onClick={() => setActiveTab("sparks")}

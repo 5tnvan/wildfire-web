@@ -4,7 +4,6 @@ import { useState } from "react";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useScroll, useTransform } from "framer-motion";
 import type { NextPage } from "next";
 import { Card, Carousel } from "~~/components/ui/apple-cards-carousel";
@@ -31,7 +30,6 @@ const Landing: NextPage = () => {
             className: "text-primary dark:text-primary",
         },
     ];
-    const router = useRouter();
 
     //TIP MODAL
     const [isAndroidTestModalOpen, setAndroidTestModalOpen] = useState(false);
@@ -80,9 +78,9 @@ const Landing: NextPage = () => {
                         </p>
                         <TypewriterEffectSmooth words={words2} className={undefined} cursorClassName={undefined} />
                         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
-                            <button className="w-40 h-10 font-semibold rounded-xl bg-black border dark:border-white border-transparent text-white text-base transform transition-transform duration-300 hover:-translate-y-2" onClick={() => router.push("/login")}>
+                            <Link href="/login" className="flex flex-row font-semibold justify-center items-center w-40 h-10 font-semibold rounded-xl bg-black border dark:border-white border-transparent text-white text-base transform transition-transform duration-300 hover:-translate-y-2">
                                 Join now
-                            </button>
+                            </Link>
                             <Link href="/home" className="flex flex-row font-semibold justify-center items-center w-40 h-10 rounded-xl bg-white text-black border border-black text-base transform transition-transform duration-300 hover:-translate-y-2">
                                 <div className="mr-2 flex flex-row justify-center items-center">
                                     <Image
