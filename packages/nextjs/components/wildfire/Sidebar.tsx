@@ -253,25 +253,25 @@ export const Sidebar = () => {
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <FaceSmileIcon width={23} /> Humour
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <LightBulbIcon width={23} />
                 Learning
               </Link>
-            </li> */}
+            </li>
             {/* <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <ChatBubbleLeftEllipsisIcon width={23} />
                 Conversations
               </Link>
             </li> */}
-            {/* <li>
+            <li>
               <Link href="/videos" className="flex flex-row gap-4 text-sm">
                 <CircleStackIcon width={23} />
                 Finance
               </Link>
-            </li> */}
+            </li>
           </ul>
           <Link href="/sparkapp" className="flex flex-row mt-3 ml-3 px-3 py-2 h-fit font-semibold justify-center items-center w-fit rounded-xl border border-neutral-500 text-xs transform transition-transform duration-300 hover:-translate-y-2">
             <div className="mr-2 flex flex-row justify-center items-center">

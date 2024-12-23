@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,8 +21,16 @@ const Home: NextPage = () => {
   const router = useRouter();
   //const [toast, setToast] = useState<any>(null);
   const tabs: Array<"sparks" | "videos" | "shorts"> = ["sparks", "videos", "shorts"];
-  const getRandomTab = () => tabs[Math.floor(Math.random() * tabs.length)];
-  const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">(getRandomTab());
+  const [activeTab, setActiveTab] = useState<"sparks" | "videos" | "shorts">("sparks");
+
+  useEffect(() => {
+    const getRandomTab = () => {
+      const randomIndex = Math.floor(Math.random() * tabs.length);
+      return tabs[randomIndex];
+    };
+
+    setActiveTab(getRandomTab());
+  }, []);
   
   //FETCH DIRECTLY
   const { feed: tagsFeed, refetch: refetchTags } = useTags(3);
