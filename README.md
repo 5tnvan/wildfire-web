@@ -5,12 +5,6 @@
   Spark app: <a href="https://www.3seconds.me">3seconds.me</a>
 </h4>
 
-<p align="center">
-    <a href="https://ibb.co/nc9cJZQ">
-        <img src="https://i.ibb.co/HXqbJgK/app-1.webp" border="0" width="50%">
-    </a>
-</p>
-
 🔥 **Got 3 seconds?**
 >Become a Web3 Creator by posting a 3-second video each day.
 
